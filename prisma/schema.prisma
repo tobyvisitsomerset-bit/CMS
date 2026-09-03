@@ -1,14 +1,14 @@
 // Visit Somerset CMS — Prisma schema
-// Dev provider is SQLite for zero-config local setup. Field types below are
-// chosen to be Postgres-compatible so switching `provider` + DATABASE_URL
-// later is the only change needed for production.
+// Postgres-backed (Railway). Point DATABASE_URL at any Postgres instance —
+// Railway's own Postgres plugin is the simplest option for both dev and prod
+// at this stage.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

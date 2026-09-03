@@ -19,7 +19,12 @@ export async function listMedia(params: { folderId?: string | null; search?: str
     where: {
       folderId: params.folderId === undefined ? undefined : params.folderId,
       ...(params.search
-        ? { OR: [{ filename: { contains: params.search } }, { tagsCsv: { contains: params.search } }] }
+        ? {
+            OR: [
+              { filename: { contains: params.search, mode: "insensitive" } },
+              { tagsCsv: { contains: params.search, mode: "insensitive" } },
+            ],
+          }
         : {}),
     },
     include: { uploadedBy: { select: { name: true } } },

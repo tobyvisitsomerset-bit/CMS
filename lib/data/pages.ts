@@ -78,7 +78,7 @@ export async function getPageById(id: string) {
 
 export async function searchPages(query: string) {
   return prisma.page.findMany({
-    where: { title: { contains: query } },
+    where: { title: { contains: query, mode: "insensitive" } },
     select: { id: true, title: true, slug: true, status: true, isSection: true },
     take: 25,
   });
