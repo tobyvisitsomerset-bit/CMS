@@ -1,0 +1,241 @@
+// Visit Somerset CMS — Prisma schema
+// Dev provider is SQLite for zero-config local setup. Field types below are
+// chosen to be Postgres-compatible so switching `provider` + DATABASE_URL
+// later is the only change needed for production.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum PageStatus {
+  DRAFT
+  PENDING_APPROVAL
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ListingCategory {
+  ACCOMMODATION
+  FOOD_DRINK
+  ATTRACTION
+  EVENT
+}
+
+// Ordered low to high — higher tiers sort first and get a badge on listings.
+enum MembershipTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  key         String           @unique // SUPER_ADMIN | CONTENT_ADMIN | MEMBER | READ_ONLY
+  name        String           @unique // "Super Admin", "Content Admin", "Member", "Read Only"
+  description String?
+  users       User[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id          String           @id @default(cuid())
+  key         String           @unique // e.g. "pages.publish"
+  description String?
+  roles       RolePermission[]
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  avatarUrl    String?
+  roleId       String
+  role         Role     @relation(fields: [roleId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  pagesAuthored Page[]     @relation("PageAuthor")
+  pagesOwned    Page[]     @relation("PageOwner")
+  assignedPages Page[]     @relation("PageAssignedMember")
+  auditLogs      AuditLog[]
+  uploadedMedia  Media[]
+  versions       Version[]
+  pageTemplates  PageTemplate[]
+}
+
+model Page {
+  id                String     @id @default(cuid())
+  title             String
+  subtitle          String?
+  slug              String     @unique
+  seoTitle          String?
+  seoDescription    String?
+  heroImageUrl      String?
+  galleryUrls       String? // JSON-encoded string[]
+  bodyContent       String?
+  callToActionLabel String?
+  callToActionUrl   String?
+  customFields      String? // JSON-encoded key/value pairs
+  status            PageStatus @default(DRAFT)
+  isSection         Boolean    @default(false) // true = folder/section node, not an editable page
+  sortOrder         Int        @default(0)
+
+  parentId String?
+  parent   Page?   @relation("PageTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children Page[]  @relation("PageTree")
+
+  authorId String?
+  author   User?   @relation("PageAuthor", fields: [authorId], references: [id])
+  ownerId  String?
+  owner    User?   @relation("PageOwner", fields: [ownerId], references: [id])
+
+  assignedMemberId String?
+  assignedMember   User?   @relation("PageAssignedMember", fields: [assignedMemberId], references: [id])
+  assignedTeam     String?
+  visibility       String  @default("public") // public | member-only | internal
+
+  publishDate DateTime?
+  expiryDate  DateTime?
+  archivedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tags          Tag[]          @relation("PageTags")
+  categories    Category[]     @relation("PageCategories")
+  contentBlocks ContentBlock[]
+  auditLogs     AuditLog[]
+  versions      Version[]
+
+  seoKeywords       String?
+  canonicalUrl      String?
+  ogTitle           String?
+  ogDescription     String?
+  socialShareImage  String?
+  schemaMarkup      String? // JSON-LD, stored as text
+
+  // Business/member pages (e.g. a business's own listing page)
+  tagline        String?
+  membershipTier MembershipTier?
+}
+
+model ContentBlock {
+  id        String   @id @default(cuid())
+  pageId    String
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type      String // hero | text | gallery | cards | video | accordion | testimonials | faq | cta_banner | map
+  sortOrder Int      @default(0)
+  config    String // JSON-encoded block-specific fields
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id    String @id @default(cuid())
+  name  String @unique
+  slug  String @unique
+  pages Page[] @relation("PageCategories")
+}
+
+model Tag {
+  id    String @id @default(cuid())
+  name  String @unique
+  slug  String @unique
+  pages Page[] @relation("PageTags")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  pageId    String?
+  page      Page?    @relation(fields: [pageId], references: [id])
+  action    String // created | updated | published | unpublished | archived | restored | deleted | cloned
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model MediaFolder {
+  id        String        @id @default(cuid())
+  name      String
+  parentId  String?
+  parent    MediaFolder?  @relation("FolderTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children  MediaFolder[] @relation("FolderTree")
+  media     Media[]
+  createdAt DateTime      @default(now())
+}
+
+model Media {
+  id           String       @id @default(cuid())
+  filename     String
+  url          String
+  mimeType     String
+  size         Int
+  kind         String // image | pdf | video | document
+  tagsCsv      String?
+  folderId     String?
+  folder       MediaFolder? @relation(fields: [folderId], references: [id])
+  uploadedById String?
+  uploadedBy   User?        @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime     @default(now())
+}
+
+model Listing {
+  id             String          @id @default(cuid())
+  category       ListingCategory
+  name           String
+  summary        String?
+  description    String?
+  imageUrl       String?
+  location       String?
+  badges         String? // JSON-encoded string[]
+  priceLabel     String?
+  rating         Float?
+  reviewCount    Int?
+  membershipTier MembershipTier?
+  externalUrl    String?
+  startDate      DateTime?
+  endDate        DateTime?
+  sortOrder      Int             @default(0)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model PageTemplate {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  blocks      String // JSON-encoded array of { type, config }
+  createdById String?
+  createdBy   User?    @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Version {
+  id            String   @id @default(cuid())
+  pageId        String
+  page          Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  versionNumber Int
+  editorId      String?
+  editor        User?    @relation(fields: [editorId], references: [id])
+  snapshot      String // JSON snapshot of page fields + content blocks at save time
+  changeSummary String?
+  createdAt     DateTime @default(now())
+}
