@@ -49,3 +49,9 @@ next-env.d.ts
 
 # Claude Code session artifacts
 /.claude/scheduled_tasks.lock
+
+# raw Kentico export data (large, contains legacy CMS export dumps)
+/kentico-import/raw
+
+# local dev Postgres data (see scripts/dev-db.ts)
+/.dev-postgres-data

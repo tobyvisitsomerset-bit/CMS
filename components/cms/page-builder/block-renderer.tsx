@@ -1,20 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- config is arbitrary per-block-type JSON, typed loosely by design */
 
 import { Star, MapPin, CalendarDays, Search } from "lucide-react";
-import type { Listing, ListingCategory } from "@prisma/client";
+import type { ListingCategory } from "@prisma/client";
+import type { ListingWithFacilities } from "@/lib/data/listings";
 import { cn } from "@/lib/utils";
 
-export type ListingsByCategory = Record<ListingCategory, Listing[]>;
-
-function parseBadges(json: string | null): string[] {
-  if (!json) return [];
-  try {
-    const parsed = JSON.parse(json);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
+export type ListingsByCategory = Record<ListingCategory, ListingWithFacilities[]>;
 
 function tierBadgeLabel(tier: string | null): string | null {
   if (tier === "PLATINUM") return "Platinum Member";
@@ -250,9 +241,9 @@ export function BlockRenderer({
                     </div>
                     {item.summary && <p className="mt-1 text-sm text-neutral-600">{item.summary}</p>}
                     <div className="mt-2 flex flex-wrap gap-1">
-                      {parseBadges(item.badges).map((b) => (
-                        <span key={b} className="rounded border px-1.5 py-0.5 text-[10px] text-neutral-600">
-                          {b}
+                      {item.facilities.map((f) => (
+                        <span key={f.id} className="rounded border px-1.5 py-0.5 text-[10px] text-neutral-600">
+                          {f.name}
                         </span>
                       ))}
                     </div>

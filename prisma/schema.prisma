@@ -196,6 +196,45 @@ model Media {
   createdAt    DateTime     @default(now())
 }
 
+model FacilityGroup {
+  id         String     @id @default(cuid())
+  name       String     @unique
+  sortOrder  Int        @default(0)
+  facilities Facility[]
+}
+
+model Facility {
+  id                  String         @id @default(cuid())
+  name                String
+  groupId             String?
+  group               FacilityGroup? @relation(fields: [groupId], references: [id])
+  mapFilter           Boolean        @default(false)
+  filterGeneral       Boolean        @default(false)
+  filterAccommodation Boolean        @default(false)
+  listings            Listing[]      @relation("ListingFacilities")
+
+  @@unique([name, groupId])
+}
+
+model Location {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  latitude    Float
+  longitude   Float
+  radiusMiles Int?
+  sortOrder   Int      @default(0)
+}
+
+model MembershipTierDefinition {
+  id                  String         @id @default(cuid())
+  tier                MembershipTier @unique
+  name                String
+  priceLabel          String?
+  searchPriorityLabel String?
+  sortOrder           Int            @default(0)
+  features            String // JSON-encoded feature-flag set (imported from Kentico)
+}
+
 model Listing {
   id             String          @id @default(cuid())
   category       ListingCategory
@@ -204,7 +243,7 @@ model Listing {
   description    String?
   imageUrl       String?
   location       String?
-  badges         String? // JSON-encoded string[]
+  facilities     Facility[]      @relation("ListingFacilities")
   priceLabel     String?
   rating         Float?
   reviewCount    Int?

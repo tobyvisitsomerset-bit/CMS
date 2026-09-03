@@ -238,221 +238,246 @@ async function main() {
     const now = new Date();
     const daysFromNow = (n: number) => new Date(now.getTime() + n * 86400000);
 
-    await prisma.listing.createMany({
-      data: [
-        // Accommodation
-        {
-          category: "ACCOMMODATION",
-          name: "Middlewick Holiday Cottages",
-          summary:
-            "Nine barns around a courtyard with an indoor pool and the Tor on the skyline — ten minutes from Glastonbury and Wells.",
-          location: "Glastonbury · self-catering · 9 barn conversions",
-          badges: JSON.stringify(["Dog friendly", "Step-free unit", "Hot tub", "EV charging"]),
-          priceLabel: "£680 per week",
-          rating: 4.9,
-          reviewCount: 212,
-          membershipTier: "PLATINUM",
-          sortOrder: 0,
+    // Facility names below are real Visit Somerset facility taxonomy (imported via
+    // kentico-import/import-reference-data.ts) where a good match exists; run that
+    // import before this seed so the `facilities` connects resolve.
+    const LISTINGS: {
+      category: "ACCOMMODATION" | "FOOD_DRINK" | "ATTRACTION" | "EVENT";
+      name: string;
+      summary: string;
+      location: string;
+      facilityNames?: string[];
+      priceLabel?: string;
+      rating?: number;
+      reviewCount?: number;
+      membershipTier?: "BRONZE" | "SILVER" | "GOLD" | "PLATINUM";
+      startDate?: Date;
+      endDate?: Date;
+      sortOrder: number;
+    }[] = [
+      // Accommodation
+      {
+        category: "ACCOMMODATION",
+        name: "Middlewick Holiday Cottages",
+        summary:
+          "Nine barns around a courtyard with an indoor pool and the Tor on the skyline — ten minutes from Glastonbury and Wells.",
+        location: "Glastonbury · self-catering · 9 barn conversions",
+        facilityNames: ["Dog Friendly", "Hot Tub", "Electric Car charging point", "Accessible to Wheelchair Users"],
+        priceLabel: "£680 per week",
+        rating: 4.9,
+        reviewCount: 212,
+        membershipTier: "PLATINUM",
+        sortOrder: 0,
+      },
+      {
+        category: "ACCOMMODATION",
+        name: "The Swan Hotel, Wells",
+        summary: "A coaching inn on the cathedral green with twelve individually decorated rooms.",
+        location: "Wells · hotel",
+        facilityNames: ["Dog Friendly"],
+        priceLabel: "£145 per night",
+        rating: 4.6,
+        reviewCount: 340,
+        membershipTier: "GOLD",
+        sortOrder: 1,
+      },
+      {
+        category: "ACCOMMODATION",
+        name: "Exmoor Glamping Pods",
+        summary: "Off-grid pods on the edge of the moor, each with a wood burner and private hot tub.",
+        location: "Exmoor · glamping",
+        facilityNames: ["Hot Tub", "Pets Accepted"],
+        priceLabel: "£320 for 3 nights",
+        rating: 4.8,
+        reviewCount: 98,
+        membershipTier: "SILVER",
+        sortOrder: 2,
+      },
+      {
+        category: "ACCOMMODATION",
+        name: "Cheddar Gorge Camping",
+        summary: "Family-run touring and camping site five minutes' walk from the gorge.",
+        location: "Cheddar · camping",
+        facilityNames: ["Family Friendly", "Dog Friendly"],
+        priceLabel: "£28 per night",
+        rating: 4.4,
+        reviewCount: 156,
+        membershipTier: "BRONZE",
+        sortOrder: 3,
+      },
+      {
+        category: "ACCOMMODATION",
+        name: "Bath City Apartments",
+        summary: "Self-catering apartments a short walk from the Roman Baths.",
+        location: "Bath · self-catering",
+        facilityNames: ["Accessible to Wheelchair Users", "Electric Car charging point"],
+        priceLabel: "£165 per night",
+        rating: 4.5,
+        reviewCount: 87,
+        sortOrder: 4,
+      },
+      {
+        category: "ACCOMMODATION",
+        name: "Quantock Hills Farm Stay",
+        summary: "A working farm offering B&B rooms and honesty-box breakfasts.",
+        location: "Quantock Hills · farm stay",
+        facilityNames: ["Dog Friendly", "Family Friendly"],
+        priceLabel: "£95 per night",
+        rating: 4.7,
+        reviewCount: 64,
+        sortOrder: 5,
+      },
+      // Food & drink
+      {
+        category: "FOOD_DRINK",
+        name: "The Newt in Somerset",
+        summary: "Kitchen-garden menus, a parabola of apple trees and a cyder cellar you can walk through.",
+        location: "Bruton · restaurant & cyder press",
+        facilityNames: ["Booking Advised", "Beautiful garden to sit in", "Accessible to Wheelchair Users"],
+        rating: 4.9,
+        membershipTier: "PLATINUM",
+        sortOrder: 0,
+      },
+      {
+        category: "FOOD_DRINK",
+        name: "Thatchers Cider",
+        summary: "Fourth-generation cider makers offering tastings and orchard tours.",
+        location: "Sandford · brewery & distillery",
+        facilityNames: ["Guided Tours Available for Individuals", "Family Friendly"],
+        membershipTier: "GOLD",
+        sortOrder: 1,
+      },
+      {
+        category: "FOOD_DRINK",
+        name: "The Cheddar Gorge Cheese Co.",
+        summary: "Traditional cheddar made in the gorge, with a free viewing gallery.",
+        location: "Cheddar · producer",
+        membershipTier: "SILVER",
+        sortOrder: 2,
+      },
+      {
+        category: "FOOD_DRINK",
+        name: "Sally Lunn's",
+        summary: "Bath's oldest house, famous for its Sally Lunn bun since 1680.",
+        location: "Bath · cafe & tea room",
+        membershipTier: "BRONZE",
+        sortOrder: 3,
+      },
+      {
+        category: "FOOD_DRINK",
+        name: "Augustus",
+        summary: "Modern British small plates in the heart of Taunton.",
+        location: "Taunton · restaurant",
+        facilityNames: ["Booking essential"],
+        sortOrder: 4,
+      },
+      {
+        category: "FOOD_DRINK",
+        name: "Burrow Hill Cider Farm",
+        summary: "West Country farmhouse cider, distilled brandy, and a summer cider bus.",
+        location: "Kingsbury Episcopi · farm shop & producer",
+        facilityNames: ["Farm Shop", "Guided Tours Available for Individuals"],
+        sortOrder: 5,
+      },
+      // Attractions
+      {
+        category: "ATTRACTION",
+        name: "Cheddar Gorge & Caves",
+        summary: "England's largest gorge, with show caves and a cliff-top walk.",
+        location: "Cheddar",
+        facilityNames: ["Family Friendly", "Dogs on Lead Only"],
+        sortOrder: 0,
+      },
+      {
+        category: "ATTRACTION",
+        name: "Glastonbury Tor",
+        summary: "A National Trust hill topped by St Michael's Tower, with views across the Levels.",
+        location: "Glastonbury",
+        facilityNames: ["Free Entry"],
+        sortOrder: 1,
+      },
+      {
+        category: "ATTRACTION",
+        name: "Wells Cathedral",
+        summary: "England's first fully Gothic cathedral, with its famous scissor arches.",
+        location: "Wells",
+        facilityNames: ["Accessible to Wheelchair Users"],
+        sortOrder: 2,
+      },
+      {
+        category: "ATTRACTION",
+        name: "Wookey Hole Caves",
+        summary: "Show caves, a papermill, and a mirror maze for a rainy day out.",
+        location: "Wookey Hole",
+        facilityNames: ["Family Friendly", "Indoor Attraction"],
+        sortOrder: 3,
+      },
+      // Events (dates relative to seed time so the calendar always looks populated)
+      {
+        category: "EVENT",
+        name: "Truckfest South West",
+        summary: "Truck show and family fun day, running since 1983.",
+        location: "Bath & West Showground, Shepton Mallet",
+        startDate: daysFromNow(2),
+        endDate: daysFromNow(4),
+        sortOrder: 0,
+      },
+      {
+        category: "EVENT",
+        name: "Stone Age SOS at Cheddar Gorge & Caves",
+        summary: "Family activity day, 10am-5pm.",
+        location: "Cheddar",
+        startDate: daysFromNow(0),
+        endDate: daysFromNow(5),
+        sortOrder: 1,
+      },
+      {
+        category: "EVENT",
+        name: "Summer of Play: Knights' Quest",
+        summary: "Outdoor trail and activities for kids, 11am-4pm.",
+        location: "Dunster Castle",
+        startDate: daysFromNow(0),
+        endDate: daysFromNow(6),
+        sortOrder: 2,
+      },
+      {
+        category: "EVENT",
+        name: "Taunton Military Wives Choir",
+        summary: "Free outdoor concert in the town centre.",
+        location: "Taunton",
+        startDate: daysFromNow(1),
+        sortOrder: 3,
+      },
+      {
+        category: "EVENT",
+        name: "Bridgwater Carnival",
+        summary: "Europe's largest illuminated procession.",
+        location: "Bridgwater",
+        startDate: daysFromNow(12),
+        sortOrder: 4,
+      },
+      {
+        category: "EVENT",
+        name: "Glastonbury Food & Drink Market",
+        summary: "Monthly market of local producers on the high street.",
+        location: "Glastonbury",
+        startDate: daysFromNow(9),
+        sortOrder: 5,
+      },
+    ];
+
+    for (const listing of LISTINGS) {
+      const { facilityNames, ...rest } = listing;
+      const facilities = facilityNames?.length
+        ? await prisma.facility.findMany({ where: { name: { in: facilityNames } } })
+        : [];
+      await prisma.listing.create({
+        data: {
+          ...rest,
+          facilities: facilities.length ? { connect: facilities.map((f) => ({ id: f.id })) } : undefined,
         },
-        {
-          category: "ACCOMMODATION",
-          name: "The Swan Hotel, Wells",
-          summary: "A coaching inn on the cathedral green with twelve individually decorated rooms.",
-          location: "Wells · hotel",
-          badges: JSON.stringify(["Dog friendly", "Restaurant on site"]),
-          priceLabel: "£145 per night",
-          rating: 4.6,
-          reviewCount: 340,
-          membershipTier: "GOLD",
-          sortOrder: 1,
-        },
-        {
-          category: "ACCOMMODATION",
-          name: "Exmoor Glamping Pods",
-          summary: "Off-grid pods on the edge of the moor, each with a wood burner and private hot tub.",
-          location: "Exmoor · glamping",
-          badges: JSON.stringify(["Hot tub", "Pet friendly", "Off-grid"]),
-          priceLabel: "£320 for 3 nights",
-          rating: 4.8,
-          reviewCount: 98,
-          membershipTier: "SILVER",
-          sortOrder: 2,
-        },
-        {
-          category: "ACCOMMODATION",
-          name: "Cheddar Gorge Camping",
-          summary: "Family-run touring and camping site five minutes' walk from the gorge.",
-          location: "Cheddar · camping",
-          badges: JSON.stringify(["Family friendly", "Dog friendly"]),
-          priceLabel: "£28 per night",
-          rating: 4.4,
-          reviewCount: 156,
-          membershipTier: "BRONZE",
-          sortOrder: 3,
-        },
-        {
-          category: "ACCOMMODATION",
-          name: "Bath City Apartments",
-          summary: "Self-catering apartments a short walk from the Roman Baths.",
-          location: "Bath · self-catering",
-          badges: JSON.stringify(["Step-free access", "EV charging"]),
-          priceLabel: "£165 per night",
-          rating: 4.5,
-          reviewCount: 87,
-          sortOrder: 4,
-        },
-        {
-          category: "ACCOMMODATION",
-          name: "Quantock Hills Farm Stay",
-          summary: "A working farm offering B&B rooms and honesty-box breakfasts.",
-          location: "Quantock Hills · farm stay",
-          badges: JSON.stringify(["Dog friendly", "Family friendly"]),
-          priceLabel: "£95 per night",
-          rating: 4.7,
-          reviewCount: 64,
-          sortOrder: 5,
-        },
-        // Food & drink
-        {
-          category: "FOOD_DRINK",
-          name: "The Newt in Somerset",
-          summary: "Kitchen-garden menus, a parabola of apple trees and a cyder cellar you can walk through.",
-          location: "Bruton · restaurant & cyder press",
-          badges: JSON.stringify(["Booking needed", "Garden", "Step-free"]),
-          rating: 4.9,
-          membershipTier: "PLATINUM",
-          sortOrder: 0,
-        },
-        {
-          category: "FOOD_DRINK",
-          name: "Thatchers Cider",
-          summary: "Fourth-generation cider makers offering tastings and orchard tours.",
-          location: "Sandford · brewery & distillery",
-          badges: JSON.stringify(["Tours", "Family friendly"]),
-          membershipTier: "GOLD",
-          sortOrder: 1,
-        },
-        {
-          category: "FOOD_DRINK",
-          name: "The Cheddar Gorge Cheese Co.",
-          summary: "Traditional cheddar made in the gorge, with a free viewing gallery.",
-          location: "Cheddar · producer",
-          badges: JSON.stringify(["Free viewing gallery"]),
-          membershipTier: "SILVER",
-          sortOrder: 2,
-        },
-        {
-          category: "FOOD_DRINK",
-          name: "Sally Lunn's",
-          summary: "Bath's oldest house, famous for its Sally Lunn bun since 1680.",
-          location: "Bath · cafe & tea room",
-          badges: JSON.stringify(["Historic", "Walk-ins"]),
-          membershipTier: "BRONZE",
-          sortOrder: 3,
-        },
-        {
-          category: "FOOD_DRINK",
-          name: "Augustus",
-          summary: "Modern British small plates in the heart of Taunton.",
-          location: "Taunton · restaurant",
-          badges: JSON.stringify(["Booking needed", "Tue-Sat"]),
-          sortOrder: 4,
-        },
-        {
-          category: "FOOD_DRINK",
-          name: "Burrow Hill Cider Farm",
-          summary: "West Country farmhouse cider, distilled brandy, and a summer cider bus.",
-          location: "Kingsbury Episcopi · farm shop & producer",
-          badges: JSON.stringify(["Farm shop", "Tours"]),
-          sortOrder: 5,
-        },
-        // Attractions
-        {
-          category: "ATTRACTION",
-          name: "Cheddar Gorge & Caves",
-          summary: "England's largest gorge, with show caves and a cliff-top walk.",
-          location: "Cheddar",
-          badges: JSON.stringify(["Family friendly", "Dog friendly on lead"]),
-          sortOrder: 0,
-        },
-        {
-          category: "ATTRACTION",
-          name: "Glastonbury Tor",
-          summary: "A National Trust hill topped by St Michael's Tower, with views across the Levels.",
-          location: "Glastonbury",
-          badges: JSON.stringify(["National Trust", "Free entry"]),
-          sortOrder: 1,
-        },
-        {
-          category: "ATTRACTION",
-          name: "Wells Cathedral",
-          summary: "England's first fully Gothic cathedral, with its famous scissor arches.",
-          location: "Wells",
-          badges: JSON.stringify(["Step-free access"]),
-          sortOrder: 2,
-        },
-        {
-          category: "ATTRACTION",
-          name: "Wookey Hole Caves",
-          summary: "Show caves, a papermill, and a mirror maze for a rainy day out.",
-          location: "Wookey Hole",
-          badges: JSON.stringify(["Family friendly", "Indoor"]),
-          sortOrder: 3,
-        },
-        // Events (dates relative to seed time so the calendar always looks populated)
-        {
-          category: "EVENT",
-          name: "Truckfest South West",
-          summary: "Truck show and family fun day, running since 1983.",
-          location: "Bath & West Showground, Shepton Mallet",
-          startDate: daysFromNow(2),
-          endDate: daysFromNow(4),
-          sortOrder: 0,
-        },
-        {
-          category: "EVENT",
-          name: "Stone Age SOS at Cheddar Gorge & Caves",
-          summary: "Family activity day, 10am-5pm.",
-          location: "Cheddar",
-          startDate: daysFromNow(0),
-          endDate: daysFromNow(5),
-          sortOrder: 1,
-        },
-        {
-          category: "EVENT",
-          name: "Summer of Play: Knights' Quest",
-          summary: "Outdoor trail and activities for kids, 11am-4pm.",
-          location: "Dunster Castle",
-          startDate: daysFromNow(0),
-          endDate: daysFromNow(6),
-          sortOrder: 2,
-        },
-        {
-          category: "EVENT",
-          name: "Taunton Military Wives Choir",
-          summary: "Free outdoor concert in the town centre.",
-          location: "Taunton",
-          startDate: daysFromNow(1),
-          sortOrder: 3,
-        },
-        {
-          category: "EVENT",
-          name: "Bridgwater Carnival",
-          summary: "Europe's largest illuminated procession.",
-          location: "Bridgwater",
-          startDate: daysFromNow(12),
-          sortOrder: 4,
-        },
-        {
-          category: "EVENT",
-          name: "Glastonbury Food & Drink Market",
-          summary: "Monthly market of local producers on the high street.",
-          location: "Glastonbury",
-          startDate: daysFromNow(9),
-          sortOrder: 5,
-        },
-      ],
-    });
+      });
+    }
   }
 
   console.log("Seeding starter page templates...");
