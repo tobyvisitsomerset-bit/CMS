@@ -7,6 +7,7 @@ import type { RoleKey } from "@/lib/permissions";
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
+  trustHost: true, // required behind Railway's (and most non-Vercel) reverse proxies
   providers: [
     Credentials({
       name: "Credentials",
