@@ -1,0 +1,6409 @@
+{
+  "facilityGroups": [
+    {
+      "name": "CATERING",
+      "sortOrder": 41
+    },
+    {
+      "name": "ESTABLISHMENT FEATURES",
+      "sortOrder": 42
+    },
+    {
+      "name": "LEISURE FACILITIES",
+      "sortOrder": 43
+    },
+    {
+      "name": "PAYMENT METHODS",
+      "sortOrder": 44
+    },
+    {
+      "name": "SPECIALIST FEATURES",
+      "sortOrder": 45
+    },
+    {
+      "name": "ROOM & UNIT FEATURES",
+      "sortOrder": 46
+    },
+    {
+      "name": "KEY FEATURES",
+      "sortOrder": 47
+    },
+    {
+      "name": "CHILDREN & INFANTS",
+      "sortOrder": 48
+    },
+    {
+      "name": "PARKING & TRANSPORT",
+      "sortOrder": 49
+    },
+    {
+      "name": "LANGUAGES SPOKEN",
+      "sortOrder": 50
+    },
+    {
+      "name": "TRAVEL & TRADE",
+      "sortOrder": 51
+    },
+    {
+      "name": "ACCESSIBILITY",
+      "sortOrder": 52
+    },
+    {
+      "name": "TOURS & DEMONSTRATIONS",
+      "sortOrder": 53
+    },
+    {
+      "name": "REMOVE",
+      "sortOrder": 54
+    },
+    {
+      "name": "PET INFORMATION",
+      "sortOrder": 55
+    },
+    {
+      "name": "SOCIAL INCLUSIVITY",
+      "sortOrder": 56
+    },
+    {
+      "name": "WEDDING",
+      "sortOrder": 57
+    },
+    {
+      "name": "ENTERTAINMENT",
+      "sortOrder": 58
+    }
+  ],
+  "facilities": [
+    {
+      "name": "Additional meal details",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Al Fresco Dining",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Banqueting",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Bistro",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Bread, Cakes and Biscuits and Confectionery",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Breakfast Included",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Café",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cafes/Licensed Family Restaurants/Refreshments",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Carvery Available",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cater exclusively for vegetarians",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cater for special dietary requirements",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cater for Special Diets",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cater for vegans",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cater for vegetarians",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Catering available in house",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Catering by approved caterers",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Catering by in house chefs",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Catering by in-house Caterers",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Catering service",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Champagne breakfast available",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Chef",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dairy-Free Options Available",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Drinking water supply",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Drinks",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Eggs and Dairy",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Fruit, Vegetables and Culinary Herbs",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Gluten-Free & Coeliac Options Available",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Health Food",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Inn",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Local Produce English Breakfast",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Locally sourced produce",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Locally-sourced produce",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Meat and Poultry",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Number of covers",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "On-Site café/restaurant",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "On-site Restaurant/Cafe",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Packed lunch available",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Packed lunches available",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Preserves/ Honey/ Chutney/ Oils",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Private Chef",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Range of drinks packages",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Ready Meals",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Restaurant",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Serve a 'Real Bath Breakfast'",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Serve afternoon tea",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Serve breakfast",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Serve evening meal",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Serve lunch",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Serves Local Food",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Special dietary requirements catered for",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Speciality Foods",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Take away service",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Tea / Coffee Shop",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Tea Room",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Tea Rooms",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Bar",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Pre/post theatre menu",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Special meal times for children",
+      "groupName": "CATERING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "4 hour concierge",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "24 hour concierge service",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "24 hr return laundry service",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Access to PC",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Aim to attract conferences and business meetings",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Air con in public areas",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Area for musician/band",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Areas for Team building",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "AV Equipment",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "AV Technician Available",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Available for wedding receptions",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Bedrooms",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Beer Garden",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Boardroom",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Break-out' Space for Informal Meetings",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Broadband Internet Access",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Business facilities (eg. Fax/ modem)",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "CCTV",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Central Heating",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Central heating throughout",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Chargeable Wi-Fi",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Conference facilities",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Designated conference and events team",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dry cleaning service",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Drying Facilities",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Event venue",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Exclusive hire of restaurant",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Exclusive Use",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Fitness Studio",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free public Wi-Fi",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free Wi-Fi for all delegates",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Garden/patio for guests' use",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Gift Shop",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Launderette",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Lecture Theatres",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Lecturn / Podium / Stage",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Leisure Facilities",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Microphone / Amp System",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Night porter",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Non smoking establishment",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Non Smoking Estbalishment",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Projectors",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Public telephone",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Public toilets",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Reception",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Teambuilding Facilities",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Thalassotherapy pool",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Toilets",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Video Conference Facility",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "WiFi",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": true
+    },
+    {
+      "name": "Wi-fi available",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Wireless access",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Wireless Broadband Internet Access",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Wood burning stove",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accommodation nearby",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accommodation on site",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Outdoor activities",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Outdoor Attraction",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Bar",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Log Fire",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Amusements",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cater for Corporate events",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Ground Floor Accommodation",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Ground Floor Bedrooms Available",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Picinic Area",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Picnic Area",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Picnic Site",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Games Room",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Sauna",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Visitor information",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Real log/coal fire",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Real log/coal fires",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Sky TV",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Multimedia / Digital Projector",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Inn",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Theatre",
+      "groupName": "ESTABLISHMENT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Access to golf course",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Activity breaks",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Arrangements for riding/pony trekking",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Chargeable Leisure Facilities",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cycle hire",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Fish",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Fishing",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Golf Nearby",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Gym",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Gym and Leisure facilities",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hot Tub",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": true
+    },
+    {
+      "name": "Hot Tub/Spa Bath",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hydrotherapy pool",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Indoor pool",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Lifeguard",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Lifeguards (May - September)",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Other sporting facilities",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Outdoor Hot Tub",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Outdoor pool",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Provisions for Surfers",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Putting green/Crazy golf",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Self guided walks/cycle rides",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Special provisions for cyclists",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Special provisions for walkers",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Swimming pool",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": true
+    },
+    {
+      "name": "Tennis court",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Tranquility Room",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Vichy shower",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Water sports facilities",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Water Treatment",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Yoga studio",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Outdoor activities",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Outdoor Attraction",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Games Room",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Sauna",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Classes and activities",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Personal trainer",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Spa and Treatment Room",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Spa bath",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Spa Facilities",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": true
+    },
+    {
+      "name": "Spa Treatments",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Steam room",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accept Bank Transfers, Internet Payment or SWIFT/IBAN",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "American Express accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Android pay accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Apple pay accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "ATM",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cash & Cheque accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cash & Cheque only",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cash accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cash machines",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cash Only",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cheques accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Contactless payment accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Credit cards not accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Delta accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Diners Club accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Gift vouchers",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Maestro accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "MasterCard accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "PayPal",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Solo accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Sterling Travellers Cheques accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Switch accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Visa accepted",
+      "groupName": "PAYMENT METHODS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Additional charge for awnings",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Booking Advised",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Booking essential",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Booking required",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Box Scheme",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Brochure Available",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Calor/Camping Gas purchase/exchange service",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Celebrity connection",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Contrast markings on glass doors and full-height windows",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Deckchairs",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Document Scanning",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Environmental Impact Assessment",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Equipment hire available",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Equipment/clothing available for hire",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Equipment/clothing free of charge",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Experience level - advanced",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Experience level - beginner",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Experience level - intermediate",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Fitness level required - high",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Fitness level required - low",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Fitness level required - medium",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Flipchart and Pens",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Fully qualified instructors",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Gas inc in rate",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Half board supplement (£)",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Home consultations",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "In countryside",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "In town / city centre",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "In town/city centre",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Independent Business",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Information Centre",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Insurance included",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Late Licence",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Late licence for evening receptions",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Latest arrival time (24 hr clock)",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Licenced for alcohol",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Licensed",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Linen available for hire",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Linen available free of charge",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Linen provided",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Linen provided for overseas visitors only",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Lockers available",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Lost property",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Max group size",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Maximum Exhibition Space:",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Maximum group size",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Members only",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Microsoft Certified",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Microsoft Partner",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Modem Point",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Monthly rates available",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "No Smoking Attraction",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Non members welcome",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Non smoking areas",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Number of people seated",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Number of people standing",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Number of Shared Bathrooms",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Number of treatment rooms",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Open All Year",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Open by appointment only",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Open by appointment outside normal opening times",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Out of town",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Outdoor Seating",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Outdoor Space",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Overnight accommodation available",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Overnight holding area",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Park and facilities limited to members",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Photocopying",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Plant Sales",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Recycling points",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Red carpet welcome",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Reduced rates for guests staying overnight",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Robes available",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Secretarial services",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Separate guests' lounge",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Smoking rooms available",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Smoking Some Areas",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Some rooms offer natural daylight",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Steps to main entrance",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Tax free shopping",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Telephone",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Themed restaurant",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Total number of touring pitches",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Towels Available",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Video",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Village Location",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Village shop",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Vinyl Printing",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Washing Machine",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Washing up facilities",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Watersports equipment hire",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Wave Loungers",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Web Design",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Whiteboard and Pens",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Pre/post theatre menu",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Stag and Hen Parties",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Welcome single sex groups, eg stag/hen parties",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Visitor information",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Daily rates available",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Lift",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Photos available on CD",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Photos/Film on DVD",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Own Catering Allowed",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Church",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dedicated motor vehicle waste disposal point",
+      "groupName": "SPECIALIST FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "3D TV",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Aga",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Air con in bedrooms",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Air Conditioning",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Air conditioning in all bedrooms",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "All rooms offer natural daylight",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Barbecue",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Barbecue in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "BBQ",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Blu Ray player",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "CD Player",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "CD Player in all bedrooms",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "CD Player in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "CD/DVD Duplication",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Central heating in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Colour Television",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Colour television in all bedrooms",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Colour television in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Colour TV",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cooking facilities for guests use",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cooking facilities for guests' use",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Daily servicing of unit (minimum of 5 days per week)",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Digital Safe",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Digital TV",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dishwasher",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dishwasher in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Drying Facilities in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "DVD Player",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "DVD Player in all bedrooms",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Electric shaver point",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Four poster beds available",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free View TV",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free Wi-Fi",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free Wi-Fi available",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Freezer",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Freezer in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Fridge",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Fridge/Freezer",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Fully fitted kitchen",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hairdryer",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hairdryer in all bedrooms",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hairdryer in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hairdryers",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "iPod Dock",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "i-pod dock",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Ironing facilities",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Ironing facilities in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Kettle",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Key card entry",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Kitchenette",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "LCD Television",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Microwave",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Microwave in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Modem point in all bedrooms",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Modem point in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Non smoking rooms available",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Non smoking units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Oven / Cooker",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Private rooms",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Radio",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Radio in all bedrooms",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Radio in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Room/unit allocations available",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Safe",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Tea & coffee making facilities in all bedrooms",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Telephone in all bedrooms",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Telephone in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "TIC Staff Admitted Free",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Toaster",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "TV and DVD",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "TV in all bedrooms",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Underfloor heating",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Units available with real log/coal fires",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Video in all units",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Washer/Dryer",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Wine Cooler",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Log Fire",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Real log/coal fire",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Real log/coal fires",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Sky TV",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Own Catering Allowed",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Air-conditioning throughout",
+      "groupName": "ROOM & UNIT FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Archaeology",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Beach adajacent for photography",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Beach Hut hire available from the Tourist Information Centre",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Beach side refreshment kiosk",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Beach within 100m",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Beach within 2km",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Beautiful garden to sit in",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Castle",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Chemical disposal point",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Coastal",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Complementary therapies",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Country house",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Countryside",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Countryside Location",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Currency exchange service",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Day membership available",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dining afloat",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dry floatation beds",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Electric Car charging point",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Electric car charging points",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Electric hook-up points",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Electricity inc in rate",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "En Suite Accommodation On Site",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "En-suite",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Farm",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Farm Shop",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Farmers market",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Film or TV location",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "First Aid",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "First Aid Room",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Food shop",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Forest Location",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free Entry",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Garden Centre",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Guide Book Recommended",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hair salon",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hair/Beauty salon at venue",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Haunted",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Health/Fitness/ Beauty Facilities",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Honesty Bar",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Indoor Attraction",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Indoor Event",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Landscaping",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Mains service pitches available",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Marketed as green/environmentally friendly",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Marketed to any other specialist market",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Marketed towards senior citizens",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Marketed towards student/youth",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Massages",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Mobile Phone Reception",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Museum",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "National Nature Reserve",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Near coastal path",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Of historic, literary or architectural interest",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "OHP and Screen",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Personal shopper",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Relaxation Areas",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Riverside",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Room service",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Sea Views",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Sea views available for photography",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Seafront",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Secure cycle storage",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Shop",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Shower facilities",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Showers",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Slippers available",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Solarium",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Supermarket",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Tourist Information (may be seasonal)",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Waterfront",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Multimedia / Digital Projector",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Personal trainer",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Spa and Treatment Room",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Spa bath",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Spa Facilities",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Spa Treatments",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Steam room",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Church",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dedicated motor vehicle waste disposal point",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Short breaks available",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Shopmobility",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "PC Classrooms",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Garden/grounds available for photography",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Romantic",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Indoor Play Area",
+      "groupName": "KEY FEATURES",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accept children (Minimum age)",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accept children all ages",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": true
+    },
+    {
+      "name": "Accept Children Over 3",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accept Children over 5",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accept Children over 7",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Baby Changing Facilities",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Child care facility available",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Child seat available",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Children's menu",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Children's outdoor play area",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Childrens Play Area",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Children's play area",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Children's videos/DVDs available",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cot",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Creche and/or childcare facilities",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Facilities for children",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Families",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Family",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Family Friendly",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Family Fun",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Food/bottle warming available",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Highchair",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Kiddie Car Hire",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Marketed towards children",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Marketed towards families",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Outdoor Play Area",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Special facilities for children",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Unsuitable for Children",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Indoor Play Area",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Special meal times for children",
+      "groupName": "CHILDREN & INFANTS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Airport Parking",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "All major credit cards accepted",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Car parking",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Car Parks",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Complimentary car parking for delegates",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free car park",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free car parking",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free Parking",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Frequent bus services",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Off site parking",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "On site parking",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "On-site car parking",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "On-site parking or valet parking",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Park & Ride",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Park and Ride",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Park for free",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Parking (charge)",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Parking (Chargeable)",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Parking (free)",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Parking Available",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": true,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Close to Airport",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Close to all major travel routes",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Close to Railway Station",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Coach drop-off point",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Coach parking",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free accommodation for coach driver",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Courtesy transport to airport",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Courtesy transport to airport (Charge Applicable)",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "On Bus Route",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "On-site coach parking",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Passenger ferry",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Station nearby",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Taxi rank",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Taxi rank nearby",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Train station",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Parking Areas for Disabled Visitors",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Parking for disabled visitors",
+      "groupName": "PARKING & TRANSPORT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Afrikaans audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Afrikaans printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Afrikaans spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Arabic audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Arabic printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Arabic spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Armenian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Armenian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Armenian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Audio Commentary in Foreign Languages",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Bengali audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Bengali printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Bengali spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Bulgarian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Bulgarian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Bulgarian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cantonese audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cantonese printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cantonese spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Catalan audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Catalan printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Catalan spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Chinese audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Chinese printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Chinese spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Czech audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Czech printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Czech spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Danish audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Danish printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Danish spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dutch audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dutch printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dutch spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Farsi audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Farsi printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Farsi spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Filipino audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Filipino printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Filipino spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Finnish audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Finnish printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Finnish spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Flemish audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Flemish printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Flemish spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "French",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "French audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "French printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "French spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Gaelic audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Gaelic printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Gaelic spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "German audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "German printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "German spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Greek audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Greek printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Greek spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Gujarati audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Gujarati printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Gujarati spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hebrew audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hebrew printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hebrew spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hindi audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hindi printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hindi spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hungarian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Turkish spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hungarian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Hungarian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Icelandic audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Icelandic printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Icelandic spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Indonesian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Indonesian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Indonesian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Italian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Italian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Italian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Japanese audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Japanese printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Japanese spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Korean audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Latvian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Latvian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Latvian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Malaysian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Malaysian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Malaysian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Maltese audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Maltese printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Maltese spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Mandarin audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Mandarin printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Mandarin spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Nepali audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Nepali printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Nepali spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Norwegian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Norwegian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Norwegian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Persian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Persian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Persian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Polish audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Polish printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Polish spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Portuguese audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Portuguese printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Portuguese spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Printed Material in Foreign Languages",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Punjabi audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Punjabi printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Punjabi spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Romanian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Romanian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Romanian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Russian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Russian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Russian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Serbo-Croat audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Serbo-Croat printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Serbo-Croat spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Spanish",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Spanish audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Spanish printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Spanish spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Staff fluent in foreign languages ** (List of languages are separately given)",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Staff Fluent in Languages - French",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Swahili audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Swahili printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Swahili spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Swedish audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Swedish printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Swedish spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Thai spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Thai audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Thai printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Tunisian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Tunisian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Tunisian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Turkish audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Turkish printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Ukrainian audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Ukrainian printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Ukrainian spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Urdu audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Urdu printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Urdu spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Vietnamese audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Vietnamese printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Vietnamese spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Welsh audio guide",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Welsh printed material",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Welsh spoken",
+      "groupName": "LANGUAGES SPOKEN",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accept coach parties",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Can be packages by 3rd parties",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cater for groups",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cater for school groups",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "City Centre Location",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Commission/net rates apply",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Easy access from main roads/good public transport links",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Easy Route",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Group discounts available",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Group-friendly",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Groups",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Groups accepted",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Groups Welcomed",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": true
+    },
+    {
+      "name": "Midweek breaks",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Min group size",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Min group size numeric qualifier",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Minimum Group size",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Route maps available",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Special group rates",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Weekend breaks",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Day Trips",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Close to Airport",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Close to all major travel routes",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Close to Railway Station",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Coach drop-off point",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Coach parking",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free accommodation for coach driver",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cater for Corporate events",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Daily rates available",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Short breaks available",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Courtesy transport to airport",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Courtesy transport to airport (Charge Applicable)",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "On Bus Route",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "On-site coach parking",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Passenger ferry",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Station nearby",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Taxi rank",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Taxi rank nearby",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Train station",
+      "groupName": "TRAVEL & TRADE",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accessible Rooms",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accessible to Wheelchair Users",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accessible Toilets",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accommodation available for visitors with disabilities",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Activities accessible for visitors with disabilities",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Additional lighting available for guests with visual impairments",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "All Areas Accessible to Disabled Visitors",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": true,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Beach wheelchair available for daily hire",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Braille",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Compliant with DDA Requirements",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Designated parking provided for guests with disabilities",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Disability awareness training for all personnel",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Disabled access to the beach",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Disabled parking next to entrance",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Disabled toilets",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Documents produced in Braille",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Facilites for disabled guests",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Facilities for Hearing Impaired Visitors",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Facilities for the Disabled",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Facilities for Visually Impaired Visitors",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Handrail by steps",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Level 1 - Accessible to someone with mobility difficulties but able to walk up a maximum of 3 steps",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Level 2 - Accessible to a wheelchair user with assistance",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Level 3 - Accessible to an independent wheelchair user",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Level access, ramp or lift to a public toilet",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Menus available in braille",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Menus available in large print format",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Ramp to main entrance",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Ramp/Level Access",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Sign Language",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Staff trained in sign Language",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Suitable for people with limited mobility",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Toilets for disabled visitors",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Wet Room Available",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Wheelchair access and toilet",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Wheelchair hire",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Guide dogs permitted",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Ground Floor Accommodation",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Ground Floor Bedrooms Available",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Lift",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Shopmobility",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Parking Areas for Disabled Visitors",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Parking for disabled visitors",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Blue Badge guide",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Blue Badge Guides admitted free",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Classroom",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Classroom Environment",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Demonstrations Given",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Educational Visits Accepted",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Guided Tours Available for Groups",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Guided Tours Available for Individuals",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Guided Tours Compulsory for Groups",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Guided Tours Compulsory for Individuals",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Instructor training",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "IT Training",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Language Training",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Lessons/courses available",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Lovely studio workshop",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "On Site Training",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Pleasure boat cruises",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Day Trips",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Classes and activities",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "PC Classrooms",
+      "groupName": "TOURS & DEMONSTRATIONS",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Additional charge for pets",
+      "groupName": "PET INFORMATION",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dog Friendly",
+      "groupName": "PET INFORMATION",
+      "mapFilter": false,
+      "filterGeneral": true,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dogs Accepted",
+      "groupName": "PET INFORMATION",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dogs Allowed",
+      "groupName": "PET INFORMATION",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dogs on Lead Only",
+      "groupName": "PET INFORMATION",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "No Dogs",
+      "groupName": "PET INFORMATION",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Pets (Proprietors) on premises",
+      "groupName": "PET INFORMATION",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Pets Accepted",
+      "groupName": "PET INFORMATION",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Pets accepted by arrangement",
+      "groupName": "PET INFORMATION",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Pets accepted in some units",
+      "groupName": "PET INFORMATION",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Guide dogs permitted",
+      "groupName": "PET INFORMATION",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Adult Only",
+      "groupName": "SOCIAL INCLUSIVITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cater for females",
+      "groupName": "SOCIAL INCLUSIVITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cater for individuals",
+      "groupName": "SOCIAL INCLUSIVITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cater for males",
+      "groupName": "SOCIAL INCLUSIVITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "LGBT Bristol",
+      "groupName": "SOCIAL INCLUSIVITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Men only",
+      "groupName": "SOCIAL INCLUSIVITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Special provisions for lone female travellers",
+      "groupName": "SOCIAL INCLUSIVITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Women only",
+      "groupName": "SOCIAL INCLUSIVITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Buttonholes",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Choice of marriage rooms",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Corsages",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dedicated wedding planner",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Dried floral arrangements",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Floral headresses",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Four poster honeymoon suite",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free overnight accommodation for Bride and Groom",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Fresh floral arrangements",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Honeymoon Breaks",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Lawn area for marquee",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Licenced for civil marriages",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Marriage / Reception Room decoration",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Master of ceremonies available",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Mother of the Bride Outfits",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Silk floral arrangements",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Special rates for small/midweek weddings",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Table decorations provided",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Unique venue",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Use of cake stand and knife",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Venue decoration",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Wedding Venue",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Weddings",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Stag and Hen Parties",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Welcome single sex groups, eg stag/hen parties",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Photos available on CD",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Photos/Film on DVD",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Garden/grounds available for photography",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Romantic",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Available for wedding receptions",
+      "groupName": "WEDDING",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Cabaret",
+      "groupName": "ENTERTAINMENT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Christmas/New Year Programme",
+      "groupName": "ENTERTAINMENT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Entertainer",
+      "groupName": "ENTERTAINMENT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Free summer entertainment programme - July & August",
+      "groupName": "ENTERTAINMENT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Live Music",
+      "groupName": "ENTERTAINMENT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Outdoor Event",
+      "groupName": "ENTERTAINMENT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Regular evening entertainment",
+      "groupName": "ENTERTAINMENT",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Accessible",
+      "groupName": "ACCESSIBILITY",
+      "mapFilter": false,
+      "filterGeneral": false,
+      "filterAccommodation": false
+    },
+    {
+      "name": "Golf",
+      "groupName": "LEISURE FACILITIES",
+      "mapFilter": false,
+      "filterGeneral": true,
+      "filterAccommodation": true
+    }
+  ],
+  "locations": [
+    {
+      "name": "Brean",
+      "latitude": 51.2979142,
+      "longitude": -3.00906,
+      "radiusMiles": 20,
+      "sortOrder": 1
+    },
+    {
+      "name": "Weston-super-Mare",
+      "latitude": 51.3478,
+      "longitude": -2.9863,
+      "radiusMiles": 20,
+      "sortOrder": 2
+    },
+    {
+      "name": "Clevedon",
+      "latitude": 51.44227,
+      "longitude": -2.85786,
+      "radiusMiles": 15,
+      "sortOrder": 3
+    },
+    {
+      "name": "Cheddar",
+      "latitude": 51.3478,
+      "longitude": -2.7766,
+      "radiusMiles": 15,
+      "sortOrder": 4
+    },
+    {
+      "name": "Burnham-on-Sea",
+      "latitude": 51.23868,
+      "longitude": -2.99762,
+      "radiusMiles": 20,
+      "sortOrder": 5
+    },
+    {
+      "name": "Glastonbury",
+      "latitude": 51.1472,
+      "longitude": -2.7176,
+      "radiusMiles": 15,
+      "sortOrder": 6
+    },
+    {
+      "name": "Wells",
+      "latitude": 51.2103,
+      "longitude": -2.64562,
+      "radiusMiles": 15,
+      "sortOrder": 7
+    },
+    {
+      "name": "Bath",
+      "latitude": 51.3758,
+      "longitude": -2.3599,
+      "radiusMiles": 15,
+      "sortOrder": 8
+    },
+    {
+      "name": "Shepton Mallet",
+      "latitude": 51.1897,
+      "longitude": -2.5472,
+      "radiusMiles": 15,
+      "sortOrder": 9
+    },
+    {
+      "name": "Street",
+      "latitude": 51.1247,
+      "longitude": -2.74,
+      "radiusMiles": 15,
+      "sortOrder": 10
+    },
+    {
+      "name": "Farrington Gurney",
+      "latitude": 51.299,
+      "longitude": -2.53274,
+      "radiusMiles": 15,
+      "sortOrder": 11
+    },
+    {
+      "name": "Bridgwater",
+      "latitude": 51.1297,
+      "longitude": -3.0006,
+      "radiusMiles": 15,
+      "sortOrder": 12
+    },
+    {
+      "name": "Bishop's Lydeard",
+      "latitude": 51.0848,
+      "longitude": -3.2919,
+      "radiusMiles": 15,
+      "sortOrder": 13
+    },
+    {
+      "name": "Selworthy",
+      "latitude": 51.2105,
+      "longitude": -3.5471,
+      "radiusMiles": 15,
+      "sortOrder": 14
+    },
+    {
+      "name": "Taunton",
+      "latitude": 51.014997,
+      "longitude": -3.102922,
+      "radiusMiles": 10,
+      "sortOrder": 15
+    },
+    {
+      "name": "Dunster",
+      "latitude": 51.1811,
+      "longitude": -3.4458,
+      "radiusMiles": 5,
+      "sortOrder": 16
+    },
+    {
+      "name": "Dulverton",
+      "latitude": 51.0416705,
+      "longitude": -3.551756,
+      "radiusMiles": 20,
+      "sortOrder": 17
+    },
+    {
+      "name": "Minehead",
+      "latitude": 51.20554,
+      "longitude": -3.47895,
+      "radiusMiles": 15,
+      "sortOrder": 18
+    },
+    {
+      "name": "Bruton",
+      "latitude": 51.1125,
+      "longitude": -2.4528,
+      "radiusMiles": 15,
+      "sortOrder": 19
+    },
+    {
+      "name": "Castle Cary",
+      "latitude": 51.09,
+      "longitude": -2.5142,
+      "radiusMiles": 5,
+      "sortOrder": 20
+    },
+    {
+      "name": "Somerton",
+      "latitude": 51.0547,
+      "longitude": -2.7339,
+      "radiusMiles": 10,
+      "sortOrder": 21
+    },
+    {
+      "name": "Yeovil",
+      "latitude": 50.939,
+      "longitude": -2.63611,
+      "radiusMiles": 10,
+      "sortOrder": 22
+    },
+    {
+      "name": "Langport",
+      "latitude": 51.0378,
+      "longitude": -2.8281,
+      "radiusMiles": 10,
+      "sortOrder": 23
+    },
+    {
+      "name": "Axbridge",
+      "latitude": 51.2863388,
+      "longitude": -2.8226397,
+      "radiusMiles": 10,
+      "sortOrder": 24
+    },
+    {
+      "name": "Porlock",
+      "latitude": 51.2081793,
+      "longitude": -3.6051117,
+      "radiusMiles": 20,
+      "sortOrder": 26
+    },
+    {
+      "name": "Bossington",
+      "latitude": 51.220188,
+      "longitude": -3.58015,
+      "radiusMiles": 10,
+      "sortOrder": 27
+    },
+    {
+      "name": "Frome",
+      "latitude": 51.230751,
+      "longitude": -2.320096,
+      "radiusMiles": 10,
+      "sortOrder": 28
+    },
+    {
+      "name": "Montacute",
+      "latitude": 50.9562509,
+      "longitude": -2.7150809,
+      "radiusMiles": 25,
+      "sortOrder": 29
+    },
+    {
+      "name": "Watchet",
+      "latitude": 51.1759274,
+      "longitude": -3.3475462,
+      "radiusMiles": 10,
+      "sortOrder": 30
+    }
+  ],
+  "membershipTiers": [
+    {
+      "tier": "BRONZE",
+      "name": "Bronze",
+      "priceLabel": "£275 (+VAT)",
+      "searchPriorityLabel": "4th",
+      "sortOrder": 1,
+      "features": {
+        "NameDescription": true,
+        "ContactDetails": true,
+        "OpeningTimesPricing": true,
+        "InteractiveMap": true,
+        "NumberImages": "3",
+        "BookNowButton": true,
+        "SpecialOffers": true,
+        "SocialFeeds": false,
+        "YouTubeVideo": false,
+        "HighlightedCarousel": false,
+        "HomepageHighlights": false,
+        "GalleryImage": false,
+        "Newsletter": "£200 + VAT per month",
+        "NewsBlog": false,
+        "SomersetImages": "10",
+        "SearchPriority": "4th",
+        "YouMightLike": false,
+        "Gradings": true,
+        "Facilities": true,
+        "Tripadvisor": false,
+        "Addmorepages": "£99 per page",
+        "Downloads": false,
+        "Socialcreation": false,
+        "Highlighthome": false
+      }
+    },
+    {
+      "tier": "SILVER",
+      "name": "Silver",
+      "priceLabel": "£385 (+VAT)",
+      "searchPriorityLabel": "3rd",
+      "sortOrder": 2,
+      "features": {
+        "NameDescription": true,
+        "ContactDetails": true,
+        "OpeningTimesPricing": true,
+        "InteractiveMap": true,
+        "NumberImages": "6",
+        "BookNowButton": true,
+        "SpecialOffers": true,
+        "SocialFeeds": true,
+        "YouTubeVideo": true,
+        "HighlightedCarousel": false,
+        "HomepageHighlights": false,
+        "GalleryImage": false,
+        "Newsletter": "£200 + VAT per month",
+        "NewsBlog": false,
+        "SomersetImages": "20",
+        "SearchPriority": "3rd",
+        "YouMightLike": true,
+        "Gradings": true,
+        "Facilities": true,
+        "Tripadvisor": false,
+        "Addmorepages": "£99 per page",
+        "Downloads": false,
+        "Socialcreation": false,
+        "Highlighthome": false
+      }
+    },
+    {
+      "tier": "GOLD",
+      "name": "Gold",
+      "priceLabel": "£715 (+VAT)",
+      "searchPriorityLabel": "2nd",
+      "sortOrder": 3,
+      "features": {
+        "NameDescription": true,
+        "ContactDetails": true,
+        "OpeningTimesPricing": true,
+        "InteractiveMap": true,
+        "NumberImages": "10",
+        "BookNowButton": true,
+        "SpecialOffers": true,
+        "SocialFeeds": true,
+        "YouTubeVideo": true,
+        "HighlightedCarousel": true,
+        "HomepageHighlights": true,
+        "GalleryImage": false,
+        "Newsletter": "£200 + VAT per month",
+        "NewsBlog": false,
+        "SomersetImages": "30",
+        "SearchPriority": "2nd",
+        "YouMightLike": true,
+        "Gradings": true,
+        "Facilities": true,
+        "Tripadvisor": true,
+        "Addmorepages": "£99 per page",
+        "Downloads": true,
+        "Socialcreation": true,
+        "Highlighthome": true
+      }
+    },
+    {
+      "tier": "PLATINUM",
+      "name": "Platinum",
+      "priceLabel": "£1,100 (+VAT)",
+      "searchPriorityLabel": "1st",
+      "sortOrder": 4,
+      "features": {
+        "NameDescription": true,
+        "ContactDetails": true,
+        "OpeningTimesPricing": true,
+        "InteractiveMap": true,
+        "NumberImages": "15",
+        "BookNowButton": true,
+        "SpecialOffers": true,
+        "SocialFeeds": true,
+        "YouTubeVideo": true,
+        "HighlightedCarousel": true,
+        "HomepageHighlights": true,
+        "GalleryImage": true,
+        "Newsletter": "Included",
+        "NewsBlog": true,
+        "SomersetImages": "40",
+        "SearchPriority": "1st",
+        "YouMightLike": true,
+        "Gradings": true,
+        "Facilities": true,
+        "Tripadvisor": true,
+        "Addmorepages": "Included",
+        "Downloads": true,
+        "Socialcreation": true,
+        "Highlighthome": true
+      }
+    }
+  ]
+}

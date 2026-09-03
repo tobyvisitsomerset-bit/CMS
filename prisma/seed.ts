@@ -1,8 +1,95 @@
-import { PrismaClient, PageStatus } from "@prisma/client";
+import { readFileSync } from "fs";
+import path from "path";
+import { PrismaClient, PageStatus, type MembershipTier } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { ROLE_KEYS, ROLE_LABELS } from "../lib/permissions";
 
 const prisma = new PrismaClient();
+
+type ReferenceData = {
+  facilityGroups: { name: string; sortOrder: number }[];
+  facilities: {
+    name: string;
+    groupName: string | null;
+    mapFilter: boolean;
+    filterGeneral: boolean;
+    filterAccommodation: boolean;
+  }[];
+  locations: { name: string; latitude: number; longitude: number; radiusMiles: number | null; sortOrder: number }[];
+  membershipTiers: {
+    tier: MembershipTier;
+    name: string;
+    priceLabel: string | null;
+    searchPriorityLabel: string | null;
+    sortOrder: number;
+    features: Record<string, unknown>;
+  }[];
+};
+
+// Real Visit Somerset data imported from the Kentico site export — see
+// kentico-import/export-to-json.ts to regenerate this fixture from a fresher export.
+async function seedReferenceData() {
+  console.log("Seeding facilities, locations & membership tiers from Kentico export...");
+  const jsonPath = path.join(process.cwd(), "kentico-import", "reference-data.json");
+  const data: ReferenceData = JSON.parse(readFileSync(jsonPath, "utf-8"));
+
+  const groupIdByName = new Map<string, string>();
+  for (const group of data.facilityGroups) {
+    const created = await prisma.facilityGroup.upsert({
+      where: { name: group.name },
+      update: {},
+      create: { name: group.name, sortOrder: group.sortOrder },
+    });
+    groupIdByName.set(group.name, created.id);
+  }
+
+  for (const facility of data.facilities) {
+    const groupId = facility.groupName ? groupIdByName.get(facility.groupName) : undefined;
+    const existing = await prisma.facility.findFirst({ where: { name: facility.name, groupId: groupId ?? null } });
+    const fields = {
+      mapFilter: facility.mapFilter,
+      filterGeneral: facility.filterGeneral,
+      filterAccommodation: facility.filterAccommodation,
+    };
+    if (existing) {
+      await prisma.facility.update({ where: { id: existing.id }, data: fields });
+    } else {
+      await prisma.facility.create({ data: { name: facility.name, groupId: groupId ?? null, ...fields } });
+    }
+  }
+
+  for (const location of data.locations) {
+    await prisma.location.upsert({
+      where: { name: location.name },
+      update: { latitude: location.latitude, longitude: location.longitude, radiusMiles: location.radiusMiles },
+      create: { ...location },
+    });
+  }
+
+  for (const tier of data.membershipTiers) {
+    await prisma.membershipTierDefinition.upsert({
+      where: { tier: tier.tier },
+      update: {
+        name: tier.name,
+        priceLabel: tier.priceLabel,
+        searchPriorityLabel: tier.searchPriorityLabel,
+        features: JSON.stringify(tier.features),
+      },
+      create: {
+        tier: tier.tier,
+        name: tier.name,
+        priceLabel: tier.priceLabel,
+        searchPriorityLabel: tier.searchPriorityLabel,
+        sortOrder: tier.sortOrder,
+        features: JSON.stringify(tier.features),
+      },
+    });
+  }
+
+  console.log(
+    `Reference data: ${data.facilityGroups.length} groups, ${data.facilities.length} facilities, ${data.locations.length} locations, ${data.membershipTiers.length} tiers`,
+  );
+}
 
 const PERMISSIONS = [
   { key: "pages.viewAll", description: "View all pages in the tree" },
@@ -111,6 +198,8 @@ async function createTree(
 }
 
 async function main() {
+  await seedReferenceData();
+
   console.log("Seeding roles & permissions...");
   const permissionRecords = await Promise.all(
     PERMISSIONS.map((p) =>
