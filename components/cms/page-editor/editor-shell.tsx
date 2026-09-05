@@ -80,7 +80,7 @@ export function EditorShell({
       )}
 
       {mode === "preview" && (
-        <div className="min-h-0 flex-1 overflow-y-auto bg-neutral-100">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-stone-100 py-6">
           <PagePreview page={page} listings={listings} nearby={nearby} />
         </div>
       )}

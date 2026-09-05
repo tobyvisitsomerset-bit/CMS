@@ -9,9 +9,11 @@ function formatDate(iso: string): string {
 
 function Row({ icon: Icon, children }: { icon: typeof Phone; children: React.ReactNode }) {
   return (
-    <div className="flex items-start gap-2.5 text-sm text-neutral-700">
-      <Icon className="mt-0.5 size-4 shrink-0 text-neutral-400" />
-      <div className="min-w-0">{children}</div>
+    <div className="flex items-start gap-3 text-sm text-neutral-700">
+      <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+        <Icon className="size-3.5" />
+      </span>
+      <div className="min-w-0 pt-1">{children}</div>
     </div>
   );
 }
@@ -26,69 +28,81 @@ export function BusinessInfoPanel({ info }: { info: BusinessInfo }) {
         : null;
 
   return (
-    <div className="space-y-3 rounded-lg border bg-neutral-50 p-4">
-      <h3 className="text-xs font-semibold tracking-wide text-neutral-500 uppercase">Details</h3>
+    <div className="space-y-4 rounded-2xl border border-stone-200 bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-12px_rgba(0,0,0,0.08)]">
+      <h3 className="text-[11px] font-semibold tracking-[0.12em] text-neutral-400 uppercase">Details</h3>
 
-      {(info.startDate || info.endDate) && (
-        <Row icon={Calendar}>
-          {info.startDate ? formatDate(info.startDate) : ""}
-          {info.endDate && info.endDate !== info.startDate ? ` – ${formatDate(info.endDate)}` : ""}
-        </Row>
-      )}
+      <div className="space-y-3.5">
+        {(info.startDate || info.endDate) && (
+          <Row icon={Calendar}>
+            {info.startDate ? formatDate(info.startDate) : ""}
+            {info.endDate && info.endDate !== info.startDate ? ` – ${formatDate(info.endDate)}` : ""}
+          </Row>
+        )}
 
-      {fullAddress && (
-        <Row icon={MapPin}>
-          <span>{fullAddress}</span>
-          {mapsHref && (
-            <a href={mapsHref} target="_blank" rel="noreferrer" className="ml-1.5 inline text-emerald-700 underline underline-offset-2">
-              Get directions
+        {fullAddress && (
+          <Row icon={MapPin}>
+            <span>{fullAddress}</span>
+            {mapsHref && (
+              <a
+                href={mapsHref}
+                target="_blank"
+                rel="noreferrer"
+                className="ml-1.5 inline font-medium text-emerald-700 underline decoration-emerald-200 underline-offset-2 hover:decoration-emerald-500"
+              >
+                Get directions
+              </a>
+            )}
+          </Row>
+        )}
+
+        {info.phone && (
+          <Row icon={Phone}>
+            <a href={`tel:${info.phone.replace(/\s+/g, "")}`} className="hover:text-emerald-700 hover:underline">
+              {info.phone}
             </a>
-          )}
-        </Row>
-      )}
+          </Row>
+        )}
 
-      {info.phone && (
-        <Row icon={Phone}>
-          <a href={`tel:${info.phone.replace(/\s+/g, "")}`} className="hover:underline">
-            {info.phone}
-          </a>
-        </Row>
-      )}
+        {info.email && (
+          <Row icon={Mail}>
+            <a href={`mailto:${info.email}`} className="break-all hover:text-emerald-700 hover:underline">
+              {info.email}
+            </a>
+          </Row>
+        )}
 
-      {info.email && (
-        <Row icon={Mail}>
-          <a href={`mailto:${info.email}`} className="break-all hover:underline">
-            {info.email}
-          </a>
-        </Row>
-      )}
+        {info.openingTimes && (
+          <Row icon={Clock}>
+            <span>{info.openingTimes}</span>
+          </Row>
+        )}
 
-      {info.openingTimes && (
-        <Row icon={Clock}>
-          <span>{info.openingTimes}</span>
-        </Row>
-      )}
+        {info.admission && (
+          <Row icon={Ticket}>
+            <span>{info.admission}</span>
+          </Row>
+        )}
 
-      {info.admission && (
-        <Row icon={Ticket}>
-          <span>{info.admission}</span>
-        </Row>
-      )}
-
-      {info.website && (
-        <Row icon={ExternalLink}>
-          <a href={info.website} target="_blank" rel="noreferrer" className="break-all text-emerald-700 hover:underline">
-            Visit website
-          </a>
-        </Row>
-      )}
+        {info.website && (
+          <Row icon={ExternalLink}>
+            <a
+              href={info.website}
+              target="_blank"
+              rel="noreferrer"
+              className="break-all font-medium text-emerald-700 underline decoration-emerald-200 underline-offset-2 hover:decoration-emerald-500"
+            >
+              Visit website
+            </a>
+          </Row>
+        )}
+      </div>
 
       {info.bookingUrl && (
         <a
           href={info.bookingUrl}
           target="_blank"
           rel="noreferrer"
-          className="mt-1 block w-full rounded-md bg-emerald-800 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-emerald-900"
+          className="block w-full rounded-xl bg-emerald-800 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm shadow-emerald-900/20 transition-colors hover:bg-emerald-900"
         >
           {info.bookingLabel}
         </a>
