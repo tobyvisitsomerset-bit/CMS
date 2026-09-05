@@ -91,6 +91,103 @@ async function seedReferenceData() {
   );
 }
 
+type ExportedPage = {
+  exportId: number;
+  exportParentId: number | null;
+  attachToExistingSlug: string | null;
+  title: string;
+  subtitle: string | null;
+  slug: string;
+  bodyContent: string | null;
+  tagline: string | null;
+  membershipTier: MembershipTier | null;
+  isSection: boolean;
+  status: PageStatus;
+  sortOrder: number;
+  heroImageUrl: string | null;
+  galleryUrls: string | null;
+  customFields: string | null;
+};
+
+// The real Visit Somerset page tree, migrated from the Kentico export via
+// kentico-import/import-real-pages.ts + reconcile-demo-vs-real.ts, then
+// frozen into kentico-import/real-pages.json by export-pages-to-json.ts.
+// Runs once — guarded by checking whether any page already carries a
+// _kenticoNodeId marker — since re-running would otherwise duplicate 5,000+
+// pages on every deploy.
+async function seedRealPages(superAdminId: string) {
+  const alreadySeeded = await prisma.page.count({ where: { customFields: { contains: "_kenticoNodeId" } } });
+  if (alreadySeeded > 0) {
+    console.log(`Real Kentico pages already seeded (${alreadySeeded} found) — skipping.`);
+    return;
+  }
+
+  console.log("Seeding real Kentico page content...");
+  const jsonPath = path.join(process.cwd(), "kentico-import", "real-pages.json");
+  const pages: ExportedPage[] = JSON.parse(readFileSync(jsonPath, "utf-8"));
+
+  const demoSlugs = new Set(pages.map((p) => p.attachToExistingSlug).filter((s): s is string => !!s));
+  const demoIdBySlug = new Map<string, string>();
+  for (const slug of demoSlugs) {
+    const demo = await prisma.page.findUnique({ where: { slug } });
+    if (demo) demoIdBySlug.set(slug, demo.id);
+  }
+
+  const idByExportId = new Map<number, string>();
+  let created = 0;
+  for (const page of pages) {
+    const parentId = page.attachToExistingSlug
+      ? demoIdBySlug.get(page.attachToExistingSlug) ?? null
+      : page.exportParentId
+        ? idByExportId.get(page.exportParentId) ?? null
+        : null;
+
+    const row = await prisma.page.create({
+      data: {
+        title: page.title,
+        subtitle: page.subtitle,
+        slug: page.slug,
+        bodyContent: page.bodyContent,
+        tagline: page.tagline,
+        membershipTier: page.membershipTier,
+        isSection: page.isSection,
+        status: page.status,
+        sortOrder: page.sortOrder,
+        heroImageUrl: page.heroImageUrl,
+        galleryUrls: page.galleryUrls,
+        customFields: page.customFields,
+        parentId,
+        authorId: superAdminId,
+        ownerId: superAdminId,
+      },
+    });
+    idByExportId.set(page.exportId, row.id);
+    created++;
+    if (created % 1000 === 0) console.log(`  ...${created} real pages created`);
+  }
+
+  const mediaUrls = new Set<string>();
+  for (const page of pages) {
+    if (page.heroImageUrl) mediaUrls.add(page.heroImageUrl);
+    if (page.galleryUrls) {
+      for (const url of JSON.parse(page.galleryUrls) as string[]) mediaUrls.add(url);
+    }
+  }
+  for (const url of mediaUrls) {
+    await prisma.media.create({
+      data: {
+        filename: path.basename(url),
+        url,
+        mimeType: "image/jpeg",
+        size: 0,
+        kind: "image",
+      },
+    });
+  }
+
+  console.log(`Real Kentico pages: ${created} created, ${mediaUrls.size} media rows registered.`);
+}
+
 const PERMISSIONS = [
   { key: "pages.viewAll", description: "View all pages in the tree" },
   { key: "pages.create", description: "Create pages and sections" },
@@ -296,19 +393,26 @@ async function main() {
     }
   }
 
+  // These migration-safety blocks only ever target the original hand-seeded
+  // demo tree by title — never the real Kentico content, which shares a lot
+  // of generic titles ("What's On", "Cheddar Gorge", etc.) at real-world
+  // scale. Demo pages never carry customFields, so this guard keeps them
+  // from colliding with real pages of the same title.
+  const demoOnly = { customFields: null } as const;
+
   // Example business membership tier — only set if not already assigned, so it doesn't
   // clobber a tier an admin later changed via the Content tab.
   await prisma.page.updateMany({
-    where: { title: "Cheddar Gorge", membershipTier: null },
+    where: { title: "Cheddar Gorge", membershipTier: null, ...demoOnly },
     data: { membershipTier: "GOLD", tagline: "England's largest gorge, right on your doorstep" },
   });
 
   // Migration safety: "Places To Stay" started life as a folder section; it now needs
   // to be an editable page in its own right so it can carry Design-tab content.
-  await prisma.page.updateMany({ where: { title: "Places To Stay" }, data: { isSection: false } });
+  await prisma.page.updateMany({ where: { title: "Places To Stay", ...demoOnly }, data: { isSection: false } });
 
   // Migration safety: earlier seed runs created "What's On" before it was renamed.
-  const whatsOn = await prisma.page.findFirst({ where: { title: "What's On" } });
+  const whatsOn = await prisma.page.findFirst({ where: { title: "What's On", ...demoOnly } });
   if (whatsOn) {
     await prisma.page.update({
       where: { id: whatsOn.id },
@@ -317,9 +421,11 @@ async function main() {
   }
   // Clean up leftover copy from the old name, whichever seed run introduced it.
   await prisma.page.updateMany({
-    where: { title: "Festivals & Events", seoTitle: "What's On" },
+    where: { title: "Festivals & Events", seoTitle: "What's On", ...demoOnly },
     data: { seoTitle: "Festivals & Events", bodyContent: "Placeholder content for Festivals & Events." },
   });
+
+  await seedRealPages(superAdmin.id);
 
   console.log("Seeding listings...");
   const listingCount = await prisma.listing.count();

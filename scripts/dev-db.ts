@@ -6,17 +6,27 @@
 
 import EmbeddedPostgres from "embedded-postgres";
 import path from "path";
+import { existsSync } from "fs";
 
+const dataDir = path.join(process.cwd(), ".dev-postgres-data");
 const pg = new EmbeddedPostgres({
-  databaseDir: path.join(process.cwd(), ".dev-postgres-data"),
+  databaseDir: dataDir,
   user: "postgres",
   password: "password",
   port: 5433,
   persistent: true,
+  // Windows initdb defaults to the OS codepage (WIN1252) if not told otherwise,
+  // which then rejects 4-byte UTF-8 chars (emoji) present in real Kentico content.
+  initdbFlags: ["--encoding=UTF8", "--locale=C"],
 });
 
 async function main() {
-  await pg.initialise();
+  // initialise() runs initdb, which requires an empty directory — only needed
+  // the very first time. On later restarts the cluster already exists.
+  const alreadyInitialised = existsSync(path.join(dataDir, "PG_VERSION"));
+  if (!alreadyInitialised) {
+    await pg.initialise();
+  }
   await pg.start();
   try {
     await pg.createDatabase("visitsomerset");

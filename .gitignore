@@ -40,8 +40,11 @@ yarn-error.log*
 /prisma/dev.db
 /prisma/dev.db-journal
 
-# uploaded media (dev)
-/public/uploads
+# uploaded media (dev) — except the migrated Kentico photos, which are
+# committed so they deploy as static assets (Railway's filesystem is
+# ephemeral, so anything not in the repo doesn't survive a redeploy)
+/public/uploads/*
+!/public/uploads/kentico
 
 # typescript
 *.tsbuildinfo
