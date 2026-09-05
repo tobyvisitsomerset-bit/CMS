@@ -94,6 +94,7 @@ async function seedReferenceData() {
 type ExportedPage = {
   exportId: number;
   exportParentId: number | null;
+  exportLinkedId: number | null;
   attachToExistingSlug: string | null;
   title: string;
   subtitle: string | null;
@@ -166,6 +167,19 @@ async function seedRealPages(superAdminId: string) {
     if (created % 1000 === 0) console.log(`  ...${created} real pages created`);
   }
 
+  // Second pass: wire up linked pages now that every exportId has a real id
+  // (a link's target isn't guaranteed to have been created before the link
+  // itself, since tree order and link order are independent).
+  let linked = 0;
+  for (const page of pages) {
+    if (!page.exportLinkedId) continue;
+    const ourId = idByExportId.get(page.exportId);
+    const targetId = idByExportId.get(page.exportLinkedId);
+    if (!ourId || !targetId) continue;
+    await prisma.page.update({ where: { id: ourId }, data: { linkedPageId: targetId } });
+    linked++;
+  }
+
   const mediaUrls = new Set<string>();
   for (const page of pages) {
     if (page.heroImageUrl) mediaUrls.add(page.heroImageUrl);
@@ -185,7 +199,7 @@ async function seedRealPages(superAdminId: string) {
     });
   }
 
-  console.log(`Real Kentico pages: ${created} created, ${mediaUrls.size} media rows registered.`);
+  console.log(`Real Kentico pages: ${created} created (${linked} linked to a canonical page), ${mediaUrls.size} media rows registered.`);
 }
 
 const PERMISSIONS = [

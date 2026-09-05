@@ -101,6 +101,13 @@ model Page {
   parent   Page?   @relation("PageTree", fields: [parentId], references: [id], onDelete: Cascade)
   children Page[]  @relation("PageTree")
 
+  // A tree location that just points at another page's real content — mirrors
+  // Kentico's "linked document" pattern, where the same business/attraction
+  // appears under multiple categories without duplicating the content itself.
+  linkedPageId String?
+  linkedPage   Page?   @relation("PageLink", fields: [linkedPageId], references: [id], onDelete: SetNull)
+  linkedFrom   Page[]  @relation("PageLink")
+
   authorId String?
   author   User?   @relation("PageAuthor", fields: [authorId], references: [id])
   ownerId  String?

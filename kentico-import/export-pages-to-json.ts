@@ -23,6 +23,7 @@ const CANONICAL_DEMO_SLUGS = new Set(["home", "things-to-do", "places-to-stay", 
 type ExportedPage = {
   exportId: number;
   exportParentId: number | null;
+  exportLinkedId: number | null;
   attachToExistingSlug: string | null;
   title: string;
   subtitle: string | null;
@@ -86,6 +87,7 @@ async function main() {
     return {
       exportId: exportIdByLocalId.get(page.id)!,
       exportParentId,
+      exportLinkedId: page.linkedPageId ? exportIdByLocalId.get(page.linkedPageId) ?? null : null,
       attachToExistingSlug,
       title: page.title,
       subtitle: page.subtitle,

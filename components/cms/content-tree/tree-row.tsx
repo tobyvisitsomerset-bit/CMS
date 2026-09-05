@@ -11,6 +11,7 @@ import {
   Folder,
   FileText,
   GripVertical,
+  Link2,
   MoreHorizontal,
   Plus,
   Copy,
@@ -125,6 +126,8 @@ export function TreeRow({
 
         {node.isSection ? (
           <Folder className="h-3.5 w-3.5 shrink-0 text-neutral-400" />
+        ) : node.linkedPageId ? (
+          <Link2 className="h-3.5 w-3.5 shrink-0 text-neutral-400" />
         ) : (
           <FileText className="h-3.5 w-3.5 shrink-0 text-neutral-400" />
         )}
@@ -134,7 +137,11 @@ export function TreeRow({
             {node.title}
           </button>
         ) : (
-          <Link href={`/cms/${node.id}`} className="flex-1 truncate py-1.5">
+          <Link
+            href={`/cms/${node.id}`}
+            className={cn("flex-1 truncate py-1.5", node.linkedPageId && "text-neutral-500 italic")}
+            title={node.linkedPageId ? "Linked page — opens the original for editing" : undefined}
+          >
             {node.title}
           </Link>
         )}

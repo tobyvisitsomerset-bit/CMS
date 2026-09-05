@@ -3,7 +3,7 @@ import type { MembershipTier, Page, PageStatus } from "@prisma/client";
 
 export type PageTreeNode = Pick<
   Page,
-  "id" | "title" | "slug" | "isSection" | "status" | "parentId" | "sortOrder" | "assignedMemberId"
+  "id" | "title" | "slug" | "isSection" | "status" | "parentId" | "sortOrder" | "assignedMemberId" | "linkedPageId"
 > & { children: PageTreeNode[] };
 
 function buildTree(rows: Omit<PageTreeNode, "children">[]): PageTreeNode[] {
@@ -37,6 +37,7 @@ export async function getFullPageTree(): Promise<PageTreeNode[]> {
       parentId: true,
       sortOrder: true,
       assignedMemberId: true,
+      linkedPageId: true,
     },
   });
   return buildTree(rows);
@@ -54,6 +55,7 @@ export async function getAssignedPageTree(userId: string): Promise<PageTreeNode[
       parentId: true,
       sortOrder: true,
       assignedMemberId: true,
+      linkedPageId: true,
     },
   });
   // Flatten: members see their own pages as top-level entries regardless of real parent.

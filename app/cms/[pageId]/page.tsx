@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getPageById } from "@/lib/data/pages";
 import { getAllListingsGrouped } from "@/lib/data/listings";
@@ -12,6 +12,10 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
 
   const page = await getPageById(pageId);
   if (!page) notFound();
+
+  // This tree location is just a link to another page's real content (mirrors
+  // Kentico's linked-document pattern) — edit the original instead.
+  if (page.linkedPageId) redirect(`/cms/${page.linkedPageId}`);
 
   const { roleKey, id } = session.user;
   const allowed = canAccessPage(roleKey, id, page);
