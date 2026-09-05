@@ -74,7 +74,28 @@ export async function getPageById(id: string) {
       tags: true,
       categories: true,
       contentBlocks: { orderBy: { sortOrder: "asc" } },
+      rooms: { orderBy: { sortOrder: "asc" } },
+      reviews: { orderBy: { sortOrder: "asc" } },
     },
+  });
+}
+
+// Real sibling pages under the same parent, for a "Nearby, worth the trip"
+// style section — no separate recommendation data exists, so this is the
+// closest real signal we have.
+export async function getNearbyPages(pageId: string, parentId: string | null, limit = 4) {
+  if (!parentId) return [];
+  return prisma.page.findMany({
+    where: {
+      parentId,
+      id: { not: pageId },
+      isSection: false,
+      linkedPageId: null,
+      status: "PUBLISHED",
+    },
+    select: { id: true, title: true, slug: true, heroImageUrl: true },
+    take: limit,
+    orderBy: { sortOrder: "asc" },
   });
 }
 

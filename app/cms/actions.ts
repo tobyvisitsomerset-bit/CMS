@@ -233,6 +233,106 @@ export async function reorderContentBlocksAction(pageId: string, orderedBlockIds
   revalidatePath("/cms");
 }
 
+// ---------- Rooms & Reviews ----------
+// Entered by the assigned member (or an admin) from the page editor. The
+// consumer-facing detail page only shows a "Rooms available" / "Reviews"
+// section once a page actually has some — no placeholder/mock content.
+
+async function assertCanEditPage(pageId: string) {
+  const session = await requireSession();
+  if (session.user.roleKey === "READ_ONLY") throw new Error("Not permitted");
+  const page = await pagesData.getPageById(pageId);
+  if (!page) throw new Error("Page not found");
+  if (!canAccessPage(session.user.roleKey, session.user.id, page)) throw new Error("Not permitted");
+  return session;
+}
+
+export async function addRoomAction(pageId: string, data: { name: string; description?: string | null; imageUrl?: string | null; priceLabel?: string | null; features?: string[] }) {
+  await assertCanEditPage(pageId);
+  const count = await prisma.room.count({ where: { pageId } });
+  const room = await prisma.room.create({
+    data: {
+      pageId,
+      name: data.name,
+      description: data.description || null,
+      imageUrl: data.imageUrl || null,
+      priceLabel: data.priceLabel || null,
+      features: data.features?.length ? JSON.stringify(data.features) : null,
+      sortOrder: count,
+    },
+  });
+  revalidatePath("/cms");
+  return room;
+}
+
+export async function updateRoomAction(roomId: string, data: { name: string; description?: string | null; imageUrl?: string | null; priceLabel?: string | null; features?: string[] }) {
+  const room = await prisma.room.findUnique({ where: { id: roomId } });
+  if (!room) throw new Error("Room not found");
+  await assertCanEditPage(room.pageId);
+  const updated = await prisma.room.update({
+    where: { id: roomId },
+    data: {
+      name: data.name,
+      description: data.description || null,
+      imageUrl: data.imageUrl || null,
+      priceLabel: data.priceLabel || null,
+      features: data.features?.length ? JSON.stringify(data.features) : null,
+    },
+  });
+  revalidatePath("/cms");
+  return updated;
+}
+
+export async function deleteRoomAction(roomId: string) {
+  const room = await prisma.room.findUnique({ where: { id: roomId } });
+  if (!room) throw new Error("Room not found");
+  await assertCanEditPage(room.pageId);
+  await prisma.room.delete({ where: { id: roomId } });
+  revalidatePath("/cms");
+}
+
+export async function addReviewAction(pageId: string, data: { authorName: string; rating: number; quote: string; reviewDate?: string | null }) {
+  await assertCanEditPage(pageId);
+  const count = await prisma.review.count({ where: { pageId } });
+  const review = await prisma.review.create({
+    data: {
+      pageId,
+      authorName: data.authorName,
+      rating: data.rating,
+      quote: data.quote,
+      reviewDate: data.reviewDate ? new Date(data.reviewDate) : null,
+      sortOrder: count,
+    },
+  });
+  revalidatePath("/cms");
+  return review;
+}
+
+export async function updateReviewAction(reviewId: string, data: { authorName: string; rating: number; quote: string; reviewDate?: string | null }) {
+  const review = await prisma.review.findUnique({ where: { id: reviewId } });
+  if (!review) throw new Error("Review not found");
+  await assertCanEditPage(review.pageId);
+  const updated = await prisma.review.update({
+    where: { id: reviewId },
+    data: {
+      authorName: data.authorName,
+      rating: data.rating,
+      quote: data.quote,
+      reviewDate: data.reviewDate ? new Date(data.reviewDate) : null,
+    },
+  });
+  revalidatePath("/cms");
+  return updated;
+}
+
+export async function deleteReviewAction(reviewId: string) {
+  const review = await prisma.review.findUnique({ where: { id: reviewId } });
+  if (!review) throw new Error("Review not found");
+  await assertCanEditPage(review.pageId);
+  await prisma.review.delete({ where: { id: reviewId } });
+  revalidatePath("/cms");
+}
+
 // ---------- Media library ----------
 
 export async function uploadMediaCompleteAction() {

@@ -140,6 +140,41 @@ model Page {
   // Business/member pages (e.g. a business's own listing page)
   tagline        String?
   membershipTier MembershipTier?
+
+  rooms   Room[]
+  reviews Review[]
+}
+
+// A bookable room/unit on an accommodation page. Entered by the assigned
+// member (or an admin) via the page editor — the consumer-facing detail page
+// only shows a "Rooms available" section once at least one of these exists.
+model Room {
+  id            String   @id @default(cuid())
+  pageId        String
+  page          Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  name          String
+  description   String?
+  imageUrl      String?
+  priceLabel    String? // free-text, e.g. "£145/night" — matches Listing.priceLabel
+  features      String? // JSON-encoded string[], e.g. ["Free WiFi", "Dog friendly"]
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// A guest review on a page. Entered by the assigned member/admin — the
+// consumer-facing detail page only shows a "Reviews" section once at least
+// one of these exists.
+model Review {
+  id          String    @id @default(cuid())
+  pageId      String
+  page        Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  authorName  String
+  rating      Int // 1-5
+  quote       String
+  reviewDate  DateTime?
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
 }
 
 model ContentBlock {
