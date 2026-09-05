@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "prestart": "prisma db push --accept-data-loss",
+    "prestart": "prisma db push --accept-data-loss && tsx prisma/seed.ts",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
