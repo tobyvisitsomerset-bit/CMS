@@ -23,7 +23,7 @@ export default function LoginPage() {
           <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-md bg-emerald-800 text-white font-serif text-lg">
             VS
           </div>
-          <h1 className="text-xl font-semibold text-neutral-900">Visit Somerset CMS</h1>
+          <h1 className="text-xl font-semibold text-neutral-900">Visit Somerset Content Hub</h1>
           <p className="text-sm text-neutral-500">Sign in to manage content</p>
         </div>
 

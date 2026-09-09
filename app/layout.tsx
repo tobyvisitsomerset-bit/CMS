@@ -23,7 +23,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Visit Somerset CMS",
+  title: "Visit Somerset Content Hub",
   description: "Content administration for Visit Somerset",
 };
 

@@ -40,7 +40,7 @@ export function TopBar({
 
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-1 font-semibold text-white hover:text-neutral-300">
-          Visit Somerset
+          Visit Somerset Content Hub
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           <DropdownMenuItem render={<Link href="/cms">Content tree</Link>} />

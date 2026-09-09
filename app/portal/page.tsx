@@ -16,11 +16,11 @@ export default async function PortalHome() {
       <h1 className="text-lg font-semibold">Member Portal</h1>
       <p className="max-w-sm text-sm text-neutral-500">
         Signed in as {session.user.name} ({session.user.roleName}). My Listings, Advertising, Documents,
-        Opportunities and the Performance Dashboard arrive in Phase 3, reading from the same CMS records
-        you edit — no duplicate content storage.
+        Opportunities and the Performance Dashboard arrive in Phase 3, reading from the same Content Hub
+        records you edit — no duplicate content storage.
       </p>
       <div className="flex gap-2">
-        <Button render={<Link href="/cms">Back to CMS</Link>} variant="outline" />
+        <Button render={<Link href="/cms">Back to Content Hub</Link>} variant="outline" />
         <form action={signOutAction}>
           <Button type="submit" variant="ghost">
             Sign out
