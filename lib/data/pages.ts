@@ -156,6 +156,7 @@ export async function updatePage(
     assignedMemberId: string | null;
     assignedTeam: string | null;
     visibility: string;
+    publishDate: Date | null;
     expiryDate: Date | null;
     tagline: string | null;
     membershipTier: MembershipTier | null;

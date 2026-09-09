@@ -27,6 +27,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -95,15 +102,22 @@ export function TreeRow({
     });
   }
 
+  const canOfferNew = caps.canCreate;
+
   return (
     <div ref={setNodeRef} style={style} className={cn(isDragging && "opacity-50")}>
-      <div
-        className={cn(
-          "group flex items-center gap-1 rounded-md pr-1 text-sm hover:bg-neutral-100",
-          isActive && "bg-emerald-50 text-emerald-900 font-medium",
-        )}
-        style={{ paddingLeft: depth * 14 + 4 }}
-      >
+      <ContextMenu>
+        <ContextMenuTrigger
+          render={
+            <div
+              className={cn(
+                "group flex items-center gap-1 rounded-md pr-1 text-sm hover:bg-neutral-100",
+                isActive && "bg-emerald-50 text-emerald-900 font-medium",
+              )}
+              style={{ paddingLeft: depth * 14 + 4 }}
+            />
+          }
+        >
         {draggable ? (
           <button
             {...attributes}
@@ -153,7 +167,7 @@ export function TreeRow({
             <MoreHorizontal className="h-3.5 w-3.5" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {caps.canCreate && node.isSection && (
+            {canOfferNew && (
               <>
                 <DropdownMenuItem
                   onClick={() => {
@@ -206,7 +220,62 @@ export function TreeRow({
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
+        </ContextMenuTrigger>
+
+        <ContextMenuContent>
+          {canOfferNew && (
+            <>
+              <ContextMenuItem
+                onClick={() => {
+                  setCreateSection(false);
+                  setCreateOpen(true);
+                }}
+              >
+                <Plus className="h-3.5 w-3.5" /> New page
+              </ContextMenuItem>
+              <ContextMenuItem
+                onClick={() => {
+                  setCreateSection(true);
+                  setCreateOpen(true);
+                }}
+              >
+                <Folder className="h-3.5 w-3.5" /> New section
+              </ContextMenuItem>
+              <ContextMenuSeparator />
+            </>
+          )}
+          {caps.canClone && !node.isSection && (
+            <ContextMenuItem
+              onClick={() =>
+                runAction(async () => {
+                  const cloned = await clonePageAction(node.id);
+                  router.push(`/cms/${cloned.id}`);
+                }, "Page cloned")
+              }
+            >
+              <Copy className="h-3.5 w-3.5" /> Clone
+            </ContextMenuItem>
+          )}
+          {caps.canArchive && !node.isSection && node.status !== "ARCHIVED" && (
+            <ContextMenuItem onClick={() => runAction(() => archivePageAction(node.id), "Page archived")}>
+              <Archive className="h-3.5 w-3.5" /> Archive
+            </ContextMenuItem>
+          )}
+          {caps.canArchive && !node.isSection && node.status === "ARCHIVED" && (
+            <ContextMenuItem onClick={() => runAction(() => restorePageAction(node.id), "Page restored")}>
+              <ArchiveRestore className="h-3.5 w-3.5" /> Restore
+            </ContextMenuItem>
+          )}
+          {caps.canDelete && (
+            <>
+              <ContextMenuSeparator />
+              <ContextMenuItem variant="destructive" onClick={() => setConfirmDelete(true)}>
+                <Trash2 className="h-3.5 w-3.5" /> Delete
+              </ContextMenuItem>
+            </>
+          )}
+        </ContextMenuContent>
+      </ContextMenu>
 
       <CreatePageDialog
         open={createOpen}

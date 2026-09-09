@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ModeSwitch, type EditorMode } from "./mode-switch";
 import { StatusActions } from "./status-actions";
-import { ContentTab } from "./content-tab";
+import { FormTab } from "./form-tab";
 import { DesignTab } from "./design-tab";
 import { SeoTab } from "./seo-tab";
 import { MediaTab } from "./media-tab";
@@ -38,7 +38,7 @@ export function EditorShell({
   nearby: NearbyPage[];
 }) {
   const [mode, setMode] = useState<EditorMode>("edit");
-  const [tab, setTab] = useState("content");
+  const [tab, setTab] = useState("form");
 
   return (
     <div className="flex h-full flex-col">
@@ -59,15 +59,15 @@ export function EditorShell({
       {mode === "edit" && (
         <Tabs value={tab} onValueChange={setTab} className="flex min-h-0 flex-1 flex-col gap-0">
           <TabsList className="w-full justify-start rounded-none border-b bg-white px-4">
-            <TabsTrigger value="content">Content</TabsTrigger>
-            <TabsTrigger value="rooms-reviews">Rooms &amp; Reviews</TabsTrigger>
+            <TabsTrigger value="form">Form</TabsTrigger>
             <TabsTrigger value="design">Design</TabsTrigger>
+            <TabsTrigger value="rooms-reviews">Rooms &amp; Reviews</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
             <TabsTrigger value="media">Media</TabsTrigger>
             <TabsTrigger value="properties">Properties</TabsTrigger>
           </TabsList>
           <div className="min-h-0 flex-1 overflow-y-auto">
-            {tab === "content" && <ContentTab page={page} readOnly={!canEdit} />}
+            {tab === "form" && <FormTab page={page} readOnly={!canEdit} />}
             {tab === "rooms-reviews" && <RoomsReviewsTab page={page} readOnly={!canEdit} />}
             {tab === "design" && (
               <DesignTab pageId={page.id} initialBlocks={page.contentBlocks} readOnly={!canEdit} listings={listings} />
