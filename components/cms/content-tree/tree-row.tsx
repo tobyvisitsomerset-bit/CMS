@@ -146,21 +146,15 @@ export function TreeRow({
           <FileText className="h-3.5 w-3.5 shrink-0 text-neutral-400" />
         )}
 
-        {node.isSection ? (
-          <button onClick={onToggle} className="flex-1 truncate py-1.5 text-left">
-            {node.title}
-          </button>
-        ) : (
-          <Link
-            href={`/cms/${node.id}`}
-            className={cn("flex-1 truncate py-1.5", node.linkedPageId && "text-neutral-500 italic")}
-            title={node.linkedPageId ? "Linked page — opens the original for editing" : undefined}
-          >
-            {node.title}
-          </Link>
-        )}
+        <Link
+          href={`/cms/${node.id}`}
+          className={cn("flex-1 truncate py-1.5", node.linkedPageId && "text-neutral-500 italic")}
+          title={node.linkedPageId ? "Linked page — opens the original for editing" : undefined}
+        >
+          {node.title}
+        </Link>
 
-        {!node.isSection && <StatusDot status={node.status} className="mr-1" />}
+        <StatusDot status={node.status} className="mr-1" />
 
         <DropdownMenu>
           <DropdownMenuTrigger className="rounded p-1 text-neutral-400 opacity-0 hover:bg-neutral-200 group-hover:opacity-100 data-[state=open]:opacity-100">
