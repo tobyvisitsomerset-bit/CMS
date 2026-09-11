@@ -22,8 +22,10 @@ if (!exportDir) {
 const DOCUMENT_XML = path.join(exportDir, "Data", "Documents", "cms_document.xml.export");
 
 // Classes that become real navigable Pages in our tree. Everything else
-// (touristitemimage/download/grading, itineraryday, sociallink, ad) is either
-// deferred (images) or skipped as not valuable as a standalone page.
+// (touristitemimage/download/grading, ad) is either deferred (no recoverable
+// binaries in this export) or out of scope (ads are a site-widget concern,
+// not page content) — see kentico-import/backfill-tourist-item-gradings.ts
+// for how gradings still get folded in, as customFields on their parent page.
 const PAGE_CLASSES = new Set([
   "cms.folder",
   "cms.menuitem",
@@ -32,10 +34,12 @@ const PAGE_CLASSES = new Set([
   "cms.blogmonth",
   "cms.blogpost",
   "sz.itinerary",
+  "sz.itineraryday",
   "sz.ambassador",
   "sz.business",
   "sz.card",
   "sz.touristitem",
+  "sz.sociallink",
 ]);
 
 const SECTION_CLASSES = new Set(["cms.folder", "cms.blog", "cms.blogmonth"]);
@@ -71,6 +75,21 @@ function stripHtml(html: string): string {
     .trim();
 }
 
+// Kentico stores a page's actual body text as freeform "webpart zone" content
+// (DocumentContent), not as a typed field — e.g.
+// <content><webpart id="..."><![CDATA[the real html]]></webpart></content>.
+// Several classes (sz.itinerary, sz.itineraryday) have an empty/absent typed
+// body field but real narrative content here. Extract the raw HTML from every
+// CDATA block so it can go through the normal stripHtml() pass afterwards —
+// stripHtml() must never see the surrounding <webpart>/CDATA markup itself,
+// since its <[^>]+> regex would treat "<![CDATA[" as a tag and eat real
+// content before the real tags inside it.
+function extractWebpartContent(documentContent: string | undefined): string {
+  if (!documentContent) return "";
+  const matches = [...documentContent.matchAll(/<!\[CDATA\[([\s\S]*?)\]\]>/g)];
+  return matches.map((m) => m[1]).join("\n\n");
+}
+
 function slugify(input: string): string {
   return input
     .toLowerCase()
@@ -90,9 +109,11 @@ const FIELD_MAP: Record<string, { title: string; subtitle?: string; body?: strin
   "cms.blogmonth": { title: "NodeName" },
   "cms.blogpost": { title: "BlogPostTitle", subtitle: "BlogPostSummary", body: "BlogPostBody" },
   "sz.itinerary": { title: "ItineraryTitle", subtitle: "ItinerarySummary", body: "ItineraryDescription" },
+  "sz.itineraryday": { title: "ItineraryDayTitle" },
   "sz.ambassador": { title: "AmbassadorName", body: "AmbassadorBio" },
   "sz.business": { title: "BusinessName", body: "BusinessDescription" },
   "sz.card": { title: "CardTitle", body: "CardDescription" },
+  "sz.sociallink": { title: "SocialLinkTitle" },
   "sz.touristitem": {
     title: "ItemTitle",
     subtitle: "ItemSummary",
@@ -181,7 +202,7 @@ async function main() {
     const parentOurId = node.parentId ? ourPageIdByKenticoNodeId.get(node.parentId) ?? null : null;
 
     const subtitleRaw = mapping?.subtitle ? node.fields[mapping.subtitle] : undefined;
-    const bodyRaw = mapping?.body ? node.fields[mapping.body] : undefined;
+    const bodyRaw = (mapping?.body ? node.fields[mapping.body] : undefined) || extractWebpartContent(node.fields.DocumentContent) || undefined;
     const heroRaw = mapping?.hero ? node.fields[mapping.hero] : undefined;
     const cardSummary = mapping?.cardSummary ? node.fields[mapping.cardSummary] : undefined;
 
