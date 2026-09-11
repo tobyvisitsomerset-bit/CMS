@@ -1,0 +1,145 @@
+// Imports sz.ad nodes (excluded from the original import-real-pages.ts run)
+// as real pages — 125 advertising banner units (e.g. "Two Day Itinerary" MPU
+// ad). No binary is recoverable for the banner image itself (Media Library
+// GUID, not present in this export) — AdImage/AdLink/AdFormat/AdHouse are
+// captured as customFields so the data isn't lost, even though there's no
+// rendering surface for these yet. Additive only: creates new pages, parented
+// under whichever already-imported ancestor page the node resolves to.
+//
+// Usage: npx tsx kentico-import/import-ads.ts <path-to-extracted-export>
+// <path-to-extracted-export> should contain Data/Documents/cms_document.xml.export
+
+import { readFileSync } from "fs";
+import path from "path";
+import { XMLParser } from "fast-xml-parser";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+const exportDir = process.argv[2];
+if (!exportDir) {
+  console.error("Usage: npx tsx kentico-import/import-ads.ts <path-to-extracted-export>");
+  process.exit(1);
+}
+
+const DOCUMENT_XML = path.join(exportDir, "Data", "Documents", "cms_document.xml.export");
+
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9/]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    .replace(/-\/|\/-/g, "/");
+}
+
+function parseCustomFields(json: string | null): { key: string; value: string }[] {
+  if (!json) return [];
+  try {
+    const parsed = JSON.parse(json);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function getField(fields: { key: string; value: string }[], key: string): string | null {
+  return fields.find((f) => f.key === key)?.value ?? null;
+}
+
+function arr(dataset: Record<string, unknown>, tag: string): Record<string, string>[] {
+  const v = dataset[tag];
+  return Array.isArray(v) ? (v as Record<string, string>[]) : v ? [v as Record<string, string>] : [];
+}
+
+async function main() {
+  console.log(`Reading ${DOCUMENT_XML}...`);
+  const xml = readFileSync(DOCUMENT_XML, "utf-8");
+  const parser = new XMLParser({ ignoreAttributes: true, parseTagValue: false });
+  const parsed = parser.parse(xml);
+  const dataset = parsed.cms_document.NewDataSet as Record<string, unknown>;
+
+  const parentByNodeId = new Map<string, string | null>();
+  for (const [, value] of Object.entries(dataset)) {
+    const records = Array.isArray(value) ? value : [value];
+    for (const r of records as Record<string, string>[]) {
+      if (r.NodeID) parentByNodeId.set(r.NodeID, r.NodeParentID ?? null);
+    }
+  }
+
+  const ads = arr(dataset, "sz.ad");
+  console.log(`Found ${ads.length} sz.ad nodes in the export.`);
+
+  const superAdmin = await prisma.user.findFirst({ where: { role: { key: "SUPER_ADMIN" } } });
+  if (!superAdmin) throw new Error("No Super Admin user found — run prisma/seed.ts first.");
+
+  const allImported = await prisma.page.findMany({
+    where: { customFields: { contains: "_kenticoNodeId" } },
+    select: { id: true, customFields: true },
+  });
+  const pageIdByKenticoNodeId = new Map<string, string>();
+  for (const p of allImported) {
+    const nodeId = getField(parseCustomFields(p.customFields), "_kenticoNodeId");
+    if (nodeId) pageIdByKenticoNodeId.set(nodeId, p.id);
+  }
+
+  function existingAncestorPageId(nodeId: string): string | null {
+    let current = parentByNodeId.get(nodeId) ?? null;
+    while (current) {
+      const pid = pageIdByKenticoNodeId.get(current);
+      if (pid) return pid;
+      current = parentByNodeId.get(current) ?? null;
+    }
+    return null;
+  }
+
+  let created = 0;
+  let skippedExisting = 0;
+
+  for (const ad of ads) {
+    if (pageIdByKenticoNodeId.has(ad.NodeID)) {
+      skippedExisting++;
+      continue;
+    }
+
+    const title = ad.AdName || ad.DocumentName || `Ad ${ad.NodeID}`;
+    const customFields: { key: string; value: string }[] = [
+      { key: "_kenticoNodeId", value: ad.NodeID },
+      { key: "_kenticoClassName", value: "sz.ad" },
+    ];
+    if (ad.AdFormat) customFields.push({ key: "AdFormat", value: ad.AdFormat });
+    if (ad.AdLink) customFields.push({ key: "AdLink", value: ad.AdLink });
+    if (ad.AdHouse) customFields.push({ key: "AdHouse", value: ad.AdHouse });
+    if (ad.AdImage) customFields.push({ key: "AdImage", value: ad.AdImage });
+
+    const baseSlug = slugify((ad.NodeAliasPath || ad.NodeID).replace(/^\//, ""));
+    let slug = baseSlug || `ad-${ad.NodeID}`;
+    const existing = await prisma.page.findUnique({ where: { slug } });
+    if (existing) slug = `${slug}-${ad.NodeID}`;
+
+    const page = await prisma.page.create({
+      data: {
+        title,
+        slug,
+        status: ad.DocumentIsArchived === "true" ? "ARCHIVED" : "PUBLISHED",
+        parentId: existingAncestorPageId(ad.NodeID),
+        sortOrder: Number(ad.NodeOrder ?? 0),
+        authorId: superAdmin.id,
+        ownerId: superAdmin.id,
+        customFields: JSON.stringify(customFields),
+      },
+    });
+    pageIdByKenticoNodeId.set(ad.NodeID, page.id);
+    created++;
+    console.log(`  Created "${title}"`);
+  }
+
+  console.log(`\nDone. Created ${created} ad pages, ${skippedExisting} already existed.`);
+}
+
+main()
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  })
+  .finally(() => prisma.$disconnect());

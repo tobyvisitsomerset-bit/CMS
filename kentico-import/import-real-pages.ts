@@ -21,11 +21,12 @@ if (!exportDir) {
 
 const DOCUMENT_XML = path.join(exportDir, "Data", "Documents", "cms_document.xml.export");
 
-// Classes that become real navigable Pages in our tree. Everything else
-// (touristitemimage/download/grading, ad) is either deferred (no recoverable
-// binaries in this export) or out of scope (ads are a site-widget concern,
-// not page content) — see kentico-import/backfill-tourist-item-gradings.ts
-// for how gradings still get folded in, as customFields on their parent page.
+// Classes that become real navigable Pages in our tree. touristitemimage/
+// download/grading never become standalone pages — no binary is recoverable
+// for any of them in this export (Media Library GUIDs, not present), so their
+// text metadata is instead folded into their parent touristitem page's
+// customFields — see kentico-import/backfill-tourist-item-gradings.ts,
+// backfill-tourist-item-downloads.ts, backfill-tourist-item-images-metadata.ts.
 const PAGE_CLASSES = new Set([
   "cms.folder",
   "cms.menuitem",
@@ -40,6 +41,7 @@ const PAGE_CLASSES = new Set([
   "sz.card",
   "sz.touristitem",
   "sz.sociallink",
+  "sz.ad",
 ]);
 
 const SECTION_CLASSES = new Set(["cms.folder", "cms.blog", "cms.blogmonth"]);
@@ -114,6 +116,7 @@ const FIELD_MAP: Record<string, { title: string; subtitle?: string; body?: strin
   "sz.business": { title: "BusinessName", body: "BusinessDescription" },
   "sz.card": { title: "CardTitle", body: "CardDescription" },
   "sz.sociallink": { title: "SocialLinkTitle" },
+  "sz.ad": { title: "AdName" },
   "sz.touristitem": {
     title: "ItemTitle",
     subtitle: "ItemSummary",
