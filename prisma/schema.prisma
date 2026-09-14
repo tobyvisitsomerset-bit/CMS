@@ -78,6 +78,7 @@ model User {
   uploadedMedia  Media[]
   versions       Version[]
   pageTemplates  PageTemplate[]
+  notifications  Notification[]
 }
 
 model Page {
@@ -214,6 +215,21 @@ model AuditLog {
   action    String // created | updated | published | unpublished | archived | restored | deleted | cloned
   details   String?
   createdAt DateTime @default(now())
+}
+
+// Per-user, in-app only (no email/push) — generated on assignment and
+// workflow transitions (see notifyAssignment/notifySubmittedForReview/
+// notifyPublished in lib/data/notifications.ts).
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message   String
+  pageId    String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
 }
 
 model MediaFolder {

@@ -10,6 +10,7 @@ import * as mediaData from "@/lib/data/media";
 import * as versionsData from "@/lib/data/versions";
 import * as templatesData from "@/lib/data/templates";
 import * as usersData from "@/lib/data/users";
+import * as notificationsData from "@/lib/data/notifications";
 
 async function requireSession() {
   const session = await auth();
@@ -109,6 +110,7 @@ export async function publishPageAction(pageId: string) {
 
   const page = await pagesData.setPageStatus(pageId, "PUBLISHED");
   await logAudit({ userId: session.user.id, pageId: page.id, action: "published" });
+  await notificationsData.notifyPublished(page.title, page.id, page.assignedMemberId);
   revalidatePath("/cms");
   return page;
 }
@@ -127,6 +129,7 @@ export async function submitForReviewAction(pageId: string) {
   const session = await requireSession();
   const page = await pagesData.setPageStatus(pageId, "PENDING_APPROVAL");
   await logAudit({ userId: session.user.id, pageId: page.id, action: "submitted" });
+  await notificationsData.notifySubmittedForReview(page.title, page.id, session.user.name ?? "Someone");
   revalidatePath("/cms");
   return page;
 }
@@ -469,6 +472,29 @@ export async function assignPageMemberAction(pageId: string, memberId: string | 
     action: "updated",
     details: memberId ? `Assigned member ${memberId}` : "Unassigned member",
   });
+  if (memberId) await notificationsData.notifyAssignment(memberId, page.title, page.id);
   revalidatePath("/cms");
   return page;
+}
+
+// ---------- Notifications ----------
+
+export async function listNotificationsAction() {
+  const session = await requireSession();
+  return notificationsData.listNotifications(session.user.id);
+}
+
+export async function unreadNotificationCountAction() {
+  const session = await requireSession();
+  return notificationsData.unreadNotificationCount(session.user.id);
+}
+
+export async function markNotificationReadAction(id: string) {
+  const session = await requireSession();
+  await notificationsData.markNotificationRead(id, session.user.id);
+}
+
+export async function markAllNotificationsReadAction() {
+  const session = await requireSession();
+  await notificationsData.markAllNotificationsRead(session.user.id);
 }

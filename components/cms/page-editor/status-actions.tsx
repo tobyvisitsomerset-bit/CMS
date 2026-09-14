@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Bell, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import type { PageStatus } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +15,7 @@ import {
 } from "@/app/cms/actions";
 import { AuditLogSheet } from "./audit-log-sheet";
 import { VersionHistorySheet } from "./version-history-sheet";
+import { NotificationsBell } from "./notifications-bell";
 
 export function StatusActions({
   pageId,
@@ -95,14 +96,7 @@ export function StatusActions({
       </Button>
       <VersionHistorySheet pageId={pageId} canEdit={canEdit} />
       <AuditLogSheet pageId={pageId} />
-      <Button
-        size="icon"
-        variant="ghost"
-        title="Notifications"
-        onClick={() => toast.message("Notifications arrive in Phase 3.")}
-      >
-        <Bell className="h-4 w-4" />
-      </Button>
+      <NotificationsBell />
     </div>
   );
 }
