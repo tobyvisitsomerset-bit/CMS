@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getPageById, getNearbyPages } from "@/lib/data/pages";
 import { getAllListingsGrouped } from "@/lib/data/listings";
+import { listMembers } from "@/lib/data/users";
 import { canAccessPage, hasCapability, isAdmin } from "@/lib/permissions";
 import { EditorShell } from "@/components/cms/page-editor/editor-shell";
 
@@ -32,8 +33,10 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
   const canPublish = hasCapability(roleKey, "pages.publish");
   const canArchive = hasCapability(roleKey, "pages.archive");
   const canReview = hasCapability(roleKey, "workflow.review");
+  const canManageMembers = hasCapability(roleKey, "members.manage");
   const listings = await getAllListingsGrouped();
   const nearby = await getNearbyPages(page.id, page.parentId);
+  const members = canManageMembers ? await listMembers() : [];
 
   return (
     <EditorShell
@@ -45,6 +48,8 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
       isMember={!isAdmin(roleKey)}
       listings={listings}
       nearby={nearby}
+      members={members}
+      canManageMembers={canManageMembers}
     />
   );
 }

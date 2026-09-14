@@ -9,11 +9,12 @@ import { DesignTab } from "./design-tab";
 import { SeoTab } from "./seo-tab";
 import { MediaTab } from "./media-tab";
 import { RoomsReviewsTab } from "./rooms-reviews-tab";
-import { PlaceholderTab } from "./placeholder-tab";
+import { PropertiesTab } from "./properties-tab";
 import { PagePreview } from "./page-preview";
 import { ListingPreview } from "./listing-preview";
 import type { ListingsByCategory } from "@/components/cms/page-builder/block-renderer";
 import type { getPageById, getNearbyPages } from "@/lib/data/pages";
+import type { listMembers } from "@/lib/data/users";
 
 type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
 type NearbyPage = Awaited<ReturnType<typeof getNearbyPages>>[number];
@@ -27,6 +28,8 @@ export function EditorShell({
   isMember,
   listings,
   nearby,
+  members,
+  canManageMembers,
 }: {
   page: PageDetail;
   canEdit: boolean;
@@ -36,6 +39,8 @@ export function EditorShell({
   isMember: boolean;
   listings: ListingsByCategory;
   nearby: NearbyPage[];
+  members: Awaited<ReturnType<typeof listMembers>>;
+  canManageMembers: boolean;
 }) {
   const [mode, setMode] = useState<EditorMode>("edit");
   const [tab, setTab] = useState("form");
@@ -74,7 +79,7 @@ export function EditorShell({
             )}
             {tab === "seo" && <SeoTab page={page} readOnly={!canEdit} />}
             {tab === "media" && <MediaTab page={page} />}
-            {tab === "properties" && <PlaceholderTab title="Ownership, assignment & visibility" phase="Phase 3" />}
+            {tab === "properties" && <PropertiesTab page={page} members={members} canManage={canManageMembers} />}
           </div>
         </Tabs>
       )}

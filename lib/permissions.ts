@@ -27,6 +27,7 @@ export type Capability =
   | "media.delete"
   | "workflow.review"
   | "settings.manage"
+  | "members.manage"
   | "audit.view";
 
 const ALL_CAPABILITIES: Capability[] = [
@@ -42,6 +43,7 @@ const ALL_CAPABILITIES: Capability[] = [
   "media.delete",
   "workflow.review",
   "settings.manage",
+  "members.manage",
   "audit.view",
 ];
 
@@ -59,6 +61,7 @@ const CAPABILITY_MATRIX: Record<RoleKey, Capability[]> = {
     "media.upload",
     "media.delete",
     "workflow.review",
+    "members.manage",
     "audit.view",
   ],
   MEMBER: ["pages.edit", "pages.clone", "media.upload"],

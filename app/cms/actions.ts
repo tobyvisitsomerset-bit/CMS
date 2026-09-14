@@ -9,6 +9,7 @@ import * as pagesData from "@/lib/data/pages";
 import * as mediaData from "@/lib/data/media";
 import * as versionsData from "@/lib/data/versions";
 import * as templatesData from "@/lib/data/templates";
+import * as usersData from "@/lib/data/users";
 
 async function requireSession() {
   const session = await auth();
@@ -440,4 +441,34 @@ export async function getPageAuditLogAction(pageId: string) {
     orderBy: { createdAt: "desc" },
     take: 50,
   });
+}
+
+// ---------- Member assignment ----------
+
+export async function listMembersAction() {
+  const session = await requireSession();
+  if (!hasCapability(session.user.roleKey, "members.manage")) throw new Error("Not permitted");
+  return usersData.listMembers();
+}
+
+export async function createMemberAction(input: { name: string; email: string; password: string }) {
+  const session = await requireSession();
+  if (!hasCapability(session.user.roleKey, "members.manage")) throw new Error("Not permitted");
+  const member = await usersData.createMemberUser(input);
+  await logAudit({ userId: session.user.id, action: "created", details: `Created member account: ${member.name} (${member.email})` });
+  return member;
+}
+
+export async function assignPageMemberAction(pageId: string, memberId: string | null) {
+  const session = await requireSession();
+  if (!hasCapability(session.user.roleKey, "members.manage")) throw new Error("Not permitted");
+  const page = await usersData.assignPageMember(pageId, memberId);
+  await logAudit({
+    userId: session.user.id,
+    pageId,
+    action: "updated",
+    details: memberId ? `Assigned member ${memberId}` : "Unassigned member",
+  });
+  revalidatePath("/cms");
+  return page;
 }
