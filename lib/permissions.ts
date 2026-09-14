@@ -83,6 +83,7 @@ export function canAccessPage(
   page: { assignedMemberId?: string | null },
 ): boolean {
   if (isAdmin(role)) return true;
+  if (role === ROLE_KEYS.READ_ONLY) return true;
   if (role === ROLE_KEYS.MEMBER) return page.assignedMemberId === userId;
   return false;
 }

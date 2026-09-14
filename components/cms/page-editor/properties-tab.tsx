@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { assignPageMemberAction, createMemberAction } from "@/app/cms/actions";
+import { assignPageMemberAction, createMemberAction, saveContentAction } from "@/app/cms/actions";
 import type { getPageById } from "@/lib/data/pages";
 import type { listMembers } from "@/lib/data/users";
 
@@ -15,6 +15,16 @@ type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
 type Member = Awaited<ReturnType<typeof listMembers>>[number];
 
 const UNASSIGNED = "unassigned";
+
+const VISIBILITY_OPTIONS: { value: string; label: string }[] = [
+  { value: "public", label: "Public" },
+  { value: "member-only", label: "Member only" },
+  { value: "internal", label: "Internal" },
+];
+
+function formatDate(d: Date | string) {
+  return new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
 
 export function PropertiesTab({
   page,
@@ -33,15 +43,45 @@ export function PropertiesTab({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [visibility, setVisibility] = useState(page.visibility);
+  const [assignedTeam, setAssignedTeam] = useState(page.assignedTeam ?? "");
+
+  const metadata = (
+    <div className="grid grid-cols-2 gap-3 text-sm">
+      <div>
+        <p className="text-xs uppercase tracking-wide text-neutral-400">Author</p>
+        <p className="text-neutral-700">{page.author?.name ?? "Unknown"}</p>
+      </div>
+      <div>
+        <p className="text-xs uppercase tracking-wide text-neutral-400">Owner</p>
+        <p className="text-neutral-700">{page.owner?.name ?? "Unknown"}</p>
+      </div>
+      <div>
+        <p className="text-xs uppercase tracking-wide text-neutral-400">Created</p>
+        <p className="text-neutral-700">{formatDate(page.createdAt)}</p>
+      </div>
+      <div>
+        <p className="text-xs uppercase tracking-wide text-neutral-400">Last modified</p>
+        <p className="text-neutral-700">{formatDate(page.updatedAt)}</p>
+      </div>
+      <div>
+        <p className="text-xs uppercase tracking-wide text-neutral-400">Status</p>
+        <p className="text-neutral-700">{page.status}</p>
+      </div>
+      <div>
+        <p className="text-xs uppercase tracking-wide text-neutral-400">Assigned member</p>
+        <p className="text-neutral-700">{page.assignedMember?.name ?? "None"}</p>
+      </div>
+    </div>
+  );
 
   if (!canManage) {
     return (
-      <div className="mx-auto max-w-2xl p-6 text-sm text-neutral-600">
-        <h2 className="mb-2 font-semibold text-neutral-800">Ownership</h2>
-        <p>
-          Assigned member: <span className="font-medium">{page.assignedMember?.name ?? "None"}</span>
-        </p>
-        <p className="mt-1 text-neutral-500">Author: {page.author?.name ?? "Unknown"}</p>
+      <div className="mx-auto max-w-2xl space-y-6 p-6">
+        <div>
+          <h2 className="mb-3 font-semibold text-neutral-800">Ownership</h2>
+          {metadata}
+        </div>
       </div>
     );
   }
@@ -80,11 +120,38 @@ export function PropertiesTab({
     });
   }
 
+  function handleVisibility(value: string | null) {
+    if (!value) return;
+    setVisibility(value);
+    startTransition(async () => {
+      try {
+        await saveContentAction(page.id, { visibility: value });
+        toast.success("Visibility updated");
+        router.refresh();
+      } catch {
+        toast.error("Couldn't update visibility.");
+      }
+    });
+  }
+
+  function handleTeamBlur() {
+    if (assignedTeam === (page.assignedTeam ?? "")) return;
+    startTransition(async () => {
+      try {
+        await saveContentAction(page.id, { assignedTeam: assignedTeam || null });
+        toast.success("Assigned team updated");
+        router.refresh();
+      } catch {
+        toast.error("Couldn't update the assigned team.");
+      }
+    });
+  }
+
   return (
     <div className="mx-auto max-w-2xl space-y-6 p-6">
       <div>
-        <h2 className="mb-1 font-semibold text-neutral-800">Ownership</h2>
-        <p className="text-sm text-neutral-500">Author: {page.author?.name ?? "Unknown"}</p>
+        <h2 className="mb-3 font-semibold text-neutral-800">Ownership</h2>
+        {metadata}
       </div>
 
       <div className="space-y-1.5">
@@ -143,6 +210,32 @@ export function PropertiesTab({
           </div>
         </form>
       )}
+
+      <div className="space-y-1.5">
+        <Label>Visibility</Label>
+        <Select value={visibility} onValueChange={handleVisibility} disabled={pending}>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {VISIBILITY_OPTIONS.map((o) => (
+              <SelectItem key={o.value} value={o.value}>
+                {o.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label>Assigned team</Label>
+        <Input
+          value={assignedTeam}
+          onChange={(e) => setAssignedTeam(e.target.value)}
+          onBlur={handleTeamBlur}
+          placeholder="e.g. Content Team, Places to Stay"
+        />
+      </div>
     </div>
   );
 }
