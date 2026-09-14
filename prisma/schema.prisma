@@ -143,6 +143,9 @@ model Page {
 
   rooms   Room[]
   reviews Review[]
+
+  @@index([parentId])
+  @@index([assignedMemberId])
 }
 
 // A bookable room/unit on an accommodation page. Entered by the assigned

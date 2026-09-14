@@ -20,12 +20,16 @@ import { reorderPageAction } from "@/app/cms/actions";
 import type { PageTreeNode, TreeCapabilities } from "./types";
 import Link from "next/link";
 
-function collectIds(nodes: PageTreeNode[], acc: Set<string> = new Set()): Set<string> {
+// Every ancestor id on the path down to `targetId`, so navigating straight to
+// a deep page (a direct link, browser back/forward, search result) reveals
+// it in the tree without needing to expand every branch by hand.
+function findAncestorIds(nodes: PageTreeNode[], targetId: string, path: string[] = []): string[] | null {
   for (const n of nodes) {
-    acc.add(n.id);
-    collectIds(n.children, acc);
+    if (n.id === targetId) return path;
+    const found = findAncestorIds(n.children, targetId, [...path, n.id]);
+    if (found) return found;
   }
-  return acc;
+  return null;
 }
 
 function filterTree(nodes: PageTreeNode[], query: string): PageTreeNode[] {
@@ -65,11 +69,37 @@ export function ContentTree({
   caps: TreeCapabilities;
   flatMember?: boolean;
 }) {
-  const [expanded, setExpanded] = useState<Set<string>>(() => collectIds(tree));
+  // Only the top level starts open — with 5,000+ real pages, defaulting to
+  // "everything expanded" used to mount every row in the tree at once (the
+  // main cause of the content hub feeling sluggish). Whatever page is active
+  // on load still has its ancestor chain expanded, so you're never dropped
+  // into a collapsed tree with no idea where the current page lives.
+  const [expanded, setExpanded] = useState<Set<string>>(() => {
+    const ids = new Set(tree.map((n) => n.id));
+    if (activePageId) {
+      const ancestors = findAncestorIds(tree, activePageId);
+      ancestors?.forEach((id) => ids.add(id));
+    }
+    return ids;
+  });
   const [search, setSearch] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const [createSection, setCreateSection] = useState(false);
   const [, startTransition] = useTransition();
+
+  // The tree persists across CMS navigations (it lives in the layout), so
+  // this handles clicking straight to a different deep page — expand its
+  // ancestors without collapsing whatever the user already had open. Adjusts
+  // state during render (React's documented pattern for "reset/adjust state
+  // when a prop changes") rather than in an effect, avoiding an extra render.
+  const [lastActivePageId, setLastActivePageId] = useState(activePageId);
+  if (activePageId !== lastActivePageId) {
+    setLastActivePageId(activePageId);
+    const ancestors = activePageId ? findAncestorIds(tree, activePageId) : null;
+    if (ancestors?.length) {
+      setExpanded((prev) => new Set([...prev, ...ancestors]));
+    }
+  }
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
 
