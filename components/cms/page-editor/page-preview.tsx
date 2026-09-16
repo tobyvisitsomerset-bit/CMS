@@ -10,10 +10,12 @@ export function PagePreview({
   page,
   listings,
   nearby,
+  linkBase = "/cms",
 }: {
   page: PageDetail;
   listings: ListingsByCategory;
   nearby: NearbyPage[];
+  linkBase?: string;
 }) {
   if (page.contentBlocks.length > 0) {
     return (
@@ -34,7 +36,16 @@ export function PagePreview({
   // A real business/attraction/event page — full listing-detail layout
   // (gallery strip, rooms, reviews, nearby, contact sidebar).
   if (info) {
-    return <ListingDetailPreview page={page} info={info} gallery={gallery} bodyContent={bodyContent} nearby={nearby} />;
+    return (
+      <ListingDetailPreview
+        page={page}
+        info={info}
+        gallery={gallery}
+        bodyContent={bodyContent}
+        nearby={nearby}
+        linkBase={linkBase}
+      />
+    );
   }
 
   // A plain page with no recognized business data (e.g. "Contact Us", a

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import type { MembershipTier, Page, PageStatus } from "@prisma/client";
 
@@ -79,6 +80,24 @@ export async function getPageById(id: string) {
     },
   });
 }
+
+// Public-site lookup by slug — cached per-request so generateMetadata and
+// the page body (which both need the same page) don't issue two queries.
+export const getPageBySlug = cache(async (slug: string) => {
+  return prisma.page.findUnique({
+    where: { slug },
+    include: {
+      author: true,
+      owner: true,
+      assignedMember: true,
+      tags: true,
+      categories: true,
+      contentBlocks: { orderBy: { sortOrder: "asc" } },
+      rooms: { orderBy: { sortOrder: "asc" } },
+      reviews: { orderBy: { sortOrder: "asc" } },
+    },
+  });
+});
 
 // Real sibling pages under the same parent, for a "Nearby, worth the trip"
 // style section — no separate recommendation data exists, so this is the

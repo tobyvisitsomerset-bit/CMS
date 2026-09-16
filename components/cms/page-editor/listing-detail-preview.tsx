@@ -46,12 +46,17 @@ export function ListingDetailPreview({
   gallery,
   bodyContent,
   nearby,
+  linkBase = "/cms",
 }: {
   page: PageDetail;
   info: BusinessInfo;
   gallery: string[];
   bodyContent: string | null;
   nearby: NearbyPage[];
+  // Where "nearby page" cards link to — the CMS's own Preview tab (default)
+  // links back into the editor; the public site passes "" so cards link to
+  // the sibling's own public slug instead.
+  linkBase?: string;
 }) {
   const images = [page.heroImageUrl, ...gallery].filter((u): u is string => !!u);
   const extraPhotoCount = images.length - 4;
@@ -209,7 +214,7 @@ export function ListingDetailPreview({
               <SectionHeading>Nearby, worth the trip</SectionHeading>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 {nearby.map((n) => (
-                  <Link key={n.id} href={`/cms/${n.id}`} className="group space-y-2">
+                  <Link key={n.id} href={linkBase ? `${linkBase}/${n.id}` : `/${n.slug}`} className="group space-y-2">
                     <div className="overflow-hidden rounded-xl">
                       {n.heroImageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
