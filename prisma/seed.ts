@@ -716,11 +716,11 @@ async function main() {
         },
         {
           name: "Listing Page",
-          description: "Search/filter bar plus a listing grid with map — the pattern used by Places To Stay.",
+          description: "Search/filter bar plus a listing grid — the pattern used by Places To Stay.",
           createdById: superAdmin.id,
           blocks: JSON.stringify([
             { type: "listing_search", config: { title: "", subtitle: "", showSearchBar: true, filters: [] } },
-            { type: "listing_grid", config: { category: "ACCOMMODATION", showMap: true } },
+            { type: "listing_grid", config: { category: "ACCOMMODATION" } },
           ]),
         },
       ],
@@ -771,7 +771,7 @@ async function main() {
         ],
       },
     },
-    { type: "listing_grid", config: { category: "ACCOMMODATION", showMap: true } },
+    { type: "listing_grid", config: { category: "ACCOMMODATION" } },
   ]);
 
   await setPageBlocks("Food & Drink", [
@@ -815,7 +815,7 @@ async function main() {
         ],
       },
     },
-    { type: "listing_grid", config: { category: "FOOD_DRINK", showMap: false } },
+    { type: "listing_grid", config: { category: "FOOD_DRINK" } },
   ]);
 
   await setPageBlocks("Festivals & Events", [

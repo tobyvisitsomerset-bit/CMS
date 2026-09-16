@@ -15,6 +15,11 @@ const TIER_RANK: Record<MembershipTier, number> = {
   BRONZE: 3,
 };
 
+// GOLD/PLATINUM members get the "Featured member" placement in hub-page grids.
+export function isFeaturedTier(tier: MembershipTier | null): boolean {
+  return tier === "PLATINUM" || tier === "GOLD";
+}
+
 function byTierThenSortOrder(a: ListingWithFacilities, b: ListingWithFacilities): number {
   const rankA = a.membershipTier ? TIER_RANK[a.membershipTier] : TIER_RANK.BRONZE + 1;
   const rankB = b.membershipTier ? TIER_RANK[b.membershipTier] : TIER_RANK.BRONZE + 1;

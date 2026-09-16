@@ -1,7 +1,24 @@
+import type { ListingCategory } from "@prisma/client";
 import { BlockRenderer, type ListingsByCategory } from "@/components/cms/page-builder/block-renderer";
+import { ListingDirectoryProvider } from "@/components/cms/page-builder/listing-directory-context";
 import { ListingDetailPreview } from "@/components/cms/page-editor/listing-detail-preview";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
 import type { getPageById, getNearbyPages } from "@/lib/data/pages";
+
+// Resolve the one category a hub page's `listing_search` block should share
+// state for, from whichever results block (`listing_grid`/`event_calendar`)
+// is present on the same page — mirrors block-renderer.tsx's own category
+// fallback so search/filter/sort state lines up with what's actually shown.
+function resolveDirectoryCategory(blocks: { type: string; config: string }[]): ListingCategory {
+  for (const block of blocks) {
+    if (block.type === "listing_grid") {
+      const config = JSON.parse(block.config || "{}");
+      return (config.category ?? "ACCOMMODATION") as ListingCategory;
+    }
+    if (block.type === "event_calendar") return "EVENT";
+  }
+  return "ACCOMMODATION";
+}
 
 type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
 type NearbyPage = Awaited<ReturnType<typeof getNearbyPages>>[number];
@@ -18,11 +35,21 @@ export function PagePreview({
   linkBase?: string;
 }) {
   if (page.contentBlocks.length > 0) {
+    const blockList = page.contentBlocks.map((block) => (
+      <BlockRenderer key={block.id} type={block.type} config={JSON.parse(block.config || "{}")} listings={listings} />
+    ));
+    const hasSearchBlock = page.contentBlocks.some((block) => block.type === "listing_search");
+    const category = hasSearchBlock ? resolveDirectoryCategory(page.contentBlocks) : null;
+
     return (
       <div className="mx-auto max-w-5xl overflow-hidden bg-white shadow-sm">
-        {page.contentBlocks.map((block) => (
-          <BlockRenderer key={block.id} type={block.type} config={JSON.parse(block.config || "{}")} listings={listings} />
-        ))}
+        {category ? (
+          <ListingDirectoryProvider items={listings[category]} category={category}>
+            {blockList}
+          </ListingDirectoryProvider>
+        ) : (
+          blockList
+        )}
       </div>
     );
   }

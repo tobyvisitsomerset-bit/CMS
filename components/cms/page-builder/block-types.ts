@@ -72,7 +72,7 @@ export function defaultConfigFor(type: BlockType): Record<string, unknown> {
     case "listing_search":
       return { title: "", subtitle: "", filters: [], showSearchBar: true };
     case "listing_grid":
-      return { category: "ACCOMMODATION", heading: "", showMap: true };
+      return { category: "ACCOMMODATION", heading: "" };
     case "event_calendar":
       return { heading: "" };
     default:

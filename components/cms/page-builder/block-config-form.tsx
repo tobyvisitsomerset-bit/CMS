@@ -320,10 +320,6 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
               </SelectContent>
             </Select>
           </Field>
-          <div className="flex items-center gap-2">
-            <Switch checked={config.showMap ?? true} onCheckedChange={(v) => set({ showMap: v })} />
-            <Label>Show map alongside listings</Label>
-          </div>
         </div>
       );
 
