@@ -24,7 +24,7 @@ function Stars({ rating, size = 14 }: { rating: number; size?: number }) {
           key={n}
           width={size}
           height={size}
-          className={n <= Math.round(rating) ? "fill-amber-400 text-amber-400" : "fill-stone-200 text-stone-200"}
+          className={n <= Math.round(rating) ? "fill-damson text-damson" : "fill-stone-200 text-stone-200"}
         />
       ))}
     </span>
@@ -33,7 +33,7 @@ function Stars({ rating, size = 14 }: { rating: number; size?: number }) {
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="flex items-center gap-3 font-serif text-xl font-semibold text-stone-900">
+    <h2 className="flex items-center gap-3 font-serif text-xl font-black text-stone-900">
       {children}
       <span className="h-px flex-1 bg-stone-200" />
     </h2>
@@ -109,12 +109,12 @@ export function ListingDetailPreview({
         <div className="space-y-10 md:col-span-2">
           <div>
             {page.membershipTier && (
-              <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-300 px-3 py-1 text-xs font-semibold text-amber-950 shadow-sm shadow-amber-900/10">
+              <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-damson px-3 py-1 text-xs font-semibold text-white shadow-sm shadow-damson/20">
                 <Crown className="size-3.5" />
                 Visit Somerset {page.membershipTier.charAt(0) + page.membershipTier.slice(1).toLowerCase()} Member
               </span>
             )}
-            <h1 className="font-serif text-4xl font-semibold tracking-tight text-stone-900">{page.title}</h1>
+            <h1 className="font-serif text-4xl font-black tracking-tight text-stone-900">{page.title}</h1>
             {page.subtitle && <p className="mt-2 text-[15px] text-stone-500">{page.subtitle}</p>}
             {avgRating !== null && (
               <div className="mt-3 flex items-center gap-2 text-sm text-stone-600">
@@ -158,7 +158,7 @@ export function ListingDetailPreview({
                             {features.map((f) => (
                               <span
                                 key={f}
-                                className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-800"
+                                className="rounded-full bg-somerset-green/10 px-2.5 py-0.5 text-[11px] font-medium text-somerset-green"
                               >
                                 {f}
                               </span>
@@ -175,7 +175,7 @@ export function ListingDetailPreview({
                             href={info.bookingUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="rounded-full bg-emerald-800 px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-900"
+                            className="rounded-full bg-damson px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:opacity-90"
                           >
                             Reserve
                           </a>
@@ -227,7 +227,7 @@ export function ListingDetailPreview({
                         <div className="aspect-square w-full bg-stone-100" />
                       )}
                     </div>
-                    <p className="truncate text-xs font-medium text-stone-600 group-hover:text-emerald-800">
+                    <p className="truncate text-xs font-medium text-stone-600 group-hover:text-somerset-green">
                       {n.title}
                     </p>
                   </Link>

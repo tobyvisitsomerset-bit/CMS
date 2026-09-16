@@ -14,7 +14,7 @@ function tierBadgeLabel(tier: string | null): string | null {
 }
 
 function Img({ src, alt, className }: { src?: string; alt: string; className?: string }) {
-  if (!src) return <div className={cn("bg-gradient-to-br from-emerald-100 to-emerald-200", className)} />;
+  if (!src) return <div className={cn("bg-gradient-to-br from-somerset-green/20 to-somerset-green/30", className)} />;
   // eslint-disable-next-line @next/next/no-img-element
   return <img src={src} alt={alt} className={cn("object-cover", className)} />;
 }
@@ -33,9 +33,9 @@ export function BlockRenderer({
       return (
         <div className="relative flex h-72 items-end overflow-hidden">
           <Img src={config.imageUrl} alt="" className="absolute inset-0 h-full w-full" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-deep-green/85 via-deep-green/30 to-transparent" />
           <div className="relative p-8 text-white">
-            <h2 className="font-serif text-3xl font-bold">{config.heading || "Hero heading"}</h2>
+            <h2 className="font-serif text-3xl font-black">{config.heading || "Hero heading"}</h2>
             {config.subheading && <p className="mt-1 max-w-lg text-white/90">{config.subheading}</p>}
             {config.ctaLabel && (
               <span className="mt-3 inline-block rounded-md bg-white px-4 py-2 text-sm font-medium text-neutral-900">
@@ -141,7 +141,7 @@ export function BlockRenderer({
           <div className="grid grid-cols-3 gap-4">
             {items.map((item, i) => (
               <div key={i} className="rounded-lg border bg-white p-4">
-                <div className="mb-2 flex gap-0.5 text-amber-400">
+                <div className="mb-2 flex gap-0.5 text-damson">
                   {Array.from({ length: item.rating ?? 5 }).map((_, s) => (
                     <Star key={s} className="h-3.5 w-3.5 fill-current" />
                   ))}
@@ -160,7 +160,7 @@ export function BlockRenderer({
         <div
           className={cn(
             "p-10 text-center",
-            config.style === "light" ? "bg-neutral-100 text-neutral-900" : "bg-emerald-900 text-white",
+            config.style === "light" ? "bg-neutral-100 text-neutral-900" : "bg-deep-green text-white",
           )}
         >
           <h3 className="text-2xl font-bold">{config.heading || "Call to action"}</h3>
@@ -177,7 +177,7 @@ export function BlockRenderer({
       return (
         <div className="p-8">
           {config.heading && <h3 className="mb-2 text-xl font-semibold">{config.heading}</h3>}
-          <div className="flex h-56 items-center justify-center gap-2 rounded-lg bg-emerald-50 text-emerald-700">
+          <div className="flex h-56 items-center justify-center gap-2 rounded-lg bg-somerset-green/10 text-somerset-green">
             <MapPin className="h-5 w-5" />
             {config.locationLabel || "Map placeholder"}
           </div>
@@ -203,7 +203,7 @@ export function BlockRenderer({
                   key={i}
                   className={cn(
                     "rounded-full border px-3 py-1 text-xs font-medium",
-                    i === 0 ? "border-emerald-700 bg-emerald-700 text-white" : "text-neutral-600",
+                    i === 0 ? "border-somerset-green bg-somerset-green text-white" : "text-neutral-600",
                   )}
                 >
                   {f}
@@ -253,7 +253,7 @@ export function BlockRenderer({
               ))}
             </div>
             {config.showMap && (
-              <div className="flex h-64 items-center justify-center rounded-lg bg-emerald-50 text-sm text-emerald-700 md:h-auto">
+              <div className="flex h-64 items-center justify-center rounded-lg bg-somerset-green/10 text-sm text-somerset-green md:h-auto">
                 <MapPin className="mr-1 h-4 w-4" /> Live map — same engine as future site
               </div>
             )}

@@ -53,12 +53,12 @@ export function PagePreview({
   return (
     <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-stone-200 bg-white p-8 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_40px_-16px_rgba(0,0,0,0.12)]">
       <div
-        className="-m-8 mb-6 flex h-64 items-end bg-gradient-to-br from-emerald-800 to-emerald-950 bg-cover bg-center p-8 text-white"
+        className="-m-8 mb-6 flex h-64 items-end bg-gradient-to-br from-somerset-green to-deep-green bg-cover bg-center p-8 text-white"
         style={page.heroImageUrl ? { backgroundImage: `url(${page.heroImageUrl})` } : undefined}
       >
         <div>
-          <h1 className="font-serif text-4xl font-semibold tracking-tight">{page.title}</h1>
-          {subtitle && <p className="mt-2 max-w-xl text-emerald-50">{subtitle}</p>}
+          <h1 className="font-serif text-4xl font-black tracking-tight">{page.title}</h1>
+          {subtitle && <p className="mt-2 max-w-xl text-white/90">{subtitle}</p>}
         </div>
       </div>
       <div className="space-y-4">
@@ -80,7 +80,7 @@ export function PagePreview({
         {page.callToActionLabel && (
           <a
             href={page.callToActionUrl || "#"}
-            className="inline-block rounded-full bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-900"
+            className="inline-block rounded-full bg-damson px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:opacity-90"
           >
             {page.callToActionLabel}
           </a>

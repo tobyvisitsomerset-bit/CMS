@@ -10,7 +10,7 @@ function formatDate(iso: string): string {
 function Row({ icon: Icon, children }: { icon: typeof Phone; children: React.ReactNode }) {
   return (
     <div className="flex items-start gap-3 text-sm text-neutral-700">
-      <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+      <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-somerset-green/10 text-somerset-green">
         <Icon className="size-3.5" />
       </span>
       <div className="min-w-0 pt-1">{children}</div>
@@ -47,7 +47,7 @@ export function BusinessInfoPanel({ info }: { info: BusinessInfo }) {
                 href={mapsHref}
                 target="_blank"
                 rel="noreferrer"
-                className="ml-1.5 inline font-medium text-emerald-700 underline decoration-emerald-200 underline-offset-2 hover:decoration-emerald-500"
+                className="ml-1.5 inline font-medium text-somerset-green underline decoration-somerset-green/30 underline-offset-2 hover:decoration-somerset-green"
               >
                 Get directions
               </a>
@@ -57,7 +57,7 @@ export function BusinessInfoPanel({ info }: { info: BusinessInfo }) {
 
         {info.phone && (
           <Row icon={Phone}>
-            <a href={`tel:${info.phone.replace(/\s+/g, "")}`} className="hover:text-emerald-700 hover:underline">
+            <a href={`tel:${info.phone.replace(/\s+/g, "")}`} className="hover:text-somerset-green hover:underline">
               {info.phone}
             </a>
           </Row>
@@ -65,7 +65,7 @@ export function BusinessInfoPanel({ info }: { info: BusinessInfo }) {
 
         {info.email && (
           <Row icon={Mail}>
-            <a href={`mailto:${info.email}`} className="break-all hover:text-emerald-700 hover:underline">
+            <a href={`mailto:${info.email}`} className="break-all hover:text-somerset-green hover:underline">
               {info.email}
             </a>
           </Row>
@@ -89,7 +89,7 @@ export function BusinessInfoPanel({ info }: { info: BusinessInfo }) {
               href={info.website}
               target="_blank"
               rel="noreferrer"
-              className="break-all font-medium text-emerald-700 underline decoration-emerald-200 underline-offset-2 hover:decoration-emerald-500"
+              className="break-all font-medium text-somerset-green underline decoration-somerset-green/30 underline-offset-2 hover:decoration-somerset-green"
             >
               Visit website
             </a>
@@ -102,7 +102,7 @@ export function BusinessInfoPanel({ info }: { info: BusinessInfo }) {
           href={info.bookingUrl}
           target="_blank"
           rel="noreferrer"
-          className="block w-full rounded-xl bg-emerald-800 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm shadow-emerald-900/20 transition-colors hover:bg-emerald-900"
+          className="block w-full rounded-xl bg-damson px-4 py-3 text-center text-sm font-semibold text-white shadow-sm shadow-damson/20 transition-colors hover:opacity-90"
         >
           {info.bookingLabel}
         </a>

@@ -11,6 +11,14 @@
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-fraunces);
   --font-serif: var(--font-fraunces);
+
+  /* Public-site brand palette (Website Redesign mockup pack, screen 00).
+     Additive only — never redefine --primary/--secondary/etc above, since
+     those drive every shadcn component used throughout the /cms admin. */
+  --color-somerset-green: #3d685b;
+  --color-deep-green: #2c4c43;
+  --color-damson: #6f266f;
+  --color-cool-grey: #f1f2f0;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
