@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import type { MembershipTier, Page, PageStatus } from "@prisma/client";
+import { parseCustomFields } from "@/lib/kentico-item-fields";
 
 export type PageTreeNode = Pick<
   Page,
@@ -117,6 +118,56 @@ export async function getNearbyPages(pageId: string, parentId: string | null, li
     orderBy: { sortOrder: "asc" },
   });
 }
+
+export type PageMapPin = {
+  id: string;
+  title: string;
+  slug: string;
+  heroImageUrl: string | null;
+  lat: number;
+  lng: number;
+  category: string;
+};
+
+// Loose UK+Ireland bounding box. A handful of real Kentico rows (~14 of
+// 3,560, spot-checked directly) carry corrupted ItemMapLatitude/Longitude
+// values — swapped lat/lng, a stray extra digit, or in one case genuinely
+// unrelated US coordinates — which would otherwise plot pins in Africa or
+// the Atlantic on a "Somerset" map. The field mapping itself is correct
+// (verified against known-good rows like Cheddar Gorge); this only excludes
+// the small number of rows whose source values are themselves wrong.
+const UK_BOUNDS = { minLat: 49, maxLat: 61, minLng: -11, maxLng: 2 };
+
+// Real per-page coordinates for the interactive map (Phase 3) — only source
+// of real geo data in this app; the mock `Listing` model has none. Coordinates
+// live inside `customFields` (ItemMapLatitude/ItemMapLongitude), not a native
+// column, so they can't be filtered in SQL and must be parsed in application
+// code, same as `getBusinessInfo()` already does for the business detail page.
+export const getPagesWithCoordinates = cache(async (): Promise<PageMapPin[]> => {
+  const rows = await prisma.page.findMany({
+    where: { status: "PUBLISHED", customFields: { not: null } },
+    select: { id: true, title: true, slug: true, heroImageUrl: true, customFields: true },
+  });
+
+  const pins: PageMapPin[] = [];
+  for (const row of rows) {
+    const fields = parseCustomFields(row.customFields);
+    const lat = fields.ItemMapLatitude ? Number(fields.ItemMapLatitude) : null;
+    const lng = fields.ItemMapLongitude ? Number(fields.ItemMapLongitude) : null;
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    if (lat! < UK_BOUNDS.minLat || lat! > UK_BOUNDS.maxLat || lng! < UK_BOUNDS.minLng || lng! > UK_BOUNDS.maxLng) continue;
+    pins.push({
+      id: row.id,
+      title: row.title,
+      slug: row.slug,
+      heroImageUrl: row.heroImageUrl,
+      lat: lat as number,
+      lng: lng as number,
+      category: row.slug.split("/")[0],
+    });
+  }
+  return pins;
+});
 
 export async function searchPages(query: string) {
   return prisma.page.findMany({

@@ -1,18 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
-
-// Only the real, currently-PUBLISHED top-level sections — the tree also has
-// ~33 stray unmerged Kentico root nodes (Zesty, Extranet, etc.) that aren't
-// real navigation and a "Experiences" hub that's still DRAFT. Hardcoded
-// rather than derived from the tree until that cleanup happens.
-const NAV_LINKS = [
-  { label: "Places To Stay", slug: "places-to-stay" },
-  { label: "Things To Do", slug: "things-to-do" },
-  { label: "Food & Drink", slug: "food-and-drink" },
-  { label: "Festivals & Events", slug: "festivals-and-events" },
-  { label: "Somerset Stories", slug: "somerset-stories" },
-];
+import { NAV_LINKS } from "@/lib/site-nav";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();

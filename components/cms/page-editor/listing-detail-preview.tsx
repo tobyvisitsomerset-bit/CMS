@@ -239,7 +239,7 @@ export function ListingDetailPreview({
 
         <div className="md:col-span-1">
           <div className="sticky top-4">
-            <BusinessInfoPanel info={info} />
+            <BusinessInfoPanel info={info} title={page.title} />
           </div>
         </div>
       </div>

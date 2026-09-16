@@ -1,5 +1,6 @@
 import { Calendar, Clock, ExternalLink, Mail, MapPin, Phone, Ticket } from "lucide-react";
 import type { BusinessInfo } from "@/lib/kentico-item-fields";
+import { SinglePinMap } from "@/components/map/single-pin-map";
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -18,7 +19,7 @@ function Row({ icon: Icon, children }: { icon: typeof Phone; children: React.Rea
   );
 }
 
-export function BusinessInfoPanel({ info }: { info: BusinessInfo }) {
+export function BusinessInfoPanel({ info, title }: { info: BusinessInfo; title: string }) {
   const fullAddress = [info.address, info.town, info.postcode].filter(Boolean).join(", ");
   const mapsHref =
     info.mapLat && info.mapLng
@@ -54,6 +55,8 @@ export function BusinessInfoPanel({ info }: { info: BusinessInfo }) {
             )}
           </Row>
         )}
+
+        {info.mapLat != null && info.mapLng != null && <SinglePinMap lat={info.mapLat} lng={info.mapLng} title={title} />}
 
         {info.phone && (
           <Row icon={Phone}>
