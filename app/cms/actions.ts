@@ -470,7 +470,7 @@ export async function assignPageMemberAction(pageId: string, memberId: string | 
     userId: session.user.id,
     pageId,
     action: "updated",
-    details: memberId ? `Assigned member ${memberId}` : "Unassigned member",
+    details: memberId ? `Assigned member ${page.assignedMember?.name ?? memberId}` : "Unassigned member",
   });
   if (memberId) await notificationsData.notifyAssignment(memberId, page.title, page.id);
   revalidatePath("/cms");

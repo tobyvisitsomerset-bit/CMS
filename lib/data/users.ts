@@ -32,5 +32,6 @@ export async function assignPageMember(pageId: string, memberId: string | null) 
   return prisma.page.update({
     where: { id: pageId },
     data: { assignedMemberId: memberId },
+    include: { assignedMember: true },
   });
 }
