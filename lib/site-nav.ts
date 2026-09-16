@@ -12,6 +12,7 @@ export const NAV_LINKS = [
   { label: "Festivals & Events", slug: "festivals-and-events" },
   { label: "Somerset Stories", slug: "somerset-stories" },
   { label: "Map", slug: "interactive-map" },
+  { label: "My Trip", slug: "my-trip" },
 ];
 
 export function labelForSlugSegment(segment: string): string {

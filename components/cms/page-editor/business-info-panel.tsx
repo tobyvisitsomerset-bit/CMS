@@ -1,6 +1,7 @@
 import { Calendar, Clock, ExternalLink, Mail, MapPin, Phone, Ticket } from "lucide-react";
 import type { BusinessInfo } from "@/lib/kentico-item-fields";
 import { SinglePinMap } from "@/components/map/single-pin-map";
+import { AddToCalendarMenu } from "@/components/calendar/add-to-calendar-menu";
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -19,7 +20,7 @@ function Row({ icon: Icon, children }: { icon: typeof Phone; children: React.Rea
   );
 }
 
-export function BusinessInfoPanel({ info, title }: { info: BusinessInfo; title: string }) {
+export function BusinessInfoPanel({ info, title, slug }: { info: BusinessInfo; title: string; slug: string }) {
   const fullAddress = [info.address, info.town, info.postcode].filter(Boolean).join(", ");
   const mapsHref =
     info.mapLat && info.mapLng
@@ -35,8 +36,24 @@ export function BusinessInfoPanel({ info, title }: { info: BusinessInfo; title: 
       <div className="space-y-3.5">
         {(info.startDate || info.endDate) && (
           <Row icon={Calendar}>
-            {info.startDate ? formatDate(info.startDate) : ""}
-            {info.endDate && info.endDate !== info.startDate ? ` – ${formatDate(info.endDate)}` : ""}
+            <div className="flex flex-wrap items-center gap-2">
+              <span>
+                {info.startDate ? formatDate(info.startDate) : ""}
+                {info.endDate && info.endDate !== info.startDate ? ` – ${formatDate(info.endDate)}` : ""}
+              </span>
+              {info.startDate && (
+                <AddToCalendarMenu
+                  event={{
+                    title,
+                    location: fullAddress || undefined,
+                    start: new Date(info.startDate),
+                    end: info.endDate ? new Date(info.endDate) : undefined,
+                  }}
+                  path={`/${slug}`}
+                  compact
+                />
+              )}
+            </div>
           </Row>
         )}
 

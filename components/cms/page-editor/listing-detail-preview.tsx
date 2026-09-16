@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Camera, ChevronRight, Crown, Quote, Star } from "lucide-react";
 import { BusinessInfoPanel } from "./business-info-panel";
+import { AddToTripButton } from "@/components/trip/add-to-trip-button";
 import type { BusinessInfo } from "@/lib/kentico-item-fields";
 import type { getPageById, getNearbyPages } from "@/lib/data/pages";
 
@@ -125,6 +126,10 @@ export function ListingDetailPreview({
                 </span>
               </div>
             )}
+            {/* Trip planning is a public-site concept only — not shown inside the CMS's own Preview tab. */}
+            {linkBase === "" && (
+              <AddToTripButton id={page.id} title={page.title} slug={page.slug} heroImageUrl={page.heroImageUrl} />
+            )}
           </div>
 
           {bodyContent && (
@@ -239,7 +244,7 @@ export function ListingDetailPreview({
 
         <div className="md:col-span-1">
           <div className="sticky top-4">
-            <BusinessInfoPanel info={info} title={page.title} />
+            <BusinessInfoPanel info={info} title={page.title} slug={page.slug} />
           </div>
         </div>
       </div>

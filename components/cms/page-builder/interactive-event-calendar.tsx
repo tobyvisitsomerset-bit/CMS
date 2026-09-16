@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import type { ListingWithFacilities } from "@/lib/data/listings";
 import { useListingDirectory, type QuickFilterKey } from "./listing-directory-context";
+import { AddToCalendarMenu } from "@/components/calendar/add-to-calendar-menu";
 
 const QUICK_FILTERS: { key: QuickFilterKey; label: string }[] = [
   { key: "this-weekend", label: "This weekend" },
@@ -21,7 +22,21 @@ function EventCard({ event }: { event: ListingWithFacilities }) {
         <span className="text-lg font-bold leading-none">{event.startDate ? new Date(event.startDate).getDate() : "—"}</span>
       </div>
       <div className="min-w-0 flex-1">
-        <p className="font-semibold">{event.name}</p>
+        <div className="flex items-start justify-between gap-2">
+          <p className="font-semibold">{event.name}</p>
+          {event.startDate && (
+            <AddToCalendarMenu
+              event={{
+                title: event.name,
+                description: event.summary ?? undefined,
+                location: event.location ?? undefined,
+                start: event.startDate,
+                end: event.endDate ?? undefined,
+              }}
+              compact
+            />
+          )}
+        </div>
         <p className="text-xs text-neutral-500">{event.location}</p>
         {event.summary && <p className="mt-1 text-sm text-neutral-600">{event.summary}</p>}
         {event.priceLabel && <p className="mt-1 text-xs font-medium text-neutral-500">{event.priceLabel}</p>}
