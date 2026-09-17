@@ -17,6 +17,20 @@ export function parseCustomFields(customFields: string | null): ItemFields {
   }
 }
 
+// parseCustomFields()/Object.fromEntries collapses repeated keys to the last
+// value — some real Kentico fields (e.g. ItemGradingName) legitimately repeat
+// per page (a business can hold several awards). This reads the raw array
+// directly so no earlier values are silently dropped.
+export function getAllFieldValues(customFields: string | null, key: string): string[] {
+  if (!customFields) return [];
+  try {
+    const entries = JSON.parse(customFields) as { key: string; value: string }[];
+    return entries.filter((e) => e.key === key).map((e) => e.value);
+  } catch {
+    return [];
+  }
+}
+
 // Kentico stores rich-text fields (opening times, admission) as HTML and
 // plain fields with HTML entities escaped — decode both for display without
 // resorting to dangerouslySetInnerHTML anywhere in the editor UI.

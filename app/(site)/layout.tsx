@@ -4,9 +4,11 @@ import { auth } from "@/lib/auth";
 import { NAV_LINKS } from "@/lib/site-nav";
 import { TripProvider } from "@/lib/trip-context";
 import { TripNavBadge } from "@/components/trip/trip-nav-badge";
+import { getSocialLinks } from "@/lib/data/pages";
+import { SocialIcon } from "@/components/site/social-icon";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth();
+  const [session, socialLinks] = await Promise.all([auth(), getSocialLinks()]);
 
   return (
     <TripProvider>
@@ -43,6 +45,22 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <footer className="bg-deep-green">
           <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-8 text-sm text-white/70 sm:flex-row">
             <p>&copy; {new Date().getFullYear()} Visit Somerset.</p>
+            {socialLinks.length > 0 && (
+              <div className="flex items-center gap-4">
+                {socialLinks.map((link) => (
+                  <a
+                    key={link.url}
+                    href={link.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={link.platform}
+                    className="text-white/70 transition-colors hover:text-white"
+                  >
+                    <SocialIcon platform={link.platform} className="size-4" />
+                  </a>
+                ))}
+              </div>
+            )}
             <Link href={session?.user ? "/cms" : "/login"} className="text-white hover:underline">
               {session?.user ? "Content Hub" : "Staff sign in"}
             </Link>

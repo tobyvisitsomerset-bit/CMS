@@ -169,6 +169,27 @@ export const getPagesWithCoordinates = cache(async (): Promise<PageMapPin[]> => 
   return pins;
 });
 
+export type SocialLink = { platform: string; url: string };
+
+// Real imported sz.sociallink pages (children of "Social Links"). 4 of the 7
+// real rows are the primary Visit Somerset account; the other 3 are a
+// district partner ("Visit Taunton") account, out of place in global chrome.
+export const getSocialLinks = cache(async (): Promise<SocialLink[]> => {
+  const rows = await prisma.page.findMany({
+    where: { slug: { startsWith: "site-content/social-links/" }, status: "PUBLISHED", title: { contains: "Visit Somerset" } },
+    select: { customFields: true },
+  });
+
+  const links: SocialLink[] = [];
+  for (const row of rows) {
+    const fields = parseCustomFields(row.customFields);
+    if (fields.SocialLink && fields.SocialLinkIcon) {
+      links.push({ platform: fields.SocialLinkIcon, url: fields.SocialLink });
+    }
+  }
+  return links;
+});
+
 export async function searchPages(query: string) {
   return prisma.page.findMany({
     where: { title: { contains: query, mode: "insensitive" } },

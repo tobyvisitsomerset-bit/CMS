@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Camera, ChevronRight, Crown, Quote, Star } from "lucide-react";
 import { BusinessInfoPanel } from "./business-info-panel";
 import { AddToTripButton } from "@/components/trip/add-to-trip-button";
-import type { BusinessInfo } from "@/lib/kentico-item-fields";
+import { getAllFieldValues, type BusinessInfo } from "@/lib/kentico-item-fields";
 import type { getPageById, getNearbyPages } from "@/lib/data/pages";
 
 type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
@@ -65,6 +65,7 @@ export function ListingDetailPreview({
     ? page.reviews.reduce((sum, r) => sum + r.rating, 0) / page.reviews.length
     : null;
   const crumbs = breadcrumbFromSlug(page.slug);
+  const gradings = Array.from(new Set(getAllFieldValues(page.customFields, "ItemGradingName")));
 
   return (
     <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_40px_-16px_rgba(0,0,0,0.12)]">
@@ -124,6 +125,18 @@ export function ListingDetailPreview({
                 <span className="text-stone-400">
                   · {page.reviews.length} review{page.reviews.length === 1 ? "" : "s"}
                 </span>
+              </div>
+            )}
+            {gradings.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {gradings.map((g) => (
+                  <span
+                    key={g}
+                    className="rounded-full border border-somerset-green/30 px-2.5 py-0.5 text-xs font-medium text-somerset-green"
+                  >
+                    {g}
+                  </span>
+                ))}
               </div>
             )}
             {/* Trip planning is a public-site concept only — not shown inside the CMS's own Preview tab. */}
