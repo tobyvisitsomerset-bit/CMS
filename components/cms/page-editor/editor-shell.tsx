@@ -57,7 +57,15 @@ export function EditorShell({
           canReview={canReview}
           canEdit={canEdit}
           isMember={isMember}
-          onViewLive={() => setMode("preview")}
+          onViewLive={() => {
+            // A DRAFT/ARCHIVED page has no real public URL to open — fall
+            // back to the internal Preview tab rather than a 404.
+            if (page.status === "PUBLISHED") {
+              window.open(`${window.location.origin}/${page.slug}`, "_blank", "noopener,noreferrer");
+            } else {
+              setMode("preview");
+            }
+          }}
         />
       </div>
 
