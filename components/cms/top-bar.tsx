@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { HelpCircle } from "lucide-react";
 import {
@@ -33,14 +34,12 @@ export function TopBar({
   canReviewWorkflow: boolean;
 }) {
   return (
-    <header className="flex h-12 shrink-0 items-center gap-3 border-b border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-200">
-      <div className="flex h-7 w-7 items-center justify-center rounded bg-emerald-700 font-serif text-xs font-semibold text-white">
-        VS
-      </div>
+    <header className="flex h-12 shrink-0 items-center gap-3 border-b border-deep-green/60 bg-deep-green px-3 text-sm text-white/80">
+      <Image src="/logo-visit-somerset.png" alt="Visit Somerset" width={419} height={113} className="h-7 w-auto" />
 
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-1 font-semibold text-white hover:text-neutral-300">
-          Visit Somerset Content Hub
+        <DropdownMenuTrigger className="flex items-center gap-1 font-semibold text-white hover:text-white/70">
+          Content Hub
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           <DropdownMenuItem render={<Link href="/cms">Content tree</Link>} />
@@ -48,10 +47,10 @@ export function TopBar({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <nav className="flex items-center gap-1 text-neutral-400">
+      <nav className="flex items-center gap-1 text-white/60">
         {breadcrumb.map((crumb, i) => (
           <span key={i} className="flex items-center gap-1">
-            {i > 0 && <span className="text-neutral-600">/</span>}
+            {i > 0 && <span className="text-white/30">/</span>}
             {crumb.href ? (
               <Link href={crumb.href} className="hover:text-white">
                 {crumb.label}
@@ -66,24 +65,24 @@ export function TopBar({
       <div className="flex-1" />
 
       {canManageMedia && (
-        <Link href="/cms/media" className="rounded px-2 py-1 text-neutral-300 hover:bg-neutral-800 hover:text-white">
+        <Link href="/cms/media" className="rounded px-2 py-1 text-white/70 hover:bg-white/10 hover:text-white">
           Media
         </Link>
       )}
       {canReviewWorkflow && (
-        <Link href="/cms/approvals" className="rounded px-2 py-1 text-neutral-300 hover:bg-neutral-800 hover:text-white">
+        <Link href="/cms/approvals" className="rounded px-2 py-1 text-white/70 hover:bg-white/10 hover:text-white">
           Approvals
         </Link>
       )}
 
-      <button className="rounded p-1.5 text-neutral-400 hover:bg-neutral-800 hover:text-white" title="Help">
+      <button className="rounded p-1.5 text-white/60 hover:bg-white/10 hover:text-white" title="Help">
         <HelpCircle className="h-4 w-4" />
       </button>
 
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-2 rounded p-1 hover:bg-neutral-800">
+        <DropdownMenuTrigger className="flex items-center gap-2 rounded p-1 hover:bg-white/10">
           <Avatar className="h-6 w-6">
-            <AvatarFallback className="bg-emerald-800 text-[10px] text-white">{initials(user.name)}</AvatarFallback>
+            <AvatarFallback className="bg-somerset-green text-[10px] text-white">{initials(user.name)}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

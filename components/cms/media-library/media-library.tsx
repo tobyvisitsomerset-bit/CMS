@@ -119,7 +119,7 @@ export function MediaLibrary() {
                 setActiveFolder(null);
               }}
               className={`block w-full rounded-md px-2 py-1.5 text-left ${
-                view === key ? "bg-emerald-50 font-medium text-emerald-900" : "hover:bg-neutral-100"
+                view === key ? "bg-somerset-green/10 font-medium text-somerset-green" : "hover:bg-neutral-100"
               }`}
             >
               {label}
@@ -138,7 +138,7 @@ export function MediaLibrary() {
                     setActiveFolder(f.id);
                   }}
                   className={`flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-left ${
-                    view === "all" && activeFolder === f.id ? "bg-emerald-50 font-medium text-emerald-900" : "hover:bg-neutral-100"
+                    view === "all" && activeFolder === f.id ? "bg-somerset-green/10 font-medium text-somerset-green" : "hover:bg-neutral-100"
                   }`}
                 >
                   <FolderIcon className="h-3.5 w-3.5 shrink-0 text-neutral-400" />
@@ -189,7 +189,7 @@ export function MediaLibrary() {
           </Button>
         </div>
 
-        <div className={`flex-1 overflow-y-auto p-4 ${dragOver ? "bg-emerald-50" : ""}`}>
+        <div className={`flex-1 overflow-y-auto p-4 ${dragOver ? "bg-somerset-green/10" : ""}`}>
           {media.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-2 text-neutral-400">
               <Upload className="h-8 w-8" />
@@ -231,7 +231,7 @@ export function MediaLibrary() {
             <p className="mb-1 text-xs font-medium text-neutral-600">Used by</p>
             {usage === null && <p className="text-xs text-neutral-400">Checking...</p>}
             {usage?.length === 0 && <p className="text-xs text-neutral-400">Not used on any page.</p>}
-            <ul className="space-y-0.5 text-xs text-emerald-700">
+            <ul className="space-y-0.5 text-xs text-somerset-green">
               {usage?.map((u) => (
                 <li key={u.id}>{u.title}</li>
               ))}

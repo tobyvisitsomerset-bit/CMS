@@ -112,7 +112,7 @@ export function TreeRow({
             <div
               className={cn(
                 "group flex items-center gap-1 rounded-md pr-1 text-sm hover:bg-neutral-100",
-                isActive && "bg-emerald-50 text-emerald-900 font-medium",
+                isActive && "bg-somerset-green/10 text-somerset-green font-medium",
               )}
               style={{ paddingLeft: depth * 14 + 4 }}
             />

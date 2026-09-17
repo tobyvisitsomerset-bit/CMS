@@ -12,7 +12,7 @@ export function MediaTab({ page }: { page: PageDetail }) {
     <div className="mx-auto max-w-3xl space-y-4 p-6">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-neutral-700">Media used on this page</h3>
-        <Link href="/cms/media" className="flex items-center gap-1 text-sm text-emerald-700 hover:underline">
+        <Link href="/cms/media" className="flex items-center gap-1 text-sm text-somerset-green hover:underline">
           Open Media Library <ExternalLink className="h-3.5 w-3.5" />
         </Link>
       </div>

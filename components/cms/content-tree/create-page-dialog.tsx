@@ -94,8 +94,8 @@ export function CreatePageDialog({
                     type="button"
                     onClick={() => setTemplateId(null)}
                     className={cn(
-                      "flex flex-col items-center gap-1 rounded-lg border p-3 text-center hover:border-emerald-400",
-                      templateId === null && "border-emerald-500 bg-emerald-50",
+                      "flex flex-col items-center gap-1 rounded-lg border p-3 text-center hover:border-somerset-green/60",
+                      templateId === null && "border-somerset-green bg-somerset-green/10",
                     )}
                   >
                     <FileText className="h-5 w-5 text-neutral-400" />
@@ -108,8 +108,8 @@ export function CreatePageDialog({
                       title={t.description ?? undefined}
                       onClick={() => setTemplateId(t.id)}
                       className={cn(
-                        "flex flex-col items-center gap-1 rounded-lg border p-3 text-center hover:border-emerald-400",
-                        templateId === t.id && "border-emerald-500 bg-emerald-50",
+                        "flex flex-col items-center gap-1 rounded-lg border p-3 text-center hover:border-somerset-green/60",
+                        templateId === t.id && "border-somerset-green bg-somerset-green/10",
                       )}
                     >
                       <LayoutTemplate className="h-5 w-5 text-neutral-400" />

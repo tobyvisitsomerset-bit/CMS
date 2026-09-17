@@ -167,7 +167,7 @@ export function ContentTree({
             key={n.id}
             href={`/cms/${n.id}`}
             className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-neutral-100 ${
-              n.id === activePageId ? "bg-emerald-50 font-medium text-emerald-900" : ""
+              n.id === activePageId ? "bg-somerset-green/10 font-medium text-somerset-green" : ""
             }`}
           >
             <StatusDot status={n.status} />

@@ -33,8 +33,8 @@ export function MediaTile({
     <button
       onClick={onClick}
       className={cn(
-        "group flex flex-col overflow-hidden rounded-lg border bg-white text-left transition-colors hover:border-emerald-400",
-        selected && "border-emerald-500 ring-2 ring-emerald-200",
+        "group flex flex-col overflow-hidden rounded-lg border bg-white text-left transition-colors hover:border-somerset-green/60",
+        selected && "border-somerset-green ring-2 ring-somerset-green/20",
       )}
     >
       <div className="flex h-28 items-center justify-center bg-neutral-100">

@@ -75,7 +75,7 @@ export function VersionHistorySheet({ pageId, canEdit }: { pageId: string; canEd
                 <div>
                   <p className="text-sm font-medium">
                     Version {v.versionNumber}
-                    {i === 0 && <span className="ml-2 rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] text-emerald-700">Current</span>}
+                    {i === 0 && <span className="ml-2 rounded bg-somerset-green/10 px-1.5 py-0.5 text-[10px] text-somerset-green">Current</span>}
                   </p>
                   <p className="text-xs text-neutral-500">
                     {v.editor?.name ?? "System"} · {formatDistanceToNow(new Date(v.createdAt), { addSuffix: true })}

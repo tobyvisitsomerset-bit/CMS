@@ -9,7 +9,7 @@ export function ListingPreview({ page }: { page: PageDetail }) {
       <p className="mb-4 text-sm text-neutral-500">How this page appears as a card in listing &amp; grid views:</p>
       <div className="w-72 overflow-hidden rounded-lg border bg-white shadow-sm">
         <div
-          className="h-36 bg-gradient-to-br from-emerald-700 to-emerald-950 bg-cover bg-center"
+          className="h-36 bg-gradient-to-br from-somerset-green to-deep-green bg-cover bg-center"
           style={page.heroImageUrl ? { backgroundImage: `url(${page.heroImageUrl})` } : undefined}
         />
         <div className="space-y-1.5 p-3">

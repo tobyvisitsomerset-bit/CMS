@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
-import { hasCapability, canAccessPage } from "@/lib/permissions";
+import { hasCapability, canAccessPage, isAdmin } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import * as pagesData from "@/lib/data/pages";
@@ -127,6 +127,11 @@ export async function unpublishPageAction(pageId: string) {
 
 export async function submitForReviewAction(pageId: string) {
   const session = await requireSession();
+  const existing = await pagesData.getPageById(pageId);
+  if (!existing) throw new Error("Page not found");
+  if (!isAdmin(session.user.roleKey) && existing.assignedMemberId !== session.user.id) {
+    throw new Error("Not permitted");
+  }
   const page = await pagesData.setPageStatus(pageId, "PENDING_APPROVAL");
   await logAudit({ userId: session.user.id, pageId: page.id, action: "submitted" });
   await notificationsData.notifySubmittedForReview(page.title, page.id, session.user.name ?? "Someone");

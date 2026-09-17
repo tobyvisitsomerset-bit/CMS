@@ -2,7 +2,7 @@ import type { PageStatus } from "@prisma/client";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<PageStatus, { color: string; label: string }> = {
-  PUBLISHED: { color: "bg-emerald-500", label: "Published" },
+  PUBLISHED: { color: "bg-somerset-green", label: "Published" },
   DRAFT: { color: "bg-amber-400", label: "Draft" },
   PENDING_APPROVAL: { color: "bg-sky-500", label: "Pending approval" },
   ARCHIVED: { color: "bg-red-500", label: "Archived" },

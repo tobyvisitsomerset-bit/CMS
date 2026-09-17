@@ -89,7 +89,7 @@ export function NotificationsBell() {
         <div className="flex items-center justify-between px-1.5 py-1">
           <span className="text-xs font-medium text-neutral-500">Notifications</span>
           {unreadCount > 0 && (
-            <button onClick={handleMarkAllRead} className="text-xs text-emerald-700 hover:underline">
+            <button onClick={handleMarkAllRead} className="text-xs text-somerset-green hover:underline">
               Mark all read
             </button>
           )}
