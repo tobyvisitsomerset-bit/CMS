@@ -119,6 +119,20 @@ export async function getNearbyPages(pageId: string, parentId: string | null, li
   });
 }
 
+export type ChildPageTile = { id: string; title: string; subtitle: string | null; slug: string; heroImageUrl: string | null };
+
+// Real child pages of a "folder"-style page (real children, no ContentBlocks,
+// no recognized business data) — lets PagePreview show a real section-index
+// grid instead of a bare title. Mirrors getNearbyPages' shape/exclusions.
+export async function getChildPages(parentId: string): Promise<ChildPageTile[]> {
+  return prisma.page.findMany({
+    where: { parentId, status: "PUBLISHED", linkedPageId: null },
+    select: { id: true, title: true, subtitle: true, slug: true, heroImageUrl: true },
+    orderBy: { sortOrder: "asc" },
+    take: 100,
+  });
+}
+
 export type PageMapPin = {
   id: string;
   title: string;
@@ -194,36 +208,26 @@ export type ExploreAreaTile = { label: string; href: string; count: number; desc
 
 // The homepage's "Explore by area" tile row — an honest substitute for the
 // mockup pack's "Somerset by mood" tiles, which would need a real Category/Tag
-// taxonomy that doesn't exist (both tables are empty). Real counts only: five
-// of these sections are genuinely Page-backed, but Food & Drink and Festivals
-// & Events currently have no real editorial Pages under them at all (just the
-// empty hub shell) — their real content lives in the mock Listing table, so
-// those two count Listing rows instead. Different source, same honesty.
-const EXPLORE_AREAS: {
-  label: string;
-  slug: string;
-  href: string;
-  source: "pages" | "listings";
-  noun: (n: number) => string;
-}[] = [
-  { label: "Places To Stay", slug: "places-to-stay", href: "/places-to-stay", source: "pages", noun: (n) => `${n} places to stay` },
-  { label: "Things To Do", slug: "things-to-do", href: "/things-to-do", source: "pages", noun: (n) => `${n} things to do` },
-  { label: "Food & Drink", slug: "food-and-drink", href: "/food-and-drink", source: "listings", noun: (n) => `${n} places to eat & drink` },
-  { label: "Festivals & Events", slug: "festivals-and-events", href: "/festivals-and-events", source: "listings", noun: (n) => `${n} upcoming events` },
-  { label: "Discover Somerset", slug: "discover-somerset", href: "/discover-somerset", source: "pages", noun: (n) => `${n} pages of inspiration` },
-  { label: "City of Bath", slug: "bath", href: "/bath", source: "pages", noun: (n) => `${n} pages about Bath` },
-  { label: "Taunton", slug: "taunton", href: "/taunton", source: "pages", noun: (n) => `${n} pages about Taunton` },
+// taxonomy that doesn't exist (both tables are empty). Real counts only, all
+// sourced from real Pages. Food & Drink and Festivals & Events point at the
+// real branches Phase 8 discovered (things-to-do/food-drink-more and
+// festivals-events) rather than their empty, now-archived former hub roots.
+const EXPLORE_AREAS: { label: string; slug: string; href: string; noun: (n: number) => string }[] = [
+  { label: "Places To Stay", slug: "places-to-stay", href: "/places-to-stay", noun: (n) => `${n} places to stay` },
+  { label: "Things To Do", slug: "things-to-do", href: "/things-to-do", noun: (n) => `${n} things to do` },
+  { label: "Food & Drink", slug: "things-to-do/food-drink-more", href: "/things-to-do/food-drink-more", noun: (n) => `${n} places to eat & drink` },
+  { label: "Festivals & Events", slug: "festivals-events", href: "/festivals-events", noun: (n) => `${n} upcoming events` },
+  { label: "Discover Somerset", slug: "discover-somerset", href: "/discover-somerset", noun: (n) => `${n} pages of inspiration` },
+  { label: "City of Bath", slug: "bath", href: "/bath", noun: (n) => `${n} pages about Bath` },
+  { label: "Taunton", slug: "taunton", href: "/taunton", noun: (n) => `${n} pages about Taunton` },
 ];
 
 export const getExploreAreaTiles = cache(async (): Promise<ExploreAreaTile[]> => {
   return Promise.all(
     EXPLORE_AREAS.map(async (area) => {
-      const count =
-        area.source === "pages"
-          ? await prisma.page.count({
-              where: { status: "PUBLISHED", OR: [{ slug: area.slug }, { slug: { startsWith: `${area.slug}/` } }] },
-            })
-          : await prisma.listing.count({ where: { category: area.slug === "food-and-drink" ? "FOOD_DRINK" : "EVENT" } });
+      const count = await prisma.page.count({
+        where: { status: "PUBLISHED", OR: [{ slug: area.slug }, { slug: { startsWith: `${area.slug}/` } }] },
+      });
       return { label: area.label, href: area.href, count, description: area.noun(count) };
     }),
   );

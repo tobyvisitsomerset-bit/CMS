@@ -2,8 +2,10 @@ import type { ListingCategory } from "@prisma/client";
 import { BlockRenderer, type ListingsByCategory } from "@/components/cms/page-builder/block-renderer";
 import { ListingDirectoryProvider } from "@/components/cms/page-builder/listing-directory-context";
 import { ListingDetailPreview } from "@/components/cms/page-editor/listing-detail-preview";
+import { Img } from "@/components/cms/page-builder/listing-ui";
+import Link from "next/link";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
-import type { getPageById, getNearbyPages } from "@/lib/data/pages";
+import type { getPageById, getNearbyPages, ChildPageTile } from "@/lib/data/pages";
 
 // Resolve the one category a hub page's `listing_search` block should share
 // state for, from whichever results block (`listing_grid`/`event_calendar`)
@@ -27,12 +29,14 @@ export function PagePreview({
   page,
   listings,
   nearby,
+  childPages = [],
   linkBase = "/cms",
   initialSearchText = "",
 }: {
   page: PageDetail;
   listings: ListingsByCategory;
   nearby: NearbyPage[];
+  childPages?: ChildPageTile[];
   linkBase?: string;
   initialSearchText?: string;
 }) {
@@ -93,7 +97,7 @@ export function PagePreview({
       <div className="space-y-4">
         {bodyContent ? (
           <p className="leading-relaxed whitespace-pre-wrap text-stone-600">{bodyContent}</p>
-        ) : linkBase === "/cms" ? (
+        ) : linkBase === "/cms" && childPages.length === 0 ? (
           <p className="italic text-stone-400">No body content yet. Add sections in the Design tab, or write body copy in Content.</p>
         ) : null}
 
@@ -102,6 +106,22 @@ export function PagePreview({
             {gallery.map((url) => (
               // eslint-disable-next-line @next/next/no-img-element -- external/dynamic upload paths, not build-time known
               <img key={url} src={url} alt="" className="aspect-square w-full rounded-xl object-cover" />
+            ))}
+          </div>
+        )}
+
+        {childPages.length > 0 && (
+          <div className="grid grid-cols-2 gap-4 border-t border-stone-100 pt-4 sm:grid-cols-3">
+            {childPages.map((child) => (
+              <Link key={child.id} href={linkBase ? `${linkBase}/${child.id}` : `/${child.slug}`} className="group space-y-2">
+                <div className="overflow-hidden rounded-xl">
+                  <Img src={child.heroImageUrl} alt="" className="aspect-[4/3] w-full transition-transform duration-300 group-hover:scale-105" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-stone-800 group-hover:text-somerset-green">{child.title}</p>
+                  {child.subtitle && <p className="line-clamp-2 text-xs text-stone-500">{child.subtitle}</p>}
+                </div>
+              </Link>
             ))}
           </div>
         )}

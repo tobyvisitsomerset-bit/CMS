@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { getPageBySlug, getPageById, getNearbyPages } from "@/lib/data/pages";
+import { getPageBySlug, getPageById, getNearbyPages, getChildPages } from "@/lib/data/pages";
 import { getAllListingsGrouped } from "@/lib/data/listings";
 import { PagePreview } from "@/components/cms/page-editor/page-preview";
 
@@ -41,14 +41,15 @@ export default async function PublicPage({
     notFound();
   }
 
-  const [listings, nearby] = await Promise.all([
+  const [listings, nearby, childPages] = await Promise.all([
     getAllListingsGrouped(),
     getNearbyPages(page.id, page.parentId),
+    page.contentBlocks.length === 0 ? getChildPages(page.id) : Promise.resolve([]),
   ]);
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
-      <PagePreview page={page} listings={listings} nearby={nearby} linkBase="" initialSearchText={q ?? ""} />
+      <PagePreview page={page} listings={listings} nearby={nearby} childPages={childPages} linkBase="" initialSearchText={q ?? ""} />
     </div>
   );
 }

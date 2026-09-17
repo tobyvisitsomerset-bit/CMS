@@ -16,10 +16,20 @@ const LeafletMap = dynamic(() => import("./leaflet-map").then((m) => m.LeafletMa
 // same known, separately-tracked cleanup problem the header nav already
 // works around. Only chip the real sections; everything else buckets into
 // "Other" rather than surfacing that mess as filter options.
-const KNOWN_SLUGS = new Set(NAV_LINKS.map((l) => l.slug).filter((s) => s !== "interactive-map"));
+const KNOWN_SLUGS = NAV_LINKS.map((l) => l.slug).filter((s) => s !== "interactive-map");
 
+// Match against the pin's full slug (not just its root segment) and prefer
+// the longest/most-specific matching nav slug — otherwise a nested section
+// like "things-to-do/food-drink-more" would fold into its parent "things-to-do"
+// chip instead of getting its own.
 function chipCategoryFor(pin: PageMapPin): string {
-  return KNOWN_SLUGS.has(pin.category) ? pin.category : "other";
+  let best: string | null = null;
+  for (const slug of KNOWN_SLUGS) {
+    if (pin.slug === slug || pin.slug.startsWith(`${slug}/`)) {
+      if (!best || slug.length > best.length) best = slug;
+    }
+  }
+  return best ?? "other";
 }
 
 export function InteractiveMapView({ pins }: { pins: PageMapPin[] }) {

@@ -13,7 +13,7 @@ import { PropertiesTab } from "./properties-tab";
 import { PagePreview } from "./page-preview";
 import { ListingPreview } from "./listing-preview";
 import type { ListingsByCategory } from "@/components/cms/page-builder/block-renderer";
-import type { getPageById, getNearbyPages } from "@/lib/data/pages";
+import type { getPageById, getNearbyPages, ChildPageTile } from "@/lib/data/pages";
 import type { listMembers } from "@/lib/data/users";
 
 type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
@@ -28,6 +28,7 @@ export function EditorShell({
   isMember,
   listings,
   nearby,
+  childPages,
   members,
   canManageMembers,
 }: {
@@ -39,6 +40,7 @@ export function EditorShell({
   isMember: boolean;
   listings: ListingsByCategory;
   nearby: NearbyPage[];
+  childPages: ChildPageTile[];
   members: Awaited<ReturnType<typeof listMembers>>;
   canManageMembers: boolean;
 }) {
@@ -94,7 +96,7 @@ export function EditorShell({
 
       {mode === "preview" && (
         <div className="min-h-0 flex-1 overflow-y-auto bg-stone-100 py-6">
-          <PagePreview page={page} listings={listings} nearby={nearby} />
+          <PagePreview page={page} listings={listings} nearby={nearby} childPages={childPages} />
         </div>
       )}
 

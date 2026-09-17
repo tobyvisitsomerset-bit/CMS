@@ -24,8 +24,8 @@ const FOOTER_COLUMNS = [
     links: [
       { label: "Places To Stay", href: "/places-to-stay" },
       { label: "Things To Do", href: "/things-to-do" },
-      { label: "Food & Drink", href: "/food-and-drink" },
-      { label: "Festivals & Events", href: "/festivals-and-events" },
+      { label: "Food & Drink", href: "/things-to-do/food-drink-more" },
+      { label: "Festivals & Events", href: "/festivals-events" },
     ],
   },
   {
