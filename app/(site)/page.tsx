@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPageBySlug, getExploreAreaTiles, getTownOverviewPages } from "@/lib/data/pages";
-import { getListingsByCategory, getUpcomingEvents } from "@/lib/data/listings";
+import { getPageBySlug, getExploreAreaTiles, getTownOverviewPages, getFeaturedRealBusinesses, getUpcomingRealEvents } from "@/lib/data/pages";
 import { HomepageHero } from "@/components/site/homepage-hero";
 import { ExploreAreaTiles } from "@/components/site/explore-area-tiles";
 import { HomeTeaserSection } from "@/components/site/home-teaser-section";
 import { TownsTileRow } from "@/components/site/towns-tile-row";
 import { MapCta } from "@/components/site/map-cta";
-import { InteractiveEventCalendar } from "@/components/cms/page-builder/interactive-event-calendar";
-import { InteractiveListingGrid } from "@/components/cms/page-builder/interactive-listing-grid";
+import { PageTileGrid } from "@/components/site/page-tile-grid";
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageBySlug("home");
@@ -36,8 +34,8 @@ export default async function HomePage() {
   const [areaTiles, towns, events, accommodation] = await Promise.all([
     getExploreAreaTiles(),
     getTownOverviewPages(),
-    getUpcomingEvents(4),
-    getListingsByCategory("ACCOMMODATION", 4),
+    getUpcomingRealEvents("festivals-events", 4),
+    getFeaturedRealBusinesses("places-to-stay", 4),
   ]);
 
   return (
@@ -45,11 +43,11 @@ export default async function HomePage() {
       <HomepageHero heading={heroConfig.heading} subheading={heroConfig.subheading} ctaLabel={heroConfig.ctaLabel} />
       <div className="mx-auto max-w-6xl space-y-16 px-6 py-16">
         <ExploreAreaTiles tiles={areaTiles} />
-        <HomeTeaserSection title="On this week" seeAllHref="/festivals-and-events">
-          <InteractiveEventCalendar config={{}} events={events} />
+        <HomeTeaserSection title="On this week" seeAllHref="/festivals-events">
+          <PageTileGrid tiles={events} />
         </HomeTeaserSection>
         <HomeTeaserSection title="Somewhere to stay" seeAllHref="/places-to-stay">
-          <InteractiveListingGrid config={{}} items={accommodation} />
+          <PageTileGrid tiles={accommodation} />
         </HomeTeaserSection>
         <TownsTileRow towns={towns} />
         <MapCta />

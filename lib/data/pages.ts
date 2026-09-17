@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import type { MembershipTier, Page, PageStatus } from "@prisma/client";
-import { parseCustomFields } from "@/lib/kentico-item-fields";
+import { parseCustomFields, getBusinessInfo } from "@/lib/kentico-item-fields";
 
 export type PageTreeNode = Pick<
   Page,
@@ -124,13 +124,77 @@ export type ChildPageTile = { id: string; title: string; subtitle: string | null
 // Real child pages of a "folder"-style page (real children, no ContentBlocks,
 // no recognized business data) — lets PagePreview show a real section-index
 // grid instead of a bare title. Mirrors getNearbyPages' shape/exclusions.
+//
+// Filters out genuine dead-end tiles: a handful of the original hand-seeded
+// demo sub-pages (e.g. "Hotels", "B&Bs" under Places To Stay) still exist
+// with zero children, zero content, and zero business data of their own —
+// often sitting right next to the real Kentico folder of the same name,
+// which collided on slug at import time and got suffixed (e.g. "hotels-296").
+// A tile that leads to a genuinely empty page is worse than no tile.
 export async function getChildPages(parentId: string): Promise<ChildPageTile[]> {
-  return prisma.page.findMany({
+  const rows = await prisma.page.findMany({
     where: { parentId, status: "PUBLISHED", linkedPageId: null },
-    select: { id: true, title: true, subtitle: true, slug: true, heroImageUrl: true },
+    select: {
+      id: true,
+      title: true,
+      subtitle: true,
+      slug: true,
+      heroImageUrl: true,
+      bodyContent: true,
+      customFields: true,
+      _count: { select: { children: true, contentBlocks: true } },
+    },
     orderBy: { sortOrder: "asc" },
     take: 100,
   });
+  return rows
+    .filter((r) => {
+      const isDeadEnd =
+        r._count.children === 0 &&
+        r._count.contentBlocks === 0 &&
+        !r.bodyContent &&
+        !getBusinessInfo(parseCustomFields(r.customFields));
+      return !isDeadEnd;
+    })
+    .map(({ id, title, subtitle, slug, heroImageUrl }) => ({ id, title, subtitle, slug, heroImageUrl }));
+}
+
+export type FeaturedPageTile = { id: string; title: string; subtitle: string | null; slug: string; heroImageUrl: string | null };
+
+// Real accommodation businesses for the homepage teaser (Phase 9 — replaces
+// the mock Listing table). Prefers pages with a real photo (only ~3% of real
+// business pages have one) so the teaser looks its best, backfilling with
+// photo-less ones if not enough exist. No rating/price shown — that data
+// doesn't exist for real pages.
+export async function getFeaturedRealBusinesses(rootSlug: string, limit: number): Promise<FeaturedPageTile[]> {
+  const select = { id: true, title: true, subtitle: true, slug: true, heroImageUrl: true } as const;
+  const where = { status: "PUBLISHED" as const, slug: { startsWith: `${rootSlug}/` }, customFields: { contains: "sz.touristitem" } };
+  const withImage = await prisma.page.findMany({ where: { ...where, heroImageUrl: { not: null } }, select, take: limit, orderBy: { sortOrder: "asc" } });
+  if (withImage.length >= limit) return withImage;
+  const rest = await prisma.page.findMany({
+    where: { ...where, heroImageUrl: null, id: { notIn: withImage.map((p) => p.id) } },
+    select,
+    take: limit - withImage.length,
+    orderBy: { sortOrder: "asc" },
+  });
+  return [...withImage, ...rest];
+}
+
+// Real upcoming festivals/events, sorted by real ItemStartDate — parsed in
+// JS via getBusinessInfo(), same pattern as getPagesWithCoordinates below
+// (a JSON-string customFields column can't be filtered/sorted by date in SQL).
+export async function getUpcomingRealEvents(rootSlug: string, limit: number): Promise<FeaturedPageTile[]> {
+  const rows = await prisma.page.findMany({
+    where: { status: "PUBLISHED", slug: { startsWith: `${rootSlug}/` }, customFields: { contains: "sz.touristitem" } },
+    select: { id: true, title: true, subtitle: true, slug: true, heroImageUrl: true, customFields: true },
+  });
+  const now = Date.now();
+  return rows
+    .map((r) => ({ ...r, startDate: getBusinessInfo(parseCustomFields(r.customFields))?.startDate }))
+    .filter((r): r is typeof r & { startDate: string } => !!r.startDate && new Date(r.startDate).getTime() >= now)
+    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+    .slice(0, limit)
+    .map(({ id, title, subtitle, slug, heroImageUrl }) => ({ id, title, subtitle, slug, heroImageUrl }));
 }
 
 export type PageMapPin = {
