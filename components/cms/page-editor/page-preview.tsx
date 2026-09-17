@@ -28,11 +28,13 @@ export function PagePreview({
   listings,
   nearby,
   linkBase = "/cms",
+  initialSearchText = "",
 }: {
   page: PageDetail;
   listings: ListingsByCategory;
   nearby: NearbyPage[];
   linkBase?: string;
+  initialSearchText?: string;
 }) {
   if (page.contentBlocks.length > 0) {
     const blockList = page.contentBlocks.map((block) => (
@@ -44,7 +46,7 @@ export function PagePreview({
     return (
       <div className="mx-auto max-w-5xl overflow-hidden bg-white shadow-sm">
         {category ? (
-          <ListingDirectoryProvider items={listings[category]} category={category}>
+          <ListingDirectoryProvider items={listings[category]} category={category} initialSearchText={initialSearchText}>
             {blockList}
           </ListingDirectoryProvider>
         ) : (
@@ -91,9 +93,9 @@ export function PagePreview({
       <div className="space-y-4">
         {bodyContent ? (
           <p className="leading-relaxed whitespace-pre-wrap text-stone-600">{bodyContent}</p>
-        ) : (
+        ) : linkBase === "/cms" ? (
           <p className="italic text-stone-400">No body content yet. Add sections in the Design tab, or write body copy in Content.</p>
-        )}
+        ) : null}
 
         {gallery.length > 0 && (
           <div className="grid grid-cols-3 gap-2 pt-2">

@@ -21,8 +21,15 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   };
 }
 
-export default async function PublicPage({ params }: { params: Promise<Params> }) {
+export default async function PublicPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<Params>;
+  searchParams: Promise<{ q?: string }>;
+}) {
   const { slug } = await params;
+  const { q } = await searchParams;
   const page = await getPageBySlug(slug.join("/"));
   if (!page || page.status !== "PUBLISHED") notFound();
 
@@ -41,7 +48,7 @@ export default async function PublicPage({ params }: { params: Promise<Params> }
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
-      <PagePreview page={page} listings={listings} nearby={nearby} linkBase="" />
+      <PagePreview page={page} listings={listings} nearby={nearby} linkBase="" initialSearchText={q ?? ""} />
     </div>
   );
 }

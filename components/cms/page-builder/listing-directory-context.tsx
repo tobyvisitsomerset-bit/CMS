@@ -62,13 +62,17 @@ const PAGE_SIZE = 6;
 export function ListingDirectoryProvider({
   items,
   category,
+  initialSearchText = "",
   children,
 }: {
   items: ListingWithFacilities[];
   category: ListingCategory;
+  // Seeds the search box from a homepage search bar's real `?q=` param —
+  // only ever read once, on mount, like any other uncontrolled initial state.
+  initialSearchText?: string;
   children: React.ReactNode;
 }) {
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState(initialSearchText);
   const [activeFacilityIds, setActiveFacilityIds] = useState<Set<string>>(new Set());
   const [activeQuickFilters, setActiveQuickFilters] = useState<Set<QuickFilterKey>>(new Set());
   const [sortKey, setSortKey] = useState<SortKey>("recommended");

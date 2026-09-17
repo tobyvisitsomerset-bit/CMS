@@ -190,6 +190,67 @@ export const getSocialLinks = cache(async (): Promise<SocialLink[]> => {
   return links;
 });
 
+export type ExploreAreaTile = { label: string; href: string; count: number; description: string };
+
+// The homepage's "Explore by area" tile row — an honest substitute for the
+// mockup pack's "Somerset by mood" tiles, which would need a real Category/Tag
+// taxonomy that doesn't exist (both tables are empty). Real counts only: five
+// of these sections are genuinely Page-backed, but Food & Drink and Festivals
+// & Events currently have no real editorial Pages under them at all (just the
+// empty hub shell) — their real content lives in the mock Listing table, so
+// those two count Listing rows instead. Different source, same honesty.
+const EXPLORE_AREAS: {
+  label: string;
+  slug: string;
+  href: string;
+  source: "pages" | "listings";
+  noun: (n: number) => string;
+}[] = [
+  { label: "Places To Stay", slug: "places-to-stay", href: "/places-to-stay", source: "pages", noun: (n) => `${n} places to stay` },
+  { label: "Things To Do", slug: "things-to-do", href: "/things-to-do", source: "pages", noun: (n) => `${n} things to do` },
+  { label: "Food & Drink", slug: "food-and-drink", href: "/food-and-drink", source: "listings", noun: (n) => `${n} places to eat & drink` },
+  { label: "Festivals & Events", slug: "festivals-and-events", href: "/festivals-and-events", source: "listings", noun: (n) => `${n} upcoming events` },
+  { label: "Discover Somerset", slug: "discover-somerset", href: "/discover-somerset", source: "pages", noun: (n) => `${n} pages of inspiration` },
+  { label: "City of Bath", slug: "bath", href: "/bath", source: "pages", noun: (n) => `${n} pages about Bath` },
+  { label: "Taunton", slug: "taunton", href: "/taunton", source: "pages", noun: (n) => `${n} pages about Taunton` },
+];
+
+export const getExploreAreaTiles = cache(async (): Promise<ExploreAreaTile[]> => {
+  return Promise.all(
+    EXPLORE_AREAS.map(async (area) => {
+      const count =
+        area.source === "pages"
+          ? await prisma.page.count({
+              where: { status: "PUBLISHED", OR: [{ slug: area.slug }, { slug: { startsWith: `${area.slug}/` } }] },
+            })
+          : await prisma.listing.count({ where: { category: area.slug === "food-and-drink" ? "FOOD_DRINK" : "EVENT" } });
+      return { label: area.label, href: area.href, count, description: area.noun(count) };
+    }),
+  );
+});
+
+export type TownTile = { id: string; title: string; slug: string; heroImageUrl: string | null };
+
+const TOWN_PAGES = [
+  { name: "Bath", slug: "discover-somerset/popular-somerset-towns/bath" },
+  { name: "Wells", slug: "discover-somerset/popular-somerset-towns/visiting-wells-in-somerset" },
+  { name: "Glastonbury", slug: "discover-somerset/popular-somerset-towns/glastonbury" },
+  { name: "Weston-super-Mare", slug: "discover-somerset/popular-somerset-towns/visiting-weston-super-mare" },
+] as const;
+
+// Real town overview pages plus Taunton, which has no equivalent nested
+// overview — points at its real root /taunton page instead rather than a
+// fabricated URL.
+export const getTownOverviewPages = cache(async (): Promise<TownTile[]> => {
+  const rows = await prisma.page.findMany({
+    where: { slug: { in: TOWN_PAGES.map((t) => t.slug) }, status: "PUBLISHED" },
+    select: { id: true, title: true, slug: true, heroImageUrl: true },
+  });
+  const bySlug = new Map(rows.map((r) => [r.slug, r]));
+  const towns = TOWN_PAGES.map((t) => bySlug.get(t.slug)).filter((r): r is NonNullable<typeof r> => !!r);
+  return [...towns, { id: "taunton", title: "Taunton", slug: "taunton", heroImageUrl: null }];
+});
+
 export async function searchPages(query: string) {
   return prisma.page.findMany({
     where: { title: { contains: query, mode: "insensitive" } },
