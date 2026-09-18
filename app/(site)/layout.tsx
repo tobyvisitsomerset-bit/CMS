@@ -4,8 +4,9 @@ import { auth } from "@/lib/auth";
 import { NAV_LINKS } from "@/lib/site-nav";
 import { TripProvider } from "@/lib/trip-context";
 import { TripNavBadge } from "@/components/trip/trip-nav-badge";
-import { getSocialLinks } from "@/lib/data/pages";
+import { getSocialLinks, getNavMenus } from "@/lib/data/pages";
 import { SocialIcon } from "@/components/site/social-icon";
+import { NavMenuItem } from "@/components/site/nav-menu-item";
 
 // Real routes only — no invented sub-links (e.g. "Hotels"/"B&Bs" are filter
 // chips inside /places-to-stay, not separate pages, so they're correctly
@@ -42,7 +43,11 @@ const FOOTER_COLUMNS = [
 ];
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const [session, socialLinks] = await Promise.all([auth(), getSocialLinks()]);
+  const [session, socialLinks, navMenus] = await Promise.all([
+    auth(),
+    getSocialLinks(),
+    getNavMenus(NAV_LINKS.filter((l) => l.slug !== "interactive-map" && l.slug !== "my-trip").map((l) => l.slug)),
+  ]);
 
   return (
     <TripProvider>
@@ -60,16 +65,20 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
               />
             </Link>
             <nav className="hidden items-center gap-6 text-sm font-medium text-stone-600 sm:flex">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.slug}
-                  href={`/${link.slug}`}
-                  className="flex items-center gap-1.5 transition-colors hover:text-somerset-green"
-                >
-                  {link.label}
-                  {link.slug === "my-trip" && <TripNavBadge />}
-                </Link>
-              ))}
+              {NAV_LINKS.map((link) =>
+                link.slug === "my-trip" ? (
+                  <Link
+                    key={link.slug}
+                    href={`/${link.slug}`}
+                    className="flex items-center gap-1.5 rounded-full bg-damson px-4 py-1.5 text-white transition-colors hover:opacity-90"
+                  >
+                    {link.label}
+                    <TripNavBadge />
+                  </Link>
+                ) : (
+                  <NavMenuItem key={link.slug} label={link.label} href={`/${link.slug}`} items={navMenus[link.slug] ?? []} />
+                ),
+              )}
             </nav>
           </div>
         </header>

@@ -11,6 +11,9 @@ import {
   Map as MapIcon,
   Search,
   CalendarDays,
+  LayoutPanelTop,
+  Rows3,
+  Building2,
 } from "lucide-react";
 
 export type BlockType =
@@ -26,7 +29,10 @@ export type BlockType =
   | "map"
   | "listing_search"
   | "listing_grid"
-  | "event_calendar";
+  | "event_calendar"
+  | "explore_area_tiles"
+  | "real_teaser"
+  | "towns_row";
 
 export const BLOCK_DEFS: { type: BlockType; label: string; description: string; icon: typeof LayoutTemplate }[] = [
   { type: "hero", label: "Hero", description: "Full-width banner with heading and CTA", icon: LayoutTemplate },
@@ -42,6 +48,9 @@ export const BLOCK_DEFS: { type: BlockType; label: string; description: string; 
   { type: "listing_search", label: "Listing Search Bar", description: "Search + filter pills for a listing page", icon: Search },
   { type: "listing_grid", label: "Listing Grid & Map", description: "Cards + map for a category of listings", icon: LayoutGrid },
   { type: "event_calendar", label: "Event Calendar", description: "Events list with a calendar sidebar", icon: CalendarDays },
+  { type: "explore_area_tiles", label: "Explore Area Tiles", description: "Real-count tiles linking to site sections", icon: LayoutPanelTop },
+  { type: "real_teaser", label: "Real Content Teaser", description: "A few real businesses or events, with a \"See all\" link", icon: Rows3 },
+  { type: "towns_row", label: "Towns Row", description: "Tile row linking to real town pages", icon: Building2 },
 ];
 
 export function blockLabel(type: string): string {
@@ -51,7 +60,7 @@ export function blockLabel(type: string): string {
 export function defaultConfigFor(type: BlockType): Record<string, unknown> {
   switch (type) {
     case "hero":
-      return { heading: "New hero heading", subheading: "", imageUrl: "", ctaLabel: "", ctaUrl: "" };
+      return { heading: "New hero heading", subheading: "", imageUrl: "", ctaLabel: "", ctaUrl: "", showSearchBar: false };
     case "text":
       return { heading: "", body: "" };
     case "gallery":
@@ -75,6 +84,31 @@ export function defaultConfigFor(type: BlockType): Record<string, unknown> {
       return { category: "ACCOMMODATION", heading: "" };
     case "event_calendar":
       return { heading: "" };
+    case "explore_area_tiles":
+      return {
+        areas: [
+          { label: "Places To Stay", rootSlug: "places-to-stay", href: "/places-to-stay", noun: "places to stay" },
+          { label: "Things To Do", rootSlug: "things-to-do", href: "/things-to-do", noun: "things to do" },
+          { label: "Food & Drink", rootSlug: "things-to-do/food-drink-more", href: "/things-to-do/food-drink-more", noun: "places to eat & drink" },
+          { label: "Festivals & Events", rootSlug: "festivals-events", href: "/festivals-events", noun: "upcoming events" },
+          { label: "Discover Somerset", rootSlug: "discover-somerset", href: "/discover-somerset", noun: "pages of inspiration" },
+          { label: "City of Bath", rootSlug: "bath", href: "/bath", noun: "pages about Bath" },
+          { label: "Taunton", rootSlug: "taunton", href: "/taunton", noun: "pages about Taunton" },
+        ],
+      };
+    case "real_teaser":
+      return { title: "On this week", mode: "events", rootSlug: "festivals-events", limit: 4, seeAllHref: "/festivals-events" };
+    case "towns_row":
+      return {
+        title: "Towns & cities",
+        towns: [
+          { title: "City of Bath", slug: "discover-somerset/popular-somerset-towns/bath" },
+          { title: "Wells", slug: "discover-somerset/popular-somerset-towns/visiting-wells-in-somerset" },
+          { title: "Glastonbury", slug: "discover-somerset/popular-somerset-towns/glastonbury" },
+          { title: "Weston-super-Mare", slug: "discover-somerset/popular-somerset-towns/visiting-weston-super-mare" },
+          { title: "Taunton", slug: "taunton" },
+        ],
+      };
     default:
       return {};
   }

@@ -1,5 +1,5 @@
 import type { ListingCategory } from "@prisma/client";
-import { BlockRenderer, type ListingsByCategory } from "@/components/cms/page-builder/block-renderer";
+import { BlockRenderer, type ListingsByCategory, type RealBlockData } from "@/components/cms/page-builder/block-renderer";
 import { ListingDirectoryProvider } from "@/components/cms/page-builder/listing-directory-context";
 import { ListingDetailPreview } from "@/components/cms/page-editor/listing-detail-preview";
 import { Img } from "@/components/cms/page-builder/listing-ui";
@@ -30,6 +30,7 @@ export function PagePreview({
   listings,
   nearby,
   childPages = [],
+  blockData = {},
   linkBase = "/cms",
   initialSearchText = "",
 }: {
@@ -37,12 +38,19 @@ export function PagePreview({
   listings: ListingsByCategory;
   nearby: NearbyPage[];
   childPages?: ChildPageTile[];
+  blockData?: Record<string, RealBlockData>;
   linkBase?: string;
   initialSearchText?: string;
 }) {
   if (page.contentBlocks.length > 0) {
     const blockList = page.contentBlocks.map((block) => (
-      <BlockRenderer key={block.id} type={block.type} config={JSON.parse(block.config || "{}")} listings={listings} />
+      <BlockRenderer
+        key={block.id}
+        type={block.type}
+        config={JSON.parse(block.config || "{}")}
+        listings={listings}
+        realData={blockData[block.id]}
+      />
     ));
     const hasSearchBlock = page.contentBlocks.some((block) => block.type === "listing_search");
     const category = hasSearchBlock ? resolveDirectoryCategory(page.contentBlocks) : null;

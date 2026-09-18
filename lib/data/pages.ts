@@ -159,6 +159,23 @@ export async function getChildPages(parentId: string): Promise<ChildPageTile[]> 
     .map(({ id, title, subtitle, slug, heroImageUrl }) => ({ id, title, subtitle, slug, heroImageUrl }));
 }
 
+// Real per-nav-item children for the header mega-menu (Phase 10) — reuses
+// getChildPages verbatim. Only nav items whose real child count is small and
+// section-like (2-12) get a dropdown; a 0/1-child item has nothing worth
+// showing, and a very large count (e.g. Festivals & Events' hundreds of
+// direct real events, not clean categories) would make an unusable menu —
+// so those items simply stay plain links, no manual per-item allowlist needed.
+export async function getNavMenus(slugs: string[]): Promise<Record<string, ChildPageTile[]>> {
+  const roots = await prisma.page.findMany({ where: { slug: { in: slugs } }, select: { id: true, slug: true } });
+  const entries = await Promise.all(
+    roots.map(async (root): Promise<[string, ChildPageTile[]]> => {
+      const children = await getChildPages(root.id);
+      return [root.slug, children.length >= 2 && children.length <= 12 ? children : []];
+    }),
+  );
+  return Object.fromEntries(entries);
+}
+
 export type FeaturedPageTile = { id: string; title: string; subtitle: string | null; slug: string; heroImageUrl: string | null };
 
 // Real accommodation businesses for the homepage teaser (Phase 9 — replaces

@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 const TABS = [
   { key: "places-to-stay", label: "Stay" },
   { key: "things-to-do", label: "Things to do" },
-  { key: "food-and-drink", label: "Eat & drink" },
-  { key: "festivals-and-events", label: "What's on" },
+  { key: "things-to-do/food-drink-more", label: "Eat & drink" },
+  { key: "festivals-events", label: "What's on" },
 ] as const;
 
 // A real search — submits a genuine GET to the matching real hub page,

@@ -1,38 +1,82 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- config is arbitrary per-block-type JSON, typed loosely by design */
 
+import Link from "next/link";
 import { Star, MapPin } from "lucide-react";
 import type { ListingCategory } from "@prisma/client";
 import type { ListingWithFacilities } from "@/lib/data/listings";
+import type { ExploreAreaTile, FeaturedPageTile, TownTile } from "@/lib/data/pages";
 import { cn } from "@/lib/utils";
 import { Img } from "./listing-ui";
 import { ListingSearchBar } from "./listing-search-bar";
 import { InteractiveListingGrid } from "./interactive-listing-grid";
 import { InteractiveEventCalendar } from "./interactive-event-calendar";
+import { ExploreAreaTiles } from "@/components/site/explore-area-tiles";
+import { HomeTeaserSection } from "@/components/site/home-teaser-section";
+import { PageTileGrid } from "@/components/site/page-tile-grid";
+import { TownsTileRow } from "@/components/site/towns-tile-row";
+import { HomepageSearchBar } from "@/components/site/homepage-search-bar";
 
 export type ListingsByCategory = Record<ListingCategory, ListingWithFacilities[]>;
+
+// Shown in the Design tab's client-side live preview, which can't run the
+// Prisma queries these block types need — real data only resolves on the
+// actual server-rendered page/CMS preview, which always pass `realData`.
+function RealDataUnavailable() {
+  return (
+    <div className="p-8 text-sm text-neutral-400">Live preview isn&apos;t available for real data — save to see it update on the real page.</div>
+  );
+}
+
+// Real-data resolved for one block instance (Phase 10) — fetched once upfront
+// by the page route per block, same "fetch once, pass down flat" pattern
+// `listings` already established, just keyed per-block since each instance's
+// own config decides what it needs. See lib/data/block-data.ts.
+export type RealBlockData =
+  | { type: "explore_area_tiles"; tiles: ExploreAreaTile[] }
+  | { type: "real_teaser"; items: FeaturedPageTile[] }
+  | { type: "towns_row"; towns: TownTile[] };
 
 export function BlockRenderer({
   type,
   config,
   listings,
+  realData,
 }: {
   type: string;
   config: Record<string, any>;
   listings?: ListingsByCategory;
+  realData?: RealBlockData;
 }) {
   switch (type) {
     case "hero":
       return (
-        <div className="relative flex h-72 items-end overflow-hidden">
+        <div className="relative flex min-h-72 items-end overflow-hidden bg-gradient-to-br from-somerset-green to-deep-green">
           <Img src={config.imageUrl} alt="" className="absolute inset-0 h-full w-full" />
           <div className="absolute inset-0 bg-gradient-to-t from-deep-green/85 via-deep-green/30 to-transparent" />
-          <div className="relative p-8 text-white">
-            <h2 className="font-serif text-3xl font-black">{config.heading || "Hero heading"}</h2>
-            {config.subheading && <p className="mt-1 max-w-lg text-white/90">{config.subheading}</p>}
-            {config.ctaLabel && (
-              <span className="mt-3 inline-block rounded-md bg-white px-4 py-2 text-sm font-medium text-neutral-900">
-                {config.ctaLabel}
-              </span>
+          <div
+            className={cn(
+              "relative flex w-full flex-col gap-6 p-8 text-white",
+              config.showSearchBar && "lg:flex-row lg:items-center lg:justify-between",
+            )}
+          >
+            <div className={cn(config.showSearchBar && "max-w-xl")}>
+              <h2 className="font-serif text-3xl font-black">{config.heading || "Hero heading"}</h2>
+              {config.subheading && <p className="mt-1 max-w-lg text-white/90">{config.subheading}</p>}
+              {config.ctaLabel &&
+                (config.ctaUrl ? (
+                  <Link href={config.ctaUrl} className="mt-3 inline-block rounded-md bg-white px-4 py-2 text-sm font-medium text-neutral-900">
+                    {config.ctaLabel}
+                  </Link>
+                ) : (
+                  <span className="mt-3 inline-block rounded-md bg-white px-4 py-2 text-sm font-medium text-neutral-900">
+                    {config.ctaLabel}
+                  </span>
+                ))}
+            </div>
+            {config.showSearchBar && (
+              <div className="w-full lg:w-auto">
+                <HomepageSearchBar />
+              </div>
             )}
           </div>
         </div>
@@ -157,11 +201,16 @@ export function BlockRenderer({
         >
           <h3 className="text-2xl font-bold">{config.heading || "Call to action"}</h3>
           {config.subtext && <p className="mt-1 opacity-90">{config.subtext}</p>}
-          {config.buttonLabel && (
-            <span className="mt-4 inline-block rounded-md bg-purple-700 px-5 py-2 text-sm font-semibold text-white">
-              {config.buttonLabel}
-            </span>
-          )}
+          {config.buttonLabel &&
+            (config.buttonUrl ? (
+              <Link href={config.buttonUrl} className="mt-4 inline-block rounded-full bg-damson px-5 py-2 text-sm font-semibold text-white transition-colors hover:opacity-90">
+                {config.buttonLabel}
+              </Link>
+            ) : (
+              <span className="mt-4 inline-block rounded-full bg-damson px-5 py-2 text-sm font-semibold text-white">
+                {config.buttonLabel}
+              </span>
+            ))}
         </div>
       );
 
@@ -188,6 +237,38 @@ export function BlockRenderer({
     case "event_calendar": {
       const events = listings?.EVENT ?? [];
       return <InteractiveEventCalendar config={config} events={events} />;
+    }
+
+    case "explore_area_tiles": {
+      if (!realData) return <RealDataUnavailable />;
+      const tiles = realData.type === "explore_area_tiles" ? realData.tiles : [];
+      return (
+        <div className="p-8">
+          <ExploreAreaTiles tiles={tiles} />
+        </div>
+      );
+    }
+
+    case "real_teaser": {
+      if (!realData) return <RealDataUnavailable />;
+      const items = realData.type === "real_teaser" ? realData.items : [];
+      return (
+        <div className="p-8">
+          <HomeTeaserSection title={config.title || "Somerset"} seeAllHref={config.seeAllHref || "#"}>
+            <PageTileGrid tiles={items} />
+          </HomeTeaserSection>
+        </div>
+      );
+    }
+
+    case "towns_row": {
+      if (!realData) return <RealDataUnavailable />;
+      const towns = realData.type === "towns_row" ? realData.towns : [];
+      return (
+        <div className="p-8">
+          <TownsTileRow towns={towns} title={config.title} />
+        </div>
+      );
     }
 
     default:

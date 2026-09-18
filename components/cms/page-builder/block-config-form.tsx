@@ -78,6 +78,10 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
               <Input value={config.ctaUrl ?? ""} onChange={(e) => set({ ctaUrl: e.target.value })} />
             </Field>
           </div>
+          <div className="flex items-center gap-2">
+            <Switch checked={config.showSearchBar ?? false} onCheckedChange={(v) => set({ showSearchBar: v })} />
+            <Label>Show the homepage search bar (Stay / Things to do / Eat &amp; drink / What&apos;s on)</Label>
+          </div>
         </div>
       );
 
@@ -329,6 +333,95 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
           <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
         </Field>
       );
+
+    case "explore_area_tiles": {
+      const areas: any[] = config.areas ?? [];
+      const update = (i: number, patch: any) => set({ areas: areas.map((x, idx) => (idx === i ? { ...x, ...patch } : x)) });
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">
+            Each tile shows a real, live count of published pages under its root slug — counts are never entered manually.
+          </p>
+          <div className="space-y-3">
+            {areas.map((area, i) => (
+              <div key={i} className="space-y-2 rounded-lg border p-3">
+                <div className="flex justify-end">
+                  <Button type="button" size="icon" variant="ghost" onClick={() => set({ areas: areas.filter((_, idx) => idx !== i) })}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+                <Input placeholder="Label, e.g. Places To Stay" value={area.label ?? ""} onChange={(e) => update(i, { label: e.target.value })} />
+                <Input placeholder="Root slug, e.g. places-to-stay" value={area.rootSlug ?? ""} onChange={(e) => update(i, { rootSlug: e.target.value })} />
+                <Input placeholder="Link href, e.g. /places-to-stay" value={area.href ?? ""} onChange={(e) => update(i, { href: e.target.value })} />
+                <Input placeholder="Noun, e.g. places to stay" value={area.noun ?? ""} onChange={(e) => update(i, { noun: e.target.value })} />
+              </div>
+            ))}
+          </div>
+          <Button type="button" size="sm" variant="outline" onClick={() => set({ areas: [...areas, { label: "", rootSlug: "", href: "", noun: "" }] })}>
+            <Plus className="h-3.5 w-3.5" /> Add area
+          </Button>
+        </div>
+      );
+    }
+
+    case "real_teaser":
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">Live preview isn&apos;t available for real data — save to see it update on the real page.</p>
+          <Field label="Title">
+            <Input value={config.title ?? ""} onChange={(e) => set({ title: e.target.value })} />
+          </Field>
+          <Field label="Content type">
+            <Select value={config.mode ?? "events"} onValueChange={(v) => set({ mode: v })}>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="events">Real upcoming events</SelectItem>
+                <SelectItem value="businesses">Real businesses</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+          <Field label="Root slug to pull from">
+            <Input placeholder="e.g. festivals-events or places-to-stay" value={config.rootSlug ?? ""} onChange={(e) => set({ rootSlug: e.target.value })} />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="How many to show">
+              <Input type="number" min={1} max={12} value={config.limit ?? 4} onChange={(e) => set({ limit: Number(e.target.value) })} />
+            </Field>
+            <Field label={'"See all" link'}>
+              <Input value={config.seeAllHref ?? ""} onChange={(e) => set({ seeAllHref: e.target.value })} />
+            </Field>
+          </div>
+        </div>
+      );
+
+    case "towns_row": {
+      const towns: any[] = config.towns ?? [];
+      const update = (i: number, patch: any) => set({ towns: towns.map((x, idx) => (idx === i ? { ...x, ...patch } : x)) });
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">Live preview isn&apos;t available for real data — save to see it update on the real page.</p>
+          <Field label="Title">
+            <Input value={config.title ?? ""} onChange={(e) => set({ title: e.target.value })} />
+          </Field>
+          <div className="space-y-3">
+            {towns.map((town, i) => (
+              <div key={i} className="flex gap-2">
+                <Input placeholder="Display title, e.g. City of Bath" value={town.title ?? ""} onChange={(e) => update(i, { title: e.target.value })} />
+                <Input placeholder="Real page slug" value={town.slug ?? ""} onChange={(e) => update(i, { slug: e.target.value })} />
+                <Button type="button" size="icon" variant="ghost" onClick={() => set({ towns: towns.filter((_, idx) => idx !== i) })}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            ))}
+          </div>
+          <Button type="button" size="sm" variant="outline" onClick={() => set({ towns: [...towns, { title: "", slug: "" }] })}>
+            <Plus className="h-3.5 w-3.5" /> Add town
+          </Button>
+        </div>
+      );
+    }
 
     default:
       return <p className="text-sm text-neutral-400">No settings for this section type.</p>;

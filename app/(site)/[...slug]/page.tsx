@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getPageBySlug, getPageById, getNearbyPages, getChildPages } from "@/lib/data/pages";
 import { getAllListingsGrouped } from "@/lib/data/listings";
+import { resolveBlockData } from "@/lib/data/block-data";
 import { PagePreview } from "@/components/cms/page-editor/page-preview";
 
 type Params = { slug: string[] };
@@ -41,15 +42,16 @@ export default async function PublicPage({
     notFound();
   }
 
-  const [listings, nearby, childPages] = await Promise.all([
+  const [listings, nearby, childPages, blockData] = await Promise.all([
     getAllListingsGrouped(),
     getNearbyPages(page.id, page.parentId),
     page.contentBlocks.length === 0 ? getChildPages(page.id) : Promise.resolve([]),
+    resolveBlockData(page.contentBlocks),
   ]);
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
-      <PagePreview page={page} listings={listings} nearby={nearby} childPages={childPages} linkBase="" initialSearchText={q ?? ""} />
+      <PagePreview page={page} listings={listings} nearby={nearby} childPages={childPages} blockData={blockData} linkBase="" initialSearchText={q ?? ""} />
     </div>
   );
 }

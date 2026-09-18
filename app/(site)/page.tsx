@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPageBySlug, getExploreAreaTiles, getTownOverviewPages, getFeaturedRealBusinesses, getUpcomingRealEvents } from "@/lib/data/pages";
-import { HomepageHero } from "@/components/site/homepage-hero";
-import { ExploreAreaTiles } from "@/components/site/explore-area-tiles";
-import { HomeTeaserSection } from "@/components/site/home-teaser-section";
-import { TownsTileRow } from "@/components/site/towns-tile-row";
-import { MapCta } from "@/components/site/map-cta";
-import { PageTileGrid } from "@/components/site/page-tile-grid";
+import { getPageBySlug, getNearbyPages, getChildPages } from "@/lib/data/pages";
+import { getAllListingsGrouped } from "@/lib/data/listings";
+import { resolveBlockData } from "@/lib/data/block-data";
+import { PagePreview } from "@/components/cms/page-editor/page-preview";
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageBySlug("home");
@@ -22,36 +19,24 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// The homepage is a real Page, edited via the CMS's own Design tab like
+// every other page (Phase 10) — this route is a thin wrapper mirroring
+// [...slug]/page.tsx, just hardcoded to slug "home" since Next's catch-all
+// route can't match "/" itself.
 export default async function HomePage() {
   const page = await getPageBySlug("home");
   if (!page || page.status !== "PUBLISHED") notFound();
 
-  const heroBlock = page.contentBlocks.find((b) => b.type === "hero");
-  const heroConfig: { heading?: string; subheading?: string; ctaLabel?: string } = heroBlock
-    ? JSON.parse(heroBlock.config || "{}")
-    : {};
-
-  const [areaTiles, towns, events, accommodation] = await Promise.all([
-    getExploreAreaTiles(),
-    getTownOverviewPages(),
-    getUpcomingRealEvents("festivals-events", 4),
-    getFeaturedRealBusinesses("places-to-stay", 4),
+  const [listings, nearby, childPages, blockData] = await Promise.all([
+    getAllListingsGrouped(),
+    getNearbyPages(page.id, page.parentId),
+    page.contentBlocks.length === 0 ? getChildPages(page.id) : Promise.resolve([]),
+    resolveBlockData(page.contentBlocks),
   ]);
 
   return (
-    <>
-      <HomepageHero heading={heroConfig.heading} subheading={heroConfig.subheading} ctaLabel={heroConfig.ctaLabel} />
-      <div className="mx-auto max-w-6xl space-y-16 px-6 py-16">
-        <ExploreAreaTiles tiles={areaTiles} />
-        <HomeTeaserSection title="On this week" seeAllHref="/festivals-events">
-          <PageTileGrid tiles={events} />
-        </HomeTeaserSection>
-        <HomeTeaserSection title="Somewhere to stay" seeAllHref="/places-to-stay">
-          <PageTileGrid tiles={accommodation} />
-        </HomeTeaserSection>
-        <TownsTileRow towns={towns} />
-        <MapCta />
-      </div>
-    </>
+    <div className="mx-auto max-w-6xl px-6 py-10">
+      <PagePreview page={page} listings={listings} nearby={nearby} childPages={childPages} blockData={blockData} linkBase="" />
+    </div>
   );
 }

@@ -12,7 +12,7 @@ import { RoomsReviewsTab } from "./rooms-reviews-tab";
 import { PropertiesTab } from "./properties-tab";
 import { PagePreview } from "./page-preview";
 import { ListingPreview } from "./listing-preview";
-import type { ListingsByCategory } from "@/components/cms/page-builder/block-renderer";
+import type { ListingsByCategory, RealBlockData } from "@/components/cms/page-builder/block-renderer";
 import type { getPageById, getNearbyPages, ChildPageTile } from "@/lib/data/pages";
 import type { listMembers } from "@/lib/data/users";
 
@@ -29,6 +29,7 @@ export function EditorShell({
   listings,
   nearby,
   childPages,
+  blockData,
   members,
   canManageMembers,
 }: {
@@ -41,6 +42,7 @@ export function EditorShell({
   listings: ListingsByCategory;
   nearby: NearbyPage[];
   childPages: ChildPageTile[];
+  blockData: Record<string, RealBlockData>;
   members: Awaited<ReturnType<typeof listMembers>>;
   canManageMembers: boolean;
 }) {
@@ -96,7 +98,7 @@ export function EditorShell({
 
       {mode === "preview" && (
         <div className="min-h-0 flex-1 overflow-y-auto bg-stone-100 py-6">
-          <PagePreview page={page} listings={listings} nearby={nearby} childPages={childPages} />
+          <PagePreview page={page} listings={listings} nearby={nearby} childPages={childPages} blockData={blockData} />
         </div>
       )}
 

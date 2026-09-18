@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getPageById, getNearbyPages, getChildPages } from "@/lib/data/pages";
 import { getAllListingsGrouped } from "@/lib/data/listings";
+import { resolveBlockData } from "@/lib/data/block-data";
 import { listMembers } from "@/lib/data/users";
 import { canAccessPage, hasCapability, isAdmin } from "@/lib/permissions";
 import { EditorShell } from "@/components/cms/page-editor/editor-shell";
@@ -37,6 +38,7 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
   const listings = await getAllListingsGrouped();
   const nearby = await getNearbyPages(page.id, page.parentId);
   const childPages = page.contentBlocks.length === 0 ? await getChildPages(page.id) : [];
+  const blockData = await resolveBlockData(page.contentBlocks);
   const members = canManageMembers ? await listMembers() : [];
 
   return (
@@ -50,6 +52,7 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
       listings={listings}
       nearby={nearby}
       childPages={childPages}
+      blockData={blockData}
       members={members}
       canManageMembers={canManageMembers}
     />
