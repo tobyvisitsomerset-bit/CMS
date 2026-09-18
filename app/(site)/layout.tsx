@@ -1,12 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { NAV_LINKS } from "@/lib/site-nav";
 import { TripProvider } from "@/lib/trip-context";
-import { TripNavBadge } from "@/components/trip/trip-nav-badge";
-import { getSocialLinks, getNavMenus } from "@/lib/data/pages";
+import { getSocialLinks, getAllMegaMenus } from "@/lib/data/pages";
 import { SocialIcon } from "@/components/site/social-icon";
-import { NavMenuItem } from "@/components/site/nav-menu-item";
+import { SiteHeader } from "@/components/site/site-header";
 
 // Real routes only — no invented sub-links (e.g. "Hotels"/"B&Bs" are filter
 // chips inside /places-to-stay, not separate pages, so they're correctly
@@ -43,45 +41,16 @@ const FOOTER_COLUMNS = [
 ];
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const [session, socialLinks, navMenus] = await Promise.all([
+  const [session, socialLinks, megaMenus] = await Promise.all([
     auth(),
     getSocialLinks(),
-    getNavMenus(NAV_LINKS.filter((l) => l.slug !== "interactive-map" && l.slug !== "my-trip").map((l) => l.slug)),
+    getAllMegaMenus(NAV_LINKS.filter((l) => l.slug !== "interactive-map" && l.slug !== "my-trip").map((l) => l.slug)),
   ]);
 
   return (
     <TripProvider>
       <div className="flex min-h-screen flex-col bg-white">
-        <header className="sticky top-0 z-30 border-b border-stone-200 bg-white/95 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-            <Link href="/" className="flex items-center">
-              <Image
-                src="/logo-visit-somerset.png"
-                alt="Visit Somerset"
-                width={419}
-                height={113}
-                priority
-                className="h-9 w-auto"
-              />
-            </Link>
-            <nav className="hidden items-center gap-6 text-sm font-medium text-stone-600 sm:flex">
-              {NAV_LINKS.map((link) =>
-                link.slug === "my-trip" ? (
-                  <Link
-                    key={link.slug}
-                    href={`/${link.slug}`}
-                    className="flex items-center gap-1.5 rounded-full bg-damson px-4 py-1.5 text-white transition-colors hover:opacity-90"
-                  >
-                    {link.label}
-                    <TripNavBadge />
-                  </Link>
-                ) : (
-                  <NavMenuItem key={link.slug} label={link.label} href={`/${link.slug}`} items={navMenus[link.slug] ?? []} />
-                ),
-              )}
-            </nav>
-          </div>
-        </header>
+        <SiteHeader navLinks={NAV_LINKS} megaMenus={megaMenus} />
 
         <main className="flex-1">{children}</main>
 

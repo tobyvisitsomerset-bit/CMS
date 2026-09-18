@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { MembershipTier, Page, PageStatus } from "@prisma/client";
 import { parseCustomFields, getBusinessInfo } from "@/lib/kentico-item-fields";
@@ -159,20 +160,86 @@ export async function getChildPages(parentId: string): Promise<ChildPageTile[]> 
     .map(({ id, title, subtitle, slug, heroImageUrl }) => ({ id, title, subtitle, slug, heroImageUrl }));
 }
 
-// Real per-nav-item children for the header mega-menu (Phase 10) — reuses
-// getChildPages verbatim. Only nav items whose real child count is small and
-// section-like (2-12) get a dropdown; a 0/1-child item has nothing worth
-// showing, and a very large count (e.g. Festivals & Events' hundreds of
-// direct real events, not clean categories) would make an unusable menu —
-// so those items simply stay plain links, no manual per-item allowlist needed.
-export async function getNavMenus(slugs: string[]): Promise<Record<string, ChildPageTile[]>> {
-  const roots = await prisma.page.findMany({ where: { slug: { in: slugs } }, select: { id: true, slug: true } });
-  const entries = await Promise.all(
-    roots.map(async (root): Promise<[string, ChildPageTile[]]> => {
-      const children = await getChildPages(root.id);
-      return [root.slug, children.length >= 2 && children.length <= 12 ? children : []];
-    }),
-  );
+export type MegaMenuLink = { id: string; title: string; slug: string };
+export type MegaMenuColumn = { heading: string | null; links: MegaMenuLink[] };
+
+// A real "Month YYYY" title (e.g. "September 2026") — festivals-events'
+// real Kentico month-folders are named exactly this way.
+const MONTH_YEAR_RE = /^[A-Z][a-z]+ \d{4}$/;
+
+// Real 2-level mega-menu (Phase 11), matching the live visitsomerset.co.uk
+// site's actual structure (confirmed by inspecting it directly, not guessed):
+// each of a nav root's real children either becomes its own named column
+// (when IT has 2+ real children of its own — Discover Somerset/Things To Do)
+// or, when it doesn't (Places To Stay's children are business-count-scale,
+// not category-scale), falls into one shared flat/unnamed column — exactly
+// Phase 10's original flat treatment, now just one case of this rule rather
+// than the only case.
+async function buildMegaMenuColumns(rootId: string, rootSlug: string): Promise<MegaMenuColumn[]> {
+  const children = await getChildPages(rootId);
+  if (children.length === 0) return [];
+
+  const flatLinks: MegaMenuLink[] = [];
+  const namedColumns: MegaMenuColumn[] = [];
+
+  for (const child of children) {
+    // Festivals & Events special case: a real month folder has dozens of
+    // real events (too many to list) — the live site curates one per month
+    // instead of skipping it entirely. We can't fabricate an editorial
+    // "featured" pick, so we use an honest, automatic substitute: the
+    // chronologically-earliest real dated event in that month.
+    if (rootSlug === "festivals-events" && MONTH_YEAR_RE.test(child.title)) {
+      const rows = await prisma.page.findMany({
+        where: { parentId: child.id, status: "PUBLISHED", linkedPageId: null },
+        select: { id: true, title: true, slug: true, customFields: true },
+      });
+      const dated = rows
+        .map((r) => ({ ...r, startDate: getBusinessInfo(parseCustomFields(r.customFields))?.startDate }))
+        .filter((r): r is typeof r & { startDate: string } => !!r.startDate)
+        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+      if (dated.length > 0) {
+        namedColumns.push({ heading: child.title, links: [{ id: dated[0].id, title: dated[0].title, slug: dated[0].slug }] });
+      } else {
+        flatLinks.push(child);
+      }
+      continue;
+    }
+
+    // Upper bound matters as much as the lower one: Places To Stay's
+    // children (Hotels, Self Catering, ...) have real grandchildren too, but
+    // at business-count scale (62-135) rather than category scale (2-20) —
+    // confirmed directly by testing, without this cap they'd wrongly drill
+    // into individual business listings instead of staying flat like the
+    // real site does.
+    const grandchildren = await getChildPages(child.id);
+    if (grandchildren.length >= 2 && grandchildren.length <= 20) {
+      namedColumns.push({ heading: child.title, links: grandchildren.slice(0, 15) });
+    } else {
+      flatLinks.push(child);
+    }
+  }
+
+  const columns = [...namedColumns];
+  if (flatLinks.length > 0) columns.push({ heading: null, links: flatLinks });
+  return columns;
+}
+
+// The header renders on every page, and this does several nested queries per
+// nav item — real, slowly-changing structural data, so it's cached across
+// requests (not just within one, unlike this file's other cache() wrappers)
+// for 5 minutes rather than re-run on every single page load.
+const getCachedMegaMenu = unstable_cache(
+  async (slug: string): Promise<MegaMenuColumn[]> => {
+    const root = await prisma.page.findUnique({ where: { slug }, select: { id: true } });
+    if (!root) return [];
+    return buildMegaMenuColumns(root.id, slug);
+  },
+  ["mega-menu"],
+  { revalidate: 300 },
+);
+
+export async function getAllMegaMenus(slugs: string[]): Promise<Record<string, MegaMenuColumn[]>> {
+  const entries = await Promise.all(slugs.map(async (slug) => [slug, await getCachedMegaMenu(slug)] as const));
   return Object.fromEntries(entries);
 }
 
