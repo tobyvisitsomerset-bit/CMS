@@ -27,6 +27,12 @@ export default async function WidgetDetailPage({ params }: { params: Promise<{ t
       </div>
 
       <dl className="divide-y rounded-lg border bg-white text-sm">
+        {widget.kentico && (
+          <div className="grid grid-cols-[10rem_1fr] gap-4 p-4">
+            <dt className="text-neutral-500">Kentico 11 equivalent</dt>
+            <dd>{widget.kentico}</dd>
+          </div>
+        )}
         <div className="grid grid-cols-[10rem_1fr] gap-4 p-4">
           <dt className="text-neutral-500">When to use it</dt>
           <dd>{widget.whenToUse}</dd>

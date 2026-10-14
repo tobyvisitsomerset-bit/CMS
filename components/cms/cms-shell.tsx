@@ -3,6 +3,8 @@
 import { usePathname } from "next/navigation";
 import { ContentTree } from "@/components/cms/content-tree/content-tree";
 import { TopBar } from "@/components/cms/top-bar";
+import { ModeSwitch } from "@/components/cms/page-editor/mode-switch";
+import { EditorModeProvider } from "@/components/cms/editor-mode-context";
 import type { PageTreeNode, TreeCapabilities } from "@/components/cms/content-tree/types";
 
 function findNode(nodes: PageTreeNode[], id: string): PageTreeNode | null {
@@ -15,9 +17,9 @@ function findNode(nodes: PageTreeNode[], id: string): PageTreeNode | null {
 }
 
 const NAMED_ROUTES: Record<string, string> = {
-  media: "Media Library",
-  approvals: "Approvals",
-  enquiries: "Enquiries",
+  media: "Media libraries",
+  approvals: "Pending pages",
+  enquiries: "Forms",
   widgets: "Widgets",
 };
 
@@ -44,22 +46,27 @@ export function CmsShell({
   const activeNode = segment && !namedRoute ? findNode(tree, segment) : null;
 
   return (
-    <div className="flex h-screen flex-col">
-      <TopBar
-        user={user}
-        canManageMedia={canManageMedia}
-        canReviewWorkflow={canReviewWorkflow}
-        breadcrumb={[
-          { label: "Pages", href: "/cms" },
-          { label: namedRoute ?? (activeNode ? activeNode.title : "(root)") },
-        ]}
-      />
-      <div className="flex min-h-0 flex-1">
-        <aside className="flex w-72 shrink-0 flex-col border-r bg-neutral-50">
-          <ContentTree tree={tree} activePageId={namedRoute ? undefined : segment} caps={caps} flatMember={flatMember} />
-        </aside>
-        <main className="min-w-0 flex-1 overflow-y-auto bg-neutral-100">{children}</main>
+    <EditorModeProvider>
+      <div className="flex h-screen flex-col bg-[#e9ffff] font-[family-name:'Segoe_UI',Helvetica,Verdana,Arial,sans-serif] text-[14px] text-[#262524]">
+        <TopBar
+          user={user}
+          canManageMedia={canManageMedia}
+          canReviewWorkflow={canReviewWorkflow}
+          breadcrumb={[
+            { label: "Pages", href: "/cms" },
+            { label: namedRoute ?? (activeNode ? activeNode.title : "Visit Somerset") },
+          ]}
+        />
+        <div className="flex min-h-0 flex-1">
+          <aside className="flex w-[260px] shrink-0 flex-col border-r border-[#c9c9c4] bg-[#e9ffff]">
+            <div className="bg-[#d9d9d6] px-3 py-2">
+              <ModeSwitch />
+            </div>
+            <ContentTree tree={tree} activePageId={namedRoute ? undefined : segment} caps={caps} flatMember={flatMember} />
+          </aside>
+          <main className="min-w-0 flex-1 overflow-y-auto bg-[#e9ffff]">{children}</main>
+        </div>
       </div>
-    </div>
+    </EditorModeProvider>
   );
 }

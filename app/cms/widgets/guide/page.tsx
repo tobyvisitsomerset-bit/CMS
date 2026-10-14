@@ -50,6 +50,11 @@ export default async function WidgetGuidePage() {
                   <h3 className="text-lg font-semibold">{w.name}</h3>
                   <p className="mt-1 text-neutral-700">{w.summary}</p>
                   <ul className="mt-2 space-y-0.5 text-sm text-neutral-700">
+                    {w.kentico && (
+                      <li>
+                        <strong>Kentico 11 equivalent:</strong> {w.kentico}
+                      </li>
+                    )}
                     <li>
                       <strong>When to use it:</strong> {w.whenToUse}
                     </li>

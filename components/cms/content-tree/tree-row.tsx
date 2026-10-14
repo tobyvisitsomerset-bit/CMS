@@ -7,11 +7,11 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { toast } from "sonner";
 import {
-  ChevronRight,
+  ArrowRight,
   Folder,
   FileText,
   GripVertical,
-  Link2,
+  Minus,
   MoreHorizontal,
   Plus,
   Copy,
@@ -111,8 +111,8 @@ export function TreeRow({
           render={
             <div
               className={cn(
-                "group flex items-center gap-1 rounded-md pr-1 text-sm hover:bg-neutral-100",
-                isActive && "bg-somerset-green/10 text-somerset-green font-medium",
+                "group flex items-center gap-1 pr-1 text-[14px] text-[#262524] hover:bg-[#d4ecec]",
+                isActive && "bg-[#d5eaea]",
               )}
               style={{ paddingLeft: depth * 14 + 4 }}
             />
@@ -133,22 +133,24 @@ export function TreeRow({
 
         <button
           onClick={onToggle}
-          className={cn("flex h-5 w-5 items-center justify-center text-neutral-400", !hasChildren && "invisible")}
+          className={cn("flex h-5 w-5 items-center justify-center", !hasChildren && "invisible")}
+          aria-label={expanded ? "Collapse" : "Expand"}
         >
-          <ChevronRight className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-90")} />
+          <span className="flex size-[13px] items-center justify-center rounded-full bg-[#0e6c9c] text-white">
+            {expanded ? <Minus className="size-2.5" strokeWidth={4} /> : <Plus className="size-2.5" strokeWidth={4} />}
+          </span>
         </button>
 
         {node.isSection ? (
-          <Folder className="h-3.5 w-3.5 shrink-0 text-neutral-400" />
-        ) : node.linkedPageId ? (
-          <Link2 className="h-3.5 w-3.5 shrink-0 text-neutral-400" />
+          <Folder className="h-4 w-4 shrink-0 fill-[#4a4a4a] text-[#4a4a4a]" />
         ) : (
-          <FileText className="h-3.5 w-3.5 shrink-0 text-neutral-400" />
+          <FileText className="h-4 w-4 shrink-0 fill-[#4a4a4a] text-white" />
         )}
+        {node.linkedPageId && <ArrowRight className="h-3 w-3 shrink-0 text-[#4a4a4a]" />}
 
         <Link
           href={`/cms/${node.id}`}
-          className={cn("flex-1 truncate py-1.5", node.linkedPageId && "text-neutral-500 italic")}
+          className={cn("flex-1 truncate py-1", node.linkedPageId && "italic")}
           title={node.linkedPageId ? "Linked page — opens the original for editing" : undefined}
         >
           {node.title}

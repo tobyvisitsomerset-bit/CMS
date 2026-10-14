@@ -1,18 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { SpellCheck } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { toast } from "sonner";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { ModeSwitch, type EditorMode } from "./mode-switch";
-import { StatusActions } from "./status-actions";
+import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useEditorMode } from "@/components/cms/editor-mode-context";
+import { EditorToolbar } from "./editor-toolbar";
 import { PageTab } from "./page-tab";
 import { FormTab } from "./form-tab";
 import { DesignTab } from "./design-tab";
 import { RoomsReviewsTab } from "./rooms-reviews-tab";
 import { MasterPageTab } from "./master-page-tab";
-import { PropertiesPanel } from "./properties-panel";
+import { PropertiesPanel, PROPERTIES_MENU, type PropertiesSection } from "./properties-panel";
 import { PagePreview } from "./page-preview";
 import { ListingPreview } from "./listing-preview";
 import type { ListingsByCategory, RealBlockData } from "@/components/cms/page-builder/block-renderer";
@@ -22,10 +27,18 @@ import type { listMembers } from "@/lib/data/users";
 import type { MasterSettings } from "@/lib/data/site-settings";
 
 type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
+type Tab = "page" | "design" | "form" | "master" | "properties";
 
-// Kentico 11's page editor: Edit / Preview / Listing modes; in Edit mode the
-// tabs Page · Design · Form · Master page · Properties, with Save, Archive,
-// Spell check and "Send notification emails" in the toolbar.
+const TABS: { key: Exclude<Tab, "properties">; label: string }[] = [
+  { key: "page", label: "Page" },
+  { key: "design", label: "Design" },
+  { key: "form", label: "Form" },
+  { key: "master", label: "Master page" },
+];
+
+// Kentico 11's page editor: the grey tab bar (Page · Design · Form ·
+// Master page · Properties ▾), then the toolbar, then the working area. The
+// Edit / Preview / Listing switch sits above the content tree.
 export function EditorShell({
   page,
   canEdit,
@@ -55,8 +68,9 @@ export function EditorShell({
   canManageMembers: boolean;
   master: MasterSettings;
 }) {
-  const [mode, setMode] = useState<EditorMode>("edit");
-  const [tab, setTab] = useState("page");
+  const { mode, setMode } = useEditorMode();
+  const [tab, setTab] = useState<Tab>("page");
+  const [section, setSection] = useState<PropertiesSection>("general");
   const [notify, setNotify] = useState(true);
   const [openBlockId, setOpenBlockId] = useState<string | null>(null);
 
@@ -76,60 +90,71 @@ export function EditorShell({
     toast("Spell check is on — misspelled words are underlined in the fields on this tab.");
   }
 
+  const toolbar = (showSave: boolean) => (
+    <EditorToolbar
+      pageId={page.id}
+      status={page.status}
+      canEdit={canEdit}
+      canPublish={canPublish}
+      canArchive={canArchive}
+      canReview={canReview}
+      isMember={isMember}
+      notify={notify}
+      onNotifyChange={setNotify}
+      onSave={save}
+      onSpellCheck={spellCheck}
+      showSave={showSave}
+      onViewLive={() => {
+        // A DRAFT/ARCHIVED page has no real public URL to open — fall
+        // back to the internal Preview mode rather than a 404.
+        if (page.status === "PUBLISHED") {
+          window.open(`${window.location.origin}/${page.slug}`, "_blank", "noopener,noreferrer");
+        } else {
+          setMode("preview");
+        }
+      }}
+    />
+  );
+
+  const tabBtn = (active: boolean) =>
+    cn(
+      "h-[26px] px-4 text-[14px] leading-none transition-colors",
+      active ? "bg-[#e9ffff] text-[#262524]" : "text-[#262524] hover:bg-[#e2e2de]",
+    );
+
   return (
     <div className="flex h-full flex-col">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-white px-6 py-3">
-        <div className="flex items-center gap-3">
-          <ModeSwitch mode={mode} onChange={setMode} />
-          {mode === "edit" && canEdit && (
-            <>
-              <Button size="sm" className="bg-somerset-green text-white hover:bg-somerset-green/90" onClick={save}>
-                Save
-              </Button>
-              <Button size="sm" variant="outline" onClick={spellCheck}>
-                <SpellCheck className="h-4 w-4" /> Spell check
-              </Button>
-              <label className="flex cursor-pointer items-center gap-2 text-sm text-neutral-600">
-                <input
-                  type="checkbox"
-                  checked={notify}
-                  onChange={(e) => setNotify(e.target.checked)}
-                  className="size-4 accent-[#3d685b]"
-                />
-                Send notification emails
-              </label>
-            </>
-          )}
-        </div>
-        <StatusActions
-          pageId={page.id}
-          status={page.status}
-          canPublish={canPublish}
-          canArchive={canArchive}
-          canReview={canReview}
-          isMember={isMember}
-          notify={notify}
-          onViewLive={() => {
-            // A DRAFT/ARCHIVED page has no real public URL to open — fall
-            // back to the internal Preview tab rather than a 404.
-            if (page.status === "PUBLISHED") {
-              window.open(`${window.location.origin}/${page.slug}`, "_blank", "noopener,noreferrer");
-            } else {
-              setMode("preview");
-            }
-          }}
-        />
-      </div>
-
       {mode === "edit" && (
-        <Tabs value={tab} onValueChange={setTab} className="flex min-h-0 flex-1 flex-col gap-0">
-          <TabsList className="w-full justify-start rounded-none border-b bg-white px-4">
-            <TabsTrigger value="page">Page</TabsTrigger>
-            <TabsTrigger value="design">Design</TabsTrigger>
-            <TabsTrigger value="form">Form</TabsTrigger>
-            <TabsTrigger value="master">Master page</TabsTrigger>
-            <TabsTrigger value="properties">Properties</TabsTrigger>
-          </TabsList>
+        <>
+          <div className="flex shrink-0 items-end gap-0 bg-[#d9d9d6] px-3 pt-2">
+            {TABS.map((t) => (
+              <button key={t.key} type="button" onClick={() => setTab(t.key)} className={tabBtn(tab === t.key)}>
+                {t.label}
+              </button>
+            ))}
+            <DropdownMenu>
+              <DropdownMenuTrigger className={cn(tabBtn(tab === "properties"), "flex items-center gap-1")}>
+                Properties <ChevronDown className="h-3 w-3 fill-current" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-44 rounded-none border-0 bg-[#403f3e] p-0 text-white">
+                {PROPERTIES_MENU.map((m) => (
+                  <DropdownMenuItem
+                    key={m.key}
+                    className="rounded-none px-4 py-2 text-[14px] text-white focus:bg-[#5a5958] focus:text-white"
+                    onClick={() => {
+                      setSection(m.key);
+                      setTab("properties");
+                    }}
+                  >
+                    {m.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {tab !== "master" && toolbar(tab === "form" || (tab === "properties" && section === "metadata"))}
+
           <div className="min-h-0 flex-1 overflow-y-auto">
             {tab === "page" && (
               <PageTab
@@ -149,6 +174,7 @@ export function EditorShell({
             {tab === "design" && (
               <DesignTab
                 pageId={page.id}
+                pageSlug={page.slug}
                 initialBlocks={page.contentBlocks}
                 readOnly={!canEdit}
                 listings={listings}
@@ -159,28 +185,34 @@ export function EditorShell({
             {tab === "form" && (
               <div>
                 <FormTab page={page} readOnly={!canEdit} />
-                <div className="mx-auto max-w-4xl px-6 pb-10">
-                  <h2 className="mb-2 border-t pt-6 text-sm font-semibold text-neutral-700">Rooms &amp; reviews</h2>
+                <div className="mx-auto max-w-5xl px-6 pb-10">
+                  <h2 className="mb-2 bg-[#e5e5e5] px-4 py-2 text-[15px] font-semibold text-[#262524]">Rooms &amp; reviews</h2>
                   <RoomsReviewsTab page={page} readOnly={!canEdit} />
                 </div>
               </div>
             )}
             {tab === "master" && <MasterPageTab initial={master} readOnly={!canPublish} />}
             {tab === "properties" && (
-              <PropertiesPanel page={page} members={members} canManageMembers={canManageMembers} canEdit={canEdit} />
+              <PropertiesPanel
+                section={section}
+                page={page}
+                members={members}
+                canManageMembers={canManageMembers}
+                canEdit={canEdit}
+              />
             )}
           </div>
-        </Tabs>
+        </>
       )}
 
       {mode === "preview" && (
-        <div className="min-h-0 flex-1 overflow-y-auto bg-stone-100 py-6">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-[#e9ffff]">
           <PagePreview page={page} listings={listings} extras={extras} childPages={childPages} blockData={blockData} />
         </div>
       )}
 
       {mode === "listing" && (
-        <div className="min-h-0 flex-1 overflow-y-auto bg-neutral-100">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-[#e9ffff]">
           <ListingPreview page={page} />
         </div>
       )}

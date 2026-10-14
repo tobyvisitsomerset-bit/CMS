@@ -59,6 +59,7 @@ export function PagePreview({
           realData={blockData[block.id]}
           pageSlug={page.slug}
           pageTitle={page.title}
+          pageId={page.id}
         />
       );
       return wrapBlock ? <div key={block.id}>{wrapBlock(block.id, block.type, node)}</div> : node;

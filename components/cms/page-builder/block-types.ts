@@ -20,6 +20,13 @@ import {
   ShoppingBag,
   Compass,
   Handshake,
+  PanelsTopLeft,
+  MousePointerClick,
+  Mail,
+  Sparkles,
+  Megaphone as AdIcon,
+  MessageSquare,
+  ThumbsUp,
 } from "lucide-react";
 
 export type BlockType =
@@ -45,7 +52,14 @@ export type BlockType =
   | "producer_shop"
   | "experiences_hub"
   | "map_band"
-  | "partners_row";
+  | "partners_row"
+  | "content_panel"
+  | "button"
+  | "newsletter_bar"
+  | "spotlight"
+  | "ad_bar"
+  | "contact_form"
+  | "page_cards";
 
 export const BLOCK_DEFS: { type: BlockType; label: string; description: string; icon: typeof LayoutTemplate }[] = [
   { type: "hero", label: "Hero", description: "Full-width banner with heading and CTA", icon: LayoutTemplate },
@@ -71,6 +85,13 @@ export const BLOCK_DEFS: { type: BlockType; label: string; description: string; 
   { type: "experiences_hub", label: "Experiences Hub", description: "Book-direct experiences landing section with search and live listings", icon: Compass },
   { type: "map_band", label: "Map Band", description: "Green band with copy and a live map of real places", icon: MapIcon },
   { type: "partners_row", label: "Partners Row", description: "Row of real featured members (highest tier first)", icon: Handshake },
+  { type: "content_panel", label: "Content panel", description: "Text, images, video or cards in a choice of layouts", icon: PanelsTopLeft },
+  { type: "button", label: "Button", description: "A single call-to-action button", icon: MousePointerClick },
+  { type: "newsletter_bar", label: "Newsletter signup bar", description: "Email signup strip", icon: Mail },
+  { type: "spotlight", label: "Spotlight", description: "Large image panel with a headline and button", icon: Sparkles },
+  { type: "ad_bar", label: "Ad bar", description: "A banner image that links out", icon: AdIcon },
+  { type: "contact_form", label: "Contact form", description: "A simple message form", icon: MessageSquare },
+  { type: "page_cards", label: "You might like", description: "Cards linking to real pages you choose", icon: ThumbsUp },
 ];
 
 export function blockIcon(type: string): typeof LayoutTemplate {
@@ -146,6 +167,32 @@ export function defaultConfigFor(type: BlockType): Record<string, unknown> {
       };
     case "listing_explorer":
       return { kind: "accommodation", rootSlug: "places-to-stay", title: "", intro: "", noun: "places to stay", parentLabel: "", parentHref: "" };
+    case "content_panel":
+      return {
+        layout: "text_image",
+        eyebrow: "",
+        heading: "Panel heading",
+        body: "",
+        imageUrl: "",
+        imageAlt: "",
+        videoUrl: "",
+        ctaLabel: "",
+        ctaUrl: "",
+        background: "white",
+        items: [],
+      };
+    case "button":
+      return { label: "Find out more", url: "", style: "purple", align: "left" };
+    case "newsletter_bar":
+      return { heading: "The Somerset newsletter", text: "What's on, where to stay and a little folklore. Monthly, never more." };
+    case "spotlight":
+      return { eyebrow: "", heading: "Spotlight heading", text: "", imageUrl: "", ctaLabel: "", ctaUrl: "" };
+    case "ad_bar":
+      return { imageUrl: "", url: "", alt: "", label: "Advertisement" };
+    case "contact_form":
+      return { heading: "Get in touch", intro: "" };
+    case "page_cards":
+      return { title: "You might like", slugs: [] };
     case "map_band":
       return {
         eyebrow: "Everything, everywhere",

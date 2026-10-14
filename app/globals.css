@@ -141,3 +141,19 @@
     @apply font-sans;
   }
 }
+
+/* Kentico 11 administration skin — pale-cyan form controls inside the CMS
+   page editor (scoped, so the public site and shadcn defaults are untouched). */
+.k11-form input[type="text"],
+.k11-form input[type="email"],
+.k11-form input[type="url"],
+.k11-form input[type="number"],
+.k11-form input[type="date"],
+.k11-form input[type="tel"],
+.k11-form textarea,
+.k11-form select,
+.k11-form [data-slot="select-trigger"] {
+  background-color: #f1fafa;
+  border: 1px solid #c3d2d2;
+  border-radius: 2px !important;
+}

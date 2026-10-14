@@ -30,10 +30,12 @@ export function PropertiesTab({
   page,
   members,
   canManage,
+  section = "general",
 }: {
   page: PageDetail;
   members: Member[];
   canManage: boolean;
+  section?: "general" | "security";
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -79,7 +81,7 @@ export function PropertiesTab({
     return (
       <div className="mx-auto max-w-2xl space-y-6 p-6">
         <div>
-          <h2 className="mb-3 font-semibold text-neutral-800">Ownership</h2>
+          <h2 className="mb-3 bg-[#e5e5e5] px-4 py-2 text-[15px] font-semibold text-[#262524]">General</h2>
           {metadata}
         </div>
       </div>
@@ -149,11 +151,16 @@ export function PropertiesTab({
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 p-6">
-      <div>
-        <h2 className="mb-3 font-semibold text-neutral-800">Ownership</h2>
-        {metadata}
-      </div>
+      {section === "general" && (
+        <div>
+          <h2 className="mb-3 bg-[#e5e5e5] px-4 py-2 text-[15px] font-semibold text-[#262524]">General</h2>
+          {metadata}
+        </div>
+      )}
 
+      {section === "security" && (
+        <>
+      <h2 className="bg-[#e5e5e5] px-4 py-2 text-[15px] font-semibold text-[#262524]">Security</h2>
       <div className="space-y-1.5">
         <Label>Assigned member</Label>
         <Select value={selected} onValueChange={handleAssign} disabled={pending}>
@@ -211,6 +218,11 @@ export function PropertiesTab({
         </form>
       )}
 
+        </>
+      )}
+
+      {section === "general" && (
+        <>
       <div className="space-y-1.5">
         <Label>Visibility</Label>
         <Select value={visibility} onValueChange={handleVisibility} disabled={pending}>
@@ -236,6 +248,8 @@ export function PropertiesTab({
           placeholder="e.g. Content Team, Places to Stay"
         />
       </div>
+        </>
+      )}
     </div>
   );
 }

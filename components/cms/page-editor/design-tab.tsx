@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -13,7 +13,7 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, arrayMove, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Pencil, Trash2, Plus, BookmarkPlus } from "lucide-react";
+import { GripVertical, Menu, Pencil, Trash2, BookmarkPlus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,11 +46,13 @@ type Block = { id: string; type: string; sortOrder: number; config: string };
 
 function SortableBlockRow({
   block,
+  readOnly,
   onEdit,
   onDelete,
   listings,
 }: {
   block: Block;
+  readOnly: boolean;
   onEdit: () => void;
   onDelete: () => void;
   listings: ListingsByCategory;
@@ -62,30 +64,45 @@ function SortableBlockRow({
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`group overflow-hidden rounded-lg border bg-white ${isDragging ? "opacity-50" : ""}`}
+      className={`border border-[#c9c9c4] bg-white ${isDragging ? "opacity-50" : ""}`}
     >
-      <div className="flex items-center gap-2 border-b bg-neutral-50 px-3 py-1.5">
-        <button {...attributes} {...listeners} className="cursor-grab text-neutral-300 hover:text-neutral-500 active:cursor-grabbing">
-          <GripVertical className="h-4 w-4" />
-        </button>
-        <span className="text-xs font-medium text-neutral-500">{blockLabel(block.type)}</span>
+      <div className="flex items-center gap-2 bg-[#f0f0ee] px-2 py-1">
+        {!readOnly && (
+          <button {...attributes} {...listeners} className="cursor-grab text-[#7a7a76] hover:text-[#262524] active:cursor-grabbing" aria-label="Drag to reorder">
+            <GripVertical className="h-4 w-4" />
+          </button>
+        )}
+        <span className="text-[13px] font-semibold text-[#262524]">{blockLabel(block.type)}</span>
         <div className="flex-1" />
-        <Button size="icon-sm" variant="ghost" onClick={onEdit} title="Edit widget properties">
-          <Pencil className="h-3.5 w-3.5" />
-        </Button>
-        <Button size="icon-sm" variant="ghost" onClick={onDelete} title="Remove widget">
-          <Trash2 className="h-3.5 w-3.5" />
-        </Button>
+        {!readOnly && (
+          <>
+            <button type="button" onClick={onEdit} title="Widget properties" className="rounded p-1 text-[#4a4947] hover:bg-[#dededa]">
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+            <button type="button" onClick={onDelete} title="Remove widget" className="rounded p-1 text-[#4a4947] hover:bg-[#dededa]">
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          </>
+        )}
       </div>
-      <div className="pointer-events-none max-h-64 overflow-hidden text-[13px]">
+      <div className="pointer-events-none max-h-40 overflow-hidden text-[13px]">
         <BlockRenderer type={block.type} config={config} listings={listings} />
       </div>
     </div>
   );
 }
 
+function templateNameFor(blocks: Block[]) {
+  if (blocks.some((b) => b.type === "listing_explorer")) return "Listing page";
+  if (blocks.some((b) => b.type === "hero" && b.config.includes('"showSearchBar":true'))) return "Home";
+  return "Widgets page";
+}
+
+// Kentico 11's Design view: the page template's zones as coloured bars, and
+// the widget list on the right to pick from.
 export function DesignTab({
   pageId,
+  pageSlug,
   initialBlocks,
   readOnly,
   listings,
@@ -93,6 +110,7 @@ export function DesignTab({
   onOpened,
 }: {
   pageId: string;
+  pageSlug: string;
   initialBlocks: Block[];
   readOnly: boolean;
   listings: ListingsByCategory;
@@ -113,7 +131,8 @@ export function DesignTab({
   const [templateName, setTemplateName] = useState("");
   const [templateDescription, setTemplateDescription] = useState("");
   const [pending, startTransition] = useTransition();
-  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [category, setCategory] = useState<string>("All widgets");
+  const [query, setQuery] = useState("");
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
 
   useEffect(() => {
@@ -181,43 +200,127 @@ export function DesignTab({
     });
   }
 
+  const visibleWidgets = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return WIDGETS.filter((w) => !w.legacy)
+      .filter((w) => category === "All widgets" || w.category === category)
+      .filter((w) => !q || `${w.name} ${w.summary}`.toLowerCase().includes(q));
+  }, [category, query]);
+
   return (
-    <div className="mx-auto max-w-4xl space-y-4 p-6">
+    <div className="flex min-h-full">
+      {/* Zones */}
+      <div className="min-w-0 flex-1 p-4">
+        <div className="bg-[#84b45c] px-3 py-2 text-[14px] text-[#1f2a14]">
+          <strong>/{pageSlug}</strong> - page template: <strong>{templateNameFor(blocks)}</strong>
+        </div>
+
+        <div className="mt-1">
+          <div className="flex items-center gap-2 bg-[#efb24c] px-3 py-2 text-[14px] text-[#3b2a07]">
+            <Menu className="h-4 w-4" /> ZoneMain
+          </div>
+          <div className="bg-[#e4e4e2] px-3 py-3 text-[13px] text-[#6a6966]">
+            The page&apos;s own content (title, summary, address, prices…) — set in the <strong>Form</strong> tab.
+          </div>
+        </div>
+
+        <div className="mt-1">
+          <div className="flex items-center gap-2 bg-[#efb24c] px-3 py-2 text-[14px] text-[#3b2a07]">
+            <Menu className="h-4 w-4" /> (Editor) ZoneWidgets
+            <div className="flex-1" />
+            {!readOnly && blocks.length > 0 && (
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() => setTemplateDialogOpen(true)}
+                className="flex items-center gap-1 text-[12px] font-semibold text-[#3b2a07] hover:underline"
+              >
+                <BookmarkPlus className="h-3.5 w-3.5" /> Save as template
+              </button>
+            )}
+          </div>
+          <div className="space-y-2 bg-[#e4e4e2] p-2">
+            {blocks.length === 0 ? (
+              <p className="px-2 py-6 text-center text-[13px] text-[#6a6966]">
+                No widgets in this zone yet. Pick one from the widget list on the right to add it.
+              </p>
+            ) : (
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
+                  <div className="space-y-2">
+                    {blocks.map((block) => (
+                      <SortableBlockRow
+                        key={block.id}
+                        block={block}
+                        readOnly={readOnly}
+                        onEdit={() => openEdit(block)}
+                        onDelete={() => setConfirmDeleteId(block.id)}
+                        listings={listings}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Widget list */}
       {!readOnly && (
-        <div className="flex justify-end gap-2">
-          {blocks.length > 0 && (
-            <Button size="sm" variant="outline" disabled={pending} onClick={() => setTemplateDialogOpen(true)}>
-              <BookmarkPlus className="h-4 w-4" /> Save as template
-            </Button>
-          )}
-          <Button size="sm" disabled={pending} onClick={() => setGalleryOpen(true)}>
-            <Plus className="h-4 w-4" /> Add widget
-          </Button>
-        </div>
-      )}
-
-      <p className="text-xs font-semibold tracking-wide text-neutral-400 uppercase">Zone: Main content</p>
-
-      {blocks.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-12 text-center text-sm text-neutral-400">
-          No widgets in this zone yet. Use “Add widget” to start building this page.
-        </div>
-      ) : (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
-            <div className="space-y-3">
-              {blocks.map((block) => (
-                <SortableBlockRow
-                  key={block.id}
-                  block={block}
-                  onEdit={() => openEdit(block)}
-                  onDelete={() => setConfirmDeleteId(block.id)}
-                  listings={listings}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
+        <aside className="w-[300px] shrink-0 border-l border-[#c9c9c4] bg-[#e9ffff] p-3">
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="mb-2 w-full border border-[#b3b3ae] bg-white px-2 py-1.5 text-[13px]"
+          >
+            <option>All widgets</option>
+            {WIDGET_CATEGORIES.filter((c) => c.name !== "Legacy").map((c) => (
+              <option key={c.name}>{c.name}</option>
+            ))}
+          </select>
+          <div className="relative mb-3">
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search widgets..."
+              className="w-full border border-[#b3b3ae] bg-white px-2 py-1.5 pr-7 text-[13px]"
+            />
+            <Search className="pointer-events-none absolute top-1/2 right-2 h-3.5 w-3.5 -translate-y-1/2 text-[#6a6966]" />
+          </div>
+          <div className="space-y-4">
+            {WIDGET_CATEGORIES.filter((c) => c.name !== "Legacy").map((cat) => {
+              const items = visibleWidgets.filter((w) => w.category === cat.name);
+              if (items.length === 0) return null;
+              return (
+                <div key={cat.name}>
+                  <p className="mb-1 text-[16px] font-semibold text-[#1d6a89]">{cat.name}</p>
+                  <ul>
+                    {items.map((w) => {
+                      const def = BLOCK_DEFS.find((d) => d.type === w.type);
+                      const Icon = def?.icon;
+                      return (
+                        <li key={w.type}>
+                          <button
+                            type="button"
+                            disabled={pending}
+                            onClick={() => handleAdd(w.type)}
+                            title={w.summary}
+                            className="flex w-full items-center gap-2 px-1 py-1.5 text-left text-[13px] text-[#262524] hover:bg-[#d4ecec]"
+                          >
+                            {Icon && <Icon className="h-4 w-4 shrink-0 text-[#4a4947]" />}
+                            <span className="truncate">{w.name}</span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
+            {visibleWidgets.length === 0 && <p className="text-[13px] text-[#6a6966]">No widgets match.</p>}
+          </div>
+        </aside>
       )}
 
       <Sheet open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
@@ -235,64 +338,12 @@ export function DesignTab({
             )}
           </div>
           <SheetFooter>
-            <Button onClick={saveEdit} disabled={pending}>
+            <Button onClick={saveEdit} disabled={pending} className="rounded-none bg-[#467c07] text-white hover:bg-[#3b6a05]">
               {pending ? "Saving..." : "Save widget"}
             </Button>
           </SheetFooter>
         </SheetContent>
       </Sheet>
-
-      <Dialog open={galleryOpen} onOpenChange={setGalleryOpen}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Select widget</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-5 py-1">
-            {WIDGET_CATEGORIES.filter((c) => c.name !== "Legacy").map((cat) => {
-              const items = WIDGETS.filter((w) => w.category === cat.name && !w.legacy);
-              if (items.length === 0) return null;
-              return (
-                <div key={cat.name}>
-                  <p className="text-sm font-semibold text-neutral-800">{cat.name}</p>
-                  <p className="mb-2 text-xs text-neutral-500">{cat.blurb}</p>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {items.map((w) => {
-                      const def = BLOCK_DEFS.find((d) => d.type === w.type);
-                      const Icon = def?.icon;
-                      return (
-                        <button
-                          key={w.type}
-                          type="button"
-                          onClick={() => {
-                            setGalleryOpen(false);
-                            handleAdd(w.type);
-                          }}
-                          className="flex gap-3 rounded-lg border p-3 text-left transition-colors hover:border-somerset-green hover:bg-somerset-green/5"
-                        >
-                          {Icon && (
-                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-somerset-green/10 text-somerset-green">
-                              <Icon className="h-4 w-4" />
-                            </span>
-                          )}
-                          <span className="min-w-0">
-                            <span className="block text-sm font-medium text-neutral-900">{w.name}</span>
-                            <span className="line-clamp-2 block text-xs text-neutral-500">{w.summary}</span>
-                            {w.data === "Live data from the site" && (
-                              <span className="mt-1 inline-block rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] text-neutral-600">
-                                Fills itself from the live site
-                              </span>
-                            )}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </DialogContent>
-      </Dialog>
 
       <AlertDialog open={!!confirmDeleteId} onOpenChange={(open) => !open && setConfirmDeleteId(null)}>
         <AlertDialogContent>
@@ -315,26 +366,14 @@ export function DesignTab({
           <div className="space-y-3 py-2">
             <div className="space-y-1.5">
               <Label htmlFor="template-name">Template name</Label>
-              <Input
-                id="template-name"
-                autoFocus
-                value={templateName}
-                onChange={(e) => setTemplateName(e.target.value)}
-                placeholder="e.g. Business detail"
-              />
+              <Input id="template-name" autoFocus value={templateName} onChange={(e) => setTemplateName(e.target.value)} placeholder="e.g. Business detail" />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="template-description">Description (optional)</Label>
-              <Textarea
-                id="template-description"
-                rows={2}
-                value={templateDescription}
-                onChange={(e) => setTemplateDescription(e.target.value)}
-              />
+              <Textarea id="template-description" rows={2} value={templateDescription} onChange={(e) => setTemplateDescription(e.target.value)} />
             </div>
             <p className="text-xs text-neutral-400">
-              This saves the current widgets as a reusable starting point — future edits to this page won&apos;t
-              change the template.
+              This saves the current widgets as a reusable starting point — future edits to this page won&apos;t change the template.
             </p>
           </div>
           <DialogFooter>
@@ -347,17 +386,6 @@ export function DesignTab({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {blocks.length > 0 && (
-        <div className="pt-4">
-          <p className="mb-2 text-xs font-medium text-neutral-400 uppercase tracking-wide">Preview of this zone</p>
-          <div className="overflow-hidden rounded-lg border bg-white">
-            {blocks.map((block) => (
-              <BlockRenderer key={block.id} type={block.type} config={JSON.parse(block.config || "{}")} listings={listings} />
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

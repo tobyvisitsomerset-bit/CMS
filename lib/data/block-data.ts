@@ -159,6 +159,16 @@ export async function resolveBlockData(
               items: await getFeaturedRealBusinesses(config.rootSlug || "things-to-do/food-drink-more", Number(config.limit) || 6),
             },
           ];
+        case "page_cards": {
+          const slugs: string[] = (config.slugs ?? []).map((x: string) => String(x).trim().replace(/^\/+|\/+$/g, "")).filter(Boolean);
+          const rows = await prisma.page.findMany({
+            where: { slug: { in: slugs }, status: "PUBLISHED" },
+            select: { id: true, title: true, subtitle: true, slug: true, heroImageUrl: true },
+          });
+          const order = new Map(slugs.map((s, i) => [s, i]));
+          rows.sort((a, b) => (order.get(a.slug) ?? 0) - (order.get(b.slug) ?? 0));
+          return [block.id, { type: "page_cards", cards: rows }];
+        }
         case "producer_shop":
           return [block.id, { type: "producer_shop", producers: await getShopProducers(config.rootSlug || "virtual-highstreet") }];
         case "experiences_hub":

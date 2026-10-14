@@ -1,120 +1,164 @@
 "use client";
 
-import { useState } from "react";
 import { Copy, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import { PropertiesTab } from "./properties-tab";
 import { SeoTab } from "./seo-tab";
+import { MediaTab } from "./media-tab";
 import { VersionHistorySheet } from "./version-history-sheet";
 import { AuditLogSheet } from "./audit-log-sheet";
+import { widgetByType } from "@/lib/widget-catalogue";
 import type { getPageById } from "@/lib/data/pages";
 import type { listMembers } from "@/lib/data/users";
 
 type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
 
-const SUB_TABS = [
+// The sections under Kentico 11's Properties menu. Each one is a full page in
+// the editor area; the menu itself lives in the tab bar.
+export type PropertiesSection = "general" | "urls" | "template" | "metadata" | "workflow" | "versions" | "security" | "attachments";
+
+export const PROPERTIES_MENU: { key: PropertiesSection; label: string }[] = [
   { key: "general", label: "General" },
   { key: "urls", label: "URLs" },
+  { key: "template", label: "Template" },
   { key: "metadata", label: "Metadata" },
+  { key: "workflow", label: "Workflow" },
   { key: "versions", label: "Versions" },
-  { key: "history", label: "History" },
-] as const;
+  { key: "security", label: "Security" },
+  { key: "attachments", label: "Attachments" },
+];
 
-type SubTab = (typeof SUB_TABS)[number]["key"];
+function Box({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mx-auto max-w-3xl p-6">
+      <h2 className="mb-3 bg-[#e5e5e5] px-4 py-2 text-[15px] font-semibold text-[#262524]">{title}</h2>
+      <div className="space-y-4 px-2 text-sm">{children}</div>
+    </div>
+  );
+}
 
-// Kentico 11's Properties tab and its sub-tabs. General holds ownership,
-// visibility and who the page is assigned to; Metadata is the SEO and social
-// sharing settings with their live Google/social preview.
 export function PropertiesPanel({
+  section,
   page,
   members,
   canManageMembers,
   canEdit,
 }: {
+  section: PropertiesSection;
   page: PageDetail;
   members: Awaited<ReturnType<typeof listMembers>>;
   canManageMembers: boolean;
   canEdit: boolean;
 }) {
-  const [sub, setSub] = useState<SubTab>("general");
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const publicUrl = `${origin}/${page.slug}`;
 
-  return (
-    <div>
-      <div className="flex gap-1 border-b bg-neutral-50 px-4">
-        {SUB_TABS.map((t) => (
-          <button
-            key={t.key}
-            type="button"
-            onClick={() => setSub(t.key)}
-            className={cn(
-              "-mb-px border-b-2 px-3 py-2 text-sm font-medium",
-              sub === t.key ? "border-somerset-green text-somerset-green" : "border-transparent text-neutral-500 hover:text-neutral-800",
+  if (section === "general" || section === "security") {
+    return <PropertiesTab page={page} members={members} canManage={canManageMembers} section={section} />;
+  }
+
+  if (section === "metadata") return <SeoTab page={page} readOnly={!canEdit} />;
+  if (section === "attachments") return <MediaTab page={page} />;
+
+  if (section === "urls") {
+    return (
+      <Box title="URLs">
+        <div>
+          <p className="text-xs tracking-wide text-neutral-500 uppercase">Public address</p>
+          <div className="mt-1 flex items-center gap-2">
+            <code className="flex-1 border bg-white px-3 py-2">{publicUrl}</code>
+            <button
+              type="button"
+              onClick={() => {
+                void navigator.clipboard.writeText(publicUrl);
+                toast("Address copied");
+              }}
+              className="border bg-white p-2 text-neutral-600 hover:bg-neutral-100"
+              title="Copy"
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+            {page.status === "PUBLISHED" && (
+              <a href={publicUrl} target="_blank" rel="noreferrer" className="border bg-white p-2 text-neutral-600 hover:bg-neutral-100" title="Open">
+                <ExternalLink className="h-4 w-4" />
+              </a>
             )}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {sub === "general" && <PropertiesTab page={page} members={members} canManage={canManageMembers} />}
-
-      {sub === "metadata" && <SeoTab page={page} readOnly={!canEdit} />}
-
-      {sub === "urls" && (
-        <div className="mx-auto max-w-2xl space-y-5 p-6 text-sm">
-          <div>
-            <p className="text-xs tracking-wide text-neutral-400 uppercase">Public address</p>
-            <div className="mt-1 flex items-center gap-2">
-              <code className="flex-1 rounded border bg-white px-3 py-2">{publicUrl}</code>
-              <button
-                type="button"
-                onClick={() => {
-                  void navigator.clipboard.writeText(publicUrl);
-                  toast("Address copied");
-                }}
-                className="rounded border p-2 text-neutral-500 hover:bg-neutral-100"
-                title="Copy"
-              >
-                <Copy className="h-4 w-4" />
-              </button>
-              {page.status === "PUBLISHED" && (
-                <a href={publicUrl} target="_blank" rel="noreferrer" className="rounded border p-2 text-neutral-500 hover:bg-neutral-100" title="Open">
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              )}
-            </div>
-            {page.status !== "PUBLISHED" && <p className="mt-1 text-xs text-neutral-400">This page isn&apos;t published yet, so the address won&apos;t load.</p>}
           </div>
+          {page.status !== "PUBLISHED" && <p className="mt-1 text-xs text-neutral-500">This page isn&apos;t published yet, so the address won&apos;t load.</p>}
+        </div>
+        <div>
+          <p className="text-xs tracking-wide text-neutral-500 uppercase">URL path</p>
+          <p className="mt-1">/{page.slug}</p>
+          <p className="mt-1 text-xs text-neutral-500">To change it, edit <strong>Slug</strong> in the Form tab, under General.</p>
+        </div>
+      </Box>
+    );
+  }
+
+  if (section === "template") {
+    const kinds = page.contentBlocks.map((b) => widgetByType(b.type)?.name ?? b.type);
+    const template =
+      page.contentBlocks.length > 0
+        ? page.contentBlocks.some((b) => b.type === "listing_explorer")
+          ? "Listing page"
+          : page.contentBlocks.some((b) => b.type === "hero" && b.config.includes("showSearchBar\":true"))
+            ? "Home"
+            : "Widgets page"
+        : page.customFields?.includes("ItemMapLatitude") || page.customFields?.includes("ItemStartDate")
+          ? "Business / event detail"
+          : "Content page";
+    return (
+      <Box title="Template">
+        <p>
+          <span className="text-neutral-500">Page template:</span> <strong>{template}</strong>
+        </p>
+        <p className="text-neutral-600">
+          The template decides the page&apos;s zones. Widgets pages have <strong>ZoneMain</strong> (set from the Form tab) and an editor zone{" "}
+          <strong>(Editor) ZoneWidgets</strong> where widgets are added in the Design tab.
+        </p>
+        {kinds.length > 0 && (
           <div>
-            <p className="text-xs tracking-wide text-neutral-400 uppercase">URL slug</p>
-            <p className="mt-1 text-neutral-700">/{page.slug}</p>
-            <p className="mt-1 text-xs text-neutral-400">To change it, edit <strong>Slug</strong> in the Form tab, under General.</p>
+            <p className="text-xs tracking-wide text-neutral-500 uppercase">Widgets on this page</p>
+            <ol className="mt-1 list-decimal pl-5">
+              {kinds.map((k, i) => (
+                <li key={i}>{k}</li>
+              ))}
+            </ol>
           </div>
-          {page.canonicalUrl && (
-            <div>
-              <p className="text-xs tracking-wide text-neutral-400 uppercase">Canonical URL (set in Metadata)</p>
-              <p className="mt-1 text-neutral-700">{page.canonicalUrl}</p>
-            </div>
-          )}
-        </div>
-      )}
+        )}
+      </Box>
+    );
+  }
 
-      {sub === "versions" && (
-        <div className="mx-auto max-w-2xl space-y-3 p-6 text-sm text-neutral-600">
-          <p>Every save keeps a version of the page. You can compare and roll back to an earlier one.</p>
-          <VersionHistorySheet pageId={page.id} canEdit={canEdit} />
-        </div>
-      )}
+  if (section === "versions") {
+    return (
+      <Box title="Versions">
+        <p className="text-neutral-600">Every save keeps a version of the page. Compare and roll back to an earlier one.</p>
+        <VersionHistorySheet pageId={page.id} canEdit={canEdit} />
+      </Box>
+    );
+  }
 
-      {sub === "history" && (
-        <div className="mx-auto max-w-2xl space-y-3 p-6 text-sm text-neutral-600">
-          <p>Who did what to this page and when — saves, publishing, archiving and assignments.</p>
-          <AuditLogSheet pageId={page.id} />
-        </div>
-      )}
-    </div>
+  // workflow
+  return (
+    <Box title="Workflow">
+      <p>
+        <span className="text-neutral-500">Current step:</span>{" "}
+        <strong>
+          {page.status === "PUBLISHED"
+            ? "Published"
+            : page.status === "PENDING_APPROVAL"
+              ? "Pending approval"
+              : page.status === "ARCHIVED"
+                ? "Archived"
+                : "Draft"}
+        </strong>
+      </p>
+      <p className="text-neutral-600">
+        Draft → (members: Submit for review → Pending approval) → Published → Archived. Use the buttons above the form to move the page along.
+      </p>
+      <p className="text-neutral-600">History of who did what to this page:</p>
+      <AuditLogSheet pageId={page.id} />
+    </Box>
   );
 }

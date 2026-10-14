@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { ChevronDown, Plus, X } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -64,25 +64,31 @@ function Section({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="overflow-hidden rounded-md border">
+    <div>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between bg-neutral-100 px-4 py-2 text-left text-sm font-semibold text-neutral-700 hover:bg-neutral-200"
+        className="flex w-full items-center gap-2 bg-[#e5e5e5] px-4 py-2 text-left text-[16px] font-semibold text-[#262524] hover:bg-[#dcdcd9]"
       >
+        {open ? (
+          <Minus className="h-4 w-4 text-[#4a4947]" strokeWidth={3} />
+        ) : (
+          <Plus className="h-4 w-4 text-[#4a4947]" strokeWidth={3} />
+        )}
         {title}
-        <ChevronDown className={`h-4 w-4 text-neutral-400 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
-      {open && <div className="grid grid-cols-2 gap-4 p-4">{children}</div>}
+      {open && <div className="space-y-3 px-2 py-4">{children}</div>}
     </div>
   );
 }
 
-function Field({ label, full, children }: { label: string; full?: boolean; children: React.ReactNode }) {
+// Kentico 11 form row: the label sits in a right-aligned blue column, the
+// control to its right.
+function Field({ label, children }: { label: string; full?: boolean; children: React.ReactNode }) {
   return (
-    <div className={`space-y-1.5 ${full ? "col-span-2" : ""}`}>
-      <Label>{label}</Label>
-      {children}
+    <div className="grid grid-cols-1 items-start gap-1 sm:grid-cols-[13rem_minmax(0,1fr)] sm:gap-4">
+      <Label className="block text-[13px] font-semibold text-[#26688a] sm:pt-2 sm:text-right">{label}:</Label>
+      <div className="max-w-2xl space-y-1">{children}</div>
     </div>
   );
 }
@@ -169,7 +175,7 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
   void dirty;
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="mx-auto max-w-4xl p-6">
+    <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="k11-form mx-auto max-w-5xl p-6">
       <fieldset disabled={readOnly || pending} className="space-y-4 disabled:opacity-60">
         <Section title="General">
           <Field label="Membership">

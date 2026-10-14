@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MediaPickerField } from "@/components/cms/media-library/media-picker-field";
 import type { BlockType } from "./block-types";
+import { PANEL_LAYOUTS } from "@/components/site/content-panel";
 
 type Config = Record<string, any>;
 type SetConfig = (updater: (c: Config) => Config) => void;
@@ -536,6 +537,223 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
           </div>
         </div>
       );
+
+    case "content_panel": {
+      const items: any[] = config.items ?? [];
+      const update = (i: number, patch: any) => set({ items: items.map((x, idx) => (idx === i ? { ...x, ...patch } : x)) });
+      const cardLayout = ["text_cards", "feature_cards", "highlight_cards", "simple_grid", "carousel"].includes(config.layout);
+      const imageLayout = ["text_image", "image_text", "text_image_split", "image_text_split", "video_text"].includes(config.layout);
+      return (
+        <div className="space-y-4">
+          <Field label="Layout">
+            <Select value={config.layout ?? "text_image"} onValueChange={(v) => set({ layout: v })}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PANEL_LAYOUTS.map((l) => (
+                  <SelectItem key={l.key} value={l.key}>
+                    {l.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+          <Field label="Background">
+            <Select value={config.background ?? "white"} onValueChange={(v) => set({ background: v })}>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="white">White</SelectItem>
+                <SelectItem value="grey">Light grey</SelectItem>
+                <SelectItem value="green">Somerset green</SelectItem>
+                <SelectItem value="purple">Damson purple</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+          <Field label="Eyebrow (small line above the heading)">
+            <Input value={config.eyebrow ?? ""} onChange={(e) => set({ eyebrow: e.target.value })} />
+          </Field>
+          <Field label="Heading">
+            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          </Field>
+          <Field label="Text (blank line between paragraphs)">
+            <Textarea rows={5} value={config.body ?? ""} onChange={(e) => set({ body: e.target.value })} />
+          </Field>
+          {imageLayout && (
+            <>
+              <Field label="Image">
+                <MediaPickerField value={config.imageUrl ?? ""} onChange={(url) => set({ imageUrl: url })} />
+              </Field>
+              <Field label="Image description (for screen readers)">
+                <Input value={config.imageAlt ?? ""} onChange={(e) => set({ imageAlt: e.target.value })} />
+              </Field>
+            </>
+          )}
+          {config.layout === "video_text" && (
+            <Field label="Video URL (YouTube or Vimeo, https)">
+              <Input value={config.videoUrl ?? ""} onChange={(e) => set({ videoUrl: e.target.value })} />
+            </Field>
+          )}
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Button label">
+              <Input value={config.ctaLabel ?? ""} onChange={(e) => set({ ctaLabel: e.target.value })} />
+            </Field>
+            <Field label="Button link">
+              <Input value={config.ctaUrl ?? ""} onChange={(e) => set({ ctaUrl: e.target.value })} />
+            </Field>
+          </div>
+          {cardLayout && (
+            <div className="space-y-3">
+              <Label>Cards</Label>
+              {items.map((it, i) => (
+                <div key={i} className="space-y-2 rounded-lg border p-3">
+                  <div className="flex justify-end">
+                    <Button type="button" size="icon" variant="ghost" onClick={() => set({ items: items.filter((_, idx) => idx !== i) })}>
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                  <Input placeholder="Title" value={it.title ?? ""} onChange={(e) => update(i, { title: e.target.value })} />
+                  <Textarea rows={2} placeholder="Text" value={it.text ?? ""} onChange={(e) => update(i, { text: e.target.value })} />
+                  <Input placeholder="Link, e.g. /things-to-do" value={it.url ?? ""} onChange={(e) => update(i, { url: e.target.value })} />
+                  {config.layout !== "simple_grid" && config.layout !== "highlight_cards" && (
+                    <MediaPickerField value={it.imageUrl ?? ""} onChange={(url) => update(i, { imageUrl: url })} />
+                  )}
+                </div>
+              ))}
+              <Button type="button" size="sm" variant="outline" onClick={() => set({ items: [...items, { title: "", text: "", imageUrl: "", url: "" }] })}>
+                <Plus className="h-3.5 w-3.5" /> Add card
+              </Button>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    case "button":
+      return (
+        <div className="space-y-4">
+          <Field label="Label">
+            <Input value={config.label ?? ""} onChange={(e) => set({ label: e.target.value })} />
+          </Field>
+          <Field label="Link">
+            <Input placeholder="/places-to-stay or https://..." value={config.url ?? ""} onChange={(e) => set({ url: e.target.value })} />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Style">
+              <Select value={config.style ?? "purple"} onValueChange={(v) => set({ style: v })}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="purple">Purple (booking)</SelectItem>
+                  <SelectItem value="green">Green</SelectItem>
+                  <SelectItem value="outline">Outline</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Alignment">
+              <Select value={config.align ?? "left"} onValueChange={(v) => set({ align: v })}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="left">Left</SelectItem>
+                  <SelectItem value="center">Centre</SelectItem>
+                  <SelectItem value="right">Right</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+          </div>
+        </div>
+      );
+
+    case "newsletter_bar":
+      return (
+        <div className="space-y-4">
+          <Field label="Heading">
+            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          </Field>
+          <Field label="Text">
+            <Textarea rows={2} value={config.text ?? ""} onChange={(e) => set({ text: e.target.value })} />
+          </Field>
+        </div>
+      );
+
+    case "spotlight":
+      return (
+        <div className="space-y-4">
+          <Field label="Eyebrow">
+            <Input value={config.eyebrow ?? ""} onChange={(e) => set({ eyebrow: e.target.value })} />
+          </Field>
+          <Field label="Heading">
+            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          </Field>
+          <Field label="Text">
+            <Textarea rows={3} value={config.text ?? ""} onChange={(e) => set({ text: e.target.value })} />
+          </Field>
+          <Field label="Background image">
+            <MediaPickerField value={config.imageUrl ?? ""} onChange={(url) => set({ imageUrl: url })} />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Button label">
+              <Input value={config.ctaLabel ?? ""} onChange={(e) => set({ ctaLabel: e.target.value })} />
+            </Field>
+            <Field label="Button link">
+              <Input value={config.ctaUrl ?? ""} onChange={(e) => set({ ctaUrl: e.target.value })} />
+            </Field>
+          </div>
+        </div>
+      );
+
+    case "ad_bar":
+      return (
+        <div className="space-y-4">
+          <Field label="Banner image">
+            <MediaPickerField value={config.imageUrl ?? ""} onChange={(url) => set({ imageUrl: url })} />
+          </Field>
+          <Field label="Link">
+            <Input placeholder="https://..." value={config.url ?? ""} onChange={(e) => set({ url: e.target.value })} />
+          </Field>
+          <Field label="Description (for screen readers)">
+            <Input value={config.alt ?? ""} onChange={(e) => set({ alt: e.target.value })} />
+          </Field>
+          <Field label="Small label above the banner">
+            <Input value={config.label ?? ""} onChange={(e) => set({ label: e.target.value })} />
+          </Field>
+        </div>
+      );
+
+    case "contact_form":
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">Messages are stored under Enquiries in the CMS against this page.</p>
+          <Field label="Heading">
+            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          </Field>
+          <Field label="Introduction">
+            <Textarea rows={3} value={config.intro ?? ""} onChange={(e) => set({ intro: e.target.value })} />
+          </Field>
+        </div>
+      );
+
+    case "page_cards": {
+      const slugs: string[] = config.slugs ?? [];
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">
+            Each card shows a real page&apos;s own title, picture and summary. Live preview isn&apos;t available — save to see it on the real page.
+          </p>
+          <Field label="Heading">
+            <Input value={config.title ?? ""} onChange={(e) => set({ title: e.target.value })} />
+          </Field>
+          <Field label="Pages (use each page's slug, from Properties › URLs)">
+            <StringListEditor values={slugs} onChange={(slugs) => set({ slugs })} placeholder="e.g. things-to-do/attractions/cheddar-gorge" />
+          </Field>
+        </div>
+      );
+    }
 
     case "map_band":
       return (

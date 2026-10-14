@@ -9,7 +9,7 @@
 
 import type { BlockType } from "@/components/cms/page-builder/block-types";
 
-export type WidgetCategory = "Page structure" | "Content" | "Real-data widgets" | "Shop & booking" | "Legacy";
+export type WidgetCategory = "Content panels" | "Page structure" | "Content" | "Real-data widgets" | "Shop & booking" | "Legacy";
 
 export type WidgetProperty = {
   name: string;
@@ -31,9 +31,12 @@ export type WidgetDef = {
   tips: string[];
   /** Hidden from the Add-widget gallery (kept so existing pages still render). */
   legacy?: boolean;
+  /** The Kentico 11 widget(s) editors already know that this replaces. */
+  kentico?: string;
 };
 
 export const WIDGET_CATEGORIES: { name: WidgetCategory; blurb: string }[] = [
+  { name: "Content panels", blurb: "The \"Content panel – …\" family: one widget, many layouts." },
   { name: "Page structure", blurb: "Banners and calls to action that frame a page." },
   { name: "Content", blurb: "Words, pictures, video and questions that you write yourself." },
   { name: "Real-data widgets", blurb: "These fill themselves from the live site — you only choose what to show." },
@@ -43,12 +46,115 @@ export const WIDGET_CATEGORIES: { name: WidgetCategory; blurb: string }[] = [
 
 export const WIDGETS: WidgetDef[] = [
   {
+    type: "content_panel",
+    name: "Content panel",
+    category: "Content panels",
+    summary:
+      "A flexible panel of words, pictures, video or cards. Pick a layout: Text only, Text & image, Image & text, Text & image split, Image & text split, Video & text, Text & cards, Feature cards, Highlight cards, Simple header with grid, or Carousel.",
+    whenToUse: "Almost any editorial block on a landing page. Add one per section of the page and choose the layout that fits.",
+    data: "You type it",
+    kentico: "Content panel – Text only / Text & image / Image & text / Text & image split / Image & text split / Video & text / Text & cards / Feature cards / Highlight cards / Simple header w/ grid / Carousel",
+    properties: [
+      { name: "Layout", type: "Choice", help: "Which Content panel layout to use (same names as the Kentico widgets)." },
+      { name: "Background", type: "Choice", help: "White, light grey, Somerset green or damson purple." },
+      { name: "Eyebrow / Heading / Text", type: "Text", help: "The words. Leave a blank line between paragraphs." },
+      { name: "Image + description", type: "Image", help: "Used by the image and split layouts. Add a description for screen readers." },
+      { name: "Video URL", type: "URL", help: "YouTube or Vimeo link for Video & text." },
+      { name: "Button label / link", type: "Text", help: "Optional button under the text." },
+      { name: "Cards", type: "List", help: "For the card and carousel layouts: title, text, link and image for each card." },
+    ],
+    tips: ["Alternate white and grey backgrounds down a page to give it rhythm.", "Keep card text short — two lines at most."],
+  },
+  {
+    type: "button",
+    name: "Button",
+    category: "Content panels",
+    summary: "A single call-to-action button.",
+    whenToUse: "Under a paragraph when you need one clear next step.",
+    data: "You type it",
+    kentico: "Button",
+    properties: [
+      { name: "Label", type: "Text", help: "What the button says." },
+      { name: "Link", type: "URL", help: "A site page (/places-to-stay) or full web address." },
+      { name: "Style / Alignment", type: "Choice", help: "Purple for booking actions, green or outline otherwise." },
+    ],
+    tips: [],
+  },
+  {
+    type: "spotlight",
+    name: "Spotlight",
+    category: "Content panels",
+    summary: "A large rounded image panel with a headline, a sentence and a button over it.",
+    whenToUse: "To promote one thing: an event, an offer or a campaign.",
+    data: "You type it",
+    kentico: "Spotlight",
+    properties: [
+      { name: "Eyebrow / Heading / Text", type: "Text", help: "The words over the image." },
+      { name: "Background image", type: "Image", help: "Wide landscape photo." },
+      { name: "Button label / link", type: "Text", help: "Optional button." },
+    ],
+    tips: [],
+  },
+  {
+    type: "newsletter_bar",
+    name: "Newsletter signup bar",
+    category: "Content panels",
+    summary: "A green strip with an email signup box. Signups are stored under Enquiries.",
+    whenToUse: "Under a page's main content, or on a campaign page.",
+    data: "You type it",
+    kentico: "Newsletter signup bar",
+    properties: [{ name: "Heading / Text", type: "Text", help: "The words beside the signup box." }],
+    tips: ["The footer already has a newsletter signup — don't add this on the same screen as the footer."],
+  },
+  {
+    type: "ad_bar",
+    name: "Ad bar",
+    category: "Content panels",
+    summary: "A wide banner image that links out, labelled as an advertisement.",
+    whenToUse: "A sponsor or partner banner.",
+    data: "You type it",
+    kentico: "Ad bar",
+    properties: [
+      { name: "Banner image", type: "Image", help: "Wide, short image." },
+      { name: "Link", type: "URL", help: "Where it goes (opens in a new tab)." },
+      { name: "Description", type: "Text", help: "For screen readers." },
+    ],
+    tips: [],
+  },
+  {
+    type: "contact_form",
+    name: "Contact form",
+    category: "Content panels",
+    summary: "A simple name / email / message form. Messages are stored under Enquiries against the page.",
+    whenToUse: "Contact pages and campaign pages.",
+    data: "You type it",
+    kentico: "Contact Form General",
+    properties: [{ name: "Heading / Introduction", type: "Text", help: "The words above the form." }],
+    tips: ["Messages are not emailed — someone needs to check Enquiries."],
+  },
+  {
+    type: "page_cards",
+    name: "You might like",
+    category: "Real-data widgets",
+    summary: "Cards linking to real pages you choose, each showing the page's own title, picture and summary.",
+    whenToUse: "At the end of an article or listing to suggest what to read or visit next.",
+    data: "Live data from the site",
+    dataNote: "Each card is read from the page you point to, so titles and photos stay in step with that page.",
+    kentico: "You might like",
+    properties: [
+      { name: "Heading", type: "Text", help: "Default: You might like." },
+      { name: "Pages", type: "List", help: "Each page's slug (from Properties › URLs). Cards appear in this order." },
+    ],
+    tips: [],
+  },
+  {
     type: "hero",
     name: "Hero banner",
     category: "Page structure",
     summary: "A large banner at the top of a page with a heading, a line of text and an optional button. On the home page it can also show the search panel.",
     whenToUse: "First widget on a landing page or section page.",
     data: "You type it",
+    kentico: "Spotlight (hero) / Availability search (when the search bar is on)",
     properties: [
       { name: "Eyebrow", type: "Text", help: "Small capitals line above the heading, e.g. SOMERSET · ENGLAND'S WEST COUNTRY." },
       { name: "Heading", type: "Text", help: "The big headline. Keep it short." },
@@ -269,6 +375,7 @@ export const WIDGETS: WidgetDef[] = [
     summary: "A row of real featured members (highest membership tier first), e.g. Made in Somerset.",
     whenToUse: "Home page or a section page to celebrate members.",
     data: "Live data from the site",
+    kentico: "Business member carousel",
     dataNote: "Members come from the section you choose; their membership tier decides the order.",
     properties: [
       { name: "Eyebrow / Title", type: "Text", help: "Heading words." },
@@ -285,6 +392,7 @@ export const WIDGETS: WidgetDef[] = [
     summary: "The full searchable, filterable list of places or events with a map. This IS the page content on Places to stay, Things to do, Food & drink and Festivals & events.",
     whenToUse: "On a section's landing page. One per page.",
     data: "Live data from the site",
+    kentico: "Member listing + Member filter strip",
     dataNote: "Every listing under the section appears automatically. Filters (type, town, graded, bookable, featured) are built from the real listings.",
     properties: [
       { name: "What it lists", type: "Choice", help: "Accommodation (with dates + map), Things to do, Food & drink, or Festivals & events." },
@@ -302,6 +410,7 @@ export const WIDGETS: WidgetDef[] = [
     summary: "One block per producer with their description and a scrolling row of their real products and prices, each with a Buy Now link.",
     whenToUse: "The Buy Somerset page.",
     data: "Live data from the site",
+    kentico: "Member eCommerce Carousel",
     dataNote: "Products are read from each producer's own online shop, so prices are always theirs. A producer whose shop can't be read shows their description and a link instead.",
     properties: [
       { name: "Section slug", type: "Text", help: "Where the producers live (virtual-highstreet)." },
@@ -316,6 +425,7 @@ export const WIDGETS: WidgetDef[] = [
     summary: "The Book Experiences landing: search, real bookable listings that link to each operator's own booking page, live stats and day-type tiles.",
     whenToUse: "The Book Experiences page.",
     data: "Live data from the site",
+    kentico: "Availability search + Member listing",
     dataNote: "Any things-to-do listing with an online booking link appears automatically.",
     properties: [
       { name: "Heading", type: "Text", help: "The big title." },
@@ -389,6 +499,7 @@ export function widgetGuideMarkdown(usage: WidgetUsage = {}): string {
     for (const w of items) {
       out.push(`### ${w.name}`, "", w.summary, "");
       out.push(`- **When to use it:** ${w.whenToUse}`);
+      if (w.kentico) out.push(`- **Kentico 11 equivalent:** ${w.kentico}`);
       out.push(`- **Content comes from:** ${w.data}${w.dataNote ? ` — ${w.dataNote}` : ""}`);
       const used = usage[w.type] ?? [];
       out.push(`- **Used on:** ${used.length ? used.map((u) => `${u.title} (/${u.slug})`).join(", ") : "not currently used"}`);

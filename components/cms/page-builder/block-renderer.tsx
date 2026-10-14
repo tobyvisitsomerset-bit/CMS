@@ -18,6 +18,8 @@ import { EventsExplorer } from "@/components/site/explorer/events-explorer";
 import { ExperiencesHubView } from "@/components/site/explorer/experiences-hub";
 import { ProducerShop } from "@/components/site/shop/producer-shop";
 import type { ShopProducer } from "@/lib/data/shop";
+import { ContentPanel } from "@/components/site/content-panel";
+import { AdBar, ButtonWidget, ContactFormWidget, NewsletterBar, PageCards, Spotlight } from "@/components/site/small-widgets";
 import type { ExperiencesHub } from "@/lib/data/experiences";
 
 export type ListingsByCategory = Record<ListingCategory, ListingWithFacilities[]>;
@@ -42,6 +44,10 @@ export type RealBlockData =
   | { type: "mood_tiles"; moods: { label: string; query: string; count: number }[] }
   | { type: "map_band"; pins: { id: string; lat: number; lng: number; title: string; href: string }[] }
   | { type: "partners_row"; items: FeaturedPageTile[] }
+  | {
+      type: "page_cards";
+      cards: { id: string; title: string; subtitle: string | null; slug: string; heroImageUrl: string | null }[];
+    }
   | { type: "producer_shop"; producers: ShopProducer[] }
   | { type: "experiences_hub"; hub: ExperiencesHub; searchParams: Record<string, string | undefined> }
   | {
@@ -68,6 +74,7 @@ export function BlockRenderer({
   realData,
   pageSlug,
   pageTitle,
+  pageId,
 }: {
   type: string;
   config: Record<string, any>;
@@ -75,6 +82,7 @@ export function BlockRenderer({
   realData?: RealBlockData;
   pageSlug?: string;
   pageTitle?: string;
+  pageId?: string;
 }) {
   switch (type) {
     case "hero": {
@@ -400,6 +408,38 @@ export function BlockRenderer({
           seeAllHref={config.seeAllHref}
         />
       );
+    }
+
+    case "content_panel":
+      return <ContentPanel config={config} />;
+
+    case "button":
+      return <ButtonWidget label={config.label} url={config.url} style={config.style} align={config.align} />;
+
+    case "newsletter_bar":
+      return <NewsletterBar heading={config.heading} text={config.text} />;
+
+    case "spotlight":
+      return (
+        <Spotlight
+          eyebrow={config.eyebrow}
+          heading={config.heading}
+          text={config.text}
+          imageUrl={config.imageUrl}
+          ctaLabel={config.ctaLabel}
+          ctaUrl={config.ctaUrl}
+        />
+      );
+
+    case "ad_bar":
+      return <AdBar imageUrl={config.imageUrl} url={config.url} alt={config.alt} label={config.label} />;
+
+    case "contact_form":
+      return <ContactFormWidget heading={config.heading} intro={config.intro} pageId={pageId} pageTitle={pageTitle} />;
+
+    case "page_cards": {
+      if (!realData || realData.type !== "page_cards") return <RealDataUnavailable />;
+      return <PageCards title={config.title} cards={realData.cards} />;
     }
 
     case "producer_shop": {
