@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -18,12 +18,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
@@ -37,6 +31,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { BLOCK_DEFS, blockLabel, defaultConfigFor, type BlockType } from "@/components/cms/page-builder/block-types";
+import { WIDGETS, WIDGET_CATEGORIES } from "@/lib/widget-catalogue";
 import { BlockRenderer, type ListingsByCategory } from "@/components/cms/page-builder/block-renderer";
 import { BlockConfigForm } from "@/components/cms/page-builder/block-config-form";
 import {
@@ -75,10 +70,10 @@ function SortableBlockRow({
         </button>
         <span className="text-xs font-medium text-neutral-500">{blockLabel(block.type)}</span>
         <div className="flex-1" />
-        <Button size="icon-sm" variant="ghost" onClick={onEdit} title="Edit section">
+        <Button size="icon-sm" variant="ghost" onClick={onEdit} title="Edit widget properties">
           <Pencil className="h-3.5 w-3.5" />
         </Button>
-        <Button size="icon-sm" variant="ghost" onClick={onDelete} title="Remove section">
+        <Button size="icon-sm" variant="ghost" onClick={onDelete} title="Remove widget">
           <Trash2 className="h-3.5 w-3.5" />
         </Button>
       </div>
@@ -94,22 +89,37 @@ export function DesignTab({
   initialBlocks,
   readOnly,
   listings,
+  openBlockId,
+  onOpened,
 }: {
   pageId: string;
   initialBlocks: Block[];
   readOnly: boolean;
   listings: ListingsByCategory;
+  openBlockId?: string | null;
+  onOpened?: () => void;
 }) {
   const router = useRouter();
   const [blocks, setBlocks] = useState(initialBlocks);
-  const [editing, setEditing] = useState<Block | null>(null);
-  const [editingConfig, setEditingConfig] = useState<Record<string, unknown>>({});
+  // Arriving from the Page tab's "Edit widget" button opens that widget's
+  // properties straight away (the tab remounts, so a lazy initial state does it).
+  const arrivedAt = !readOnly && openBlockId ? (initialBlocks.find((b) => b.id === openBlockId) ?? null) : null;
+  const [editing, setEditing] = useState<Block | null>(arrivedAt);
+  const [editingConfig, setEditingConfig] = useState<Record<string, unknown>>(() =>
+    arrivedAt ? JSON.parse(arrivedAt.config || "{}") : {},
+  );
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
   const [templateName, setTemplateName] = useState("");
   const [templateDescription, setTemplateDescription] = useState("");
   const [pending, startTransition] = useTransition();
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
+
+  useEffect(() => {
+    if (openBlockId) onOpened?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleAdd(type: BlockType) {
     startTransition(async () => {
@@ -117,7 +127,7 @@ export function DesignTab({
       const newBlock = { ...block, config: JSON.stringify(defaultConfigFor(type)) };
       setBlocks((b) => [...b, newBlock as Block]);
       await updateContentBlockAction(block.id, defaultConfigFor(type));
-      toast.success(`${blockLabel(type)} section added`);
+      toast.success(`${blockLabel(type)} widget added`);
     });
   }
 
@@ -131,7 +141,7 @@ export function DesignTab({
     startTransition(async () => {
       await updateContentBlockAction(editing.id, editingConfig);
       setBlocks((b) => b.map((x) => (x.id === editing.id ? { ...x, config: JSON.stringify(editingConfig) } : x)));
-      toast.success("Section updated");
+      toast.success("Widget updated");
       setEditing(null);
       router.refresh();
     });
@@ -142,7 +152,7 @@ export function DesignTab({
       await deleteContentBlockAction(id);
       setBlocks((b) => b.filter((x) => x.id !== id));
       setConfirmDeleteId(null);
-      toast.success("Section removed");
+      toast.success("Widget removed");
     });
   }
 
@@ -180,32 +190,17 @@ export function DesignTab({
               <BookmarkPlus className="h-4 w-4" /> Save as template
             </Button>
           )}
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button size="sm" disabled={pending}>
-                  <Plus className="h-4 w-4" /> Add section
-                </Button>
-              }
-            />
-            <DropdownMenuContent align="end" className="w-64">
-              {BLOCK_DEFS.map((def) => (
-                <DropdownMenuItem key={def.type} onClick={() => handleAdd(def.type)}>
-                  <def.icon className="h-4 w-4" />
-                  <div>
-                    <div>{def.label}</div>
-                    <div className="text-xs text-neutral-400">{def.description}</div>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button size="sm" disabled={pending} onClick={() => setGalleryOpen(true)}>
+            <Plus className="h-4 w-4" /> Add widget
+          </Button>
         </div>
       )}
 
+      <p className="text-xs font-semibold tracking-wide text-neutral-400 uppercase">Zone: Main content</p>
+
       {blocks.length === 0 ? (
         <div className="rounded-lg border border-dashed p-12 text-center text-sm text-neutral-400">
-          No sections yet. Add one above to start building this page.
+          No widgets in this zone yet. Use “Add widget” to start building this page.
         </div>
       ) : (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -228,7 +223,7 @@ export function DesignTab({
       <Sheet open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
         <SheetContent className="w-[420px] overflow-y-auto sm:max-w-[420px]">
           <SheetHeader>
-            <SheetTitle>{editing ? blockLabel(editing.type) : ""} settings</SheetTitle>
+            <SheetTitle>{editing ? blockLabel(editing.type) : ""} — widget properties</SheetTitle>
           </SheetHeader>
           <div className="px-4 pb-4">
             {editing && (
@@ -241,16 +236,68 @@ export function DesignTab({
           </div>
           <SheetFooter>
             <Button onClick={saveEdit} disabled={pending}>
-              {pending ? "Saving..." : "Save section"}
+              {pending ? "Saving..." : "Save widget"}
             </Button>
           </SheetFooter>
         </SheetContent>
       </Sheet>
 
+      <Dialog open={galleryOpen} onOpenChange={setGalleryOpen}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Select widget</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-5 py-1">
+            {WIDGET_CATEGORIES.filter((c) => c.name !== "Legacy").map((cat) => {
+              const items = WIDGETS.filter((w) => w.category === cat.name && !w.legacy);
+              if (items.length === 0) return null;
+              return (
+                <div key={cat.name}>
+                  <p className="text-sm font-semibold text-neutral-800">{cat.name}</p>
+                  <p className="mb-2 text-xs text-neutral-500">{cat.blurb}</p>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {items.map((w) => {
+                      const def = BLOCK_DEFS.find((d) => d.type === w.type);
+                      const Icon = def?.icon;
+                      return (
+                        <button
+                          key={w.type}
+                          type="button"
+                          onClick={() => {
+                            setGalleryOpen(false);
+                            handleAdd(w.type);
+                          }}
+                          className="flex gap-3 rounded-lg border p-3 text-left transition-colors hover:border-somerset-green hover:bg-somerset-green/5"
+                        >
+                          {Icon && (
+                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-somerset-green/10 text-somerset-green">
+                              <Icon className="h-4 w-4" />
+                            </span>
+                          )}
+                          <span className="min-w-0">
+                            <span className="block text-sm font-medium text-neutral-900">{w.name}</span>
+                            <span className="line-clamp-2 block text-xs text-neutral-500">{w.summary}</span>
+                            {w.data === "Live data from the site" && (
+                              <span className="mt-1 inline-block rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] text-neutral-600">
+                                Fills itself from the live site
+                              </span>
+                            )}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <AlertDialog open={!!confirmDeleteId} onOpenChange={(open) => !open && setConfirmDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove this section?</AlertDialogTitle>
+            <AlertDialogTitle>Remove this widget?</AlertDialogTitle>
             <AlertDialogDescription>This can&apos;t be undone.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -286,7 +333,7 @@ export function DesignTab({
               />
             </div>
             <p className="text-xs text-neutral-400">
-              This saves the current sections as a reusable starting point — future edits to this page won&apos;t
+              This saves the current widgets as a reusable starting point — future edits to this page won&apos;t
               change the template.
             </p>
           </div>
@@ -303,7 +350,7 @@ export function DesignTab({
 
       {blocks.length > 0 && (
         <div className="pt-4">
-          <p className="mb-2 text-xs font-medium text-neutral-400 uppercase tracking-wide">Live preview</p>
+          <p className="mb-2 text-xs font-medium text-neutral-400 uppercase tracking-wide">Preview of this zone</p>
           <div className="overflow-hidden rounded-lg border bg-white">
             {blocks.map((block) => (
               <BlockRenderer key={block.id} type={block.type} config={JSON.parse(block.config || "{}")} listings={listings} />

@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { MAIN_NAV, MAP_NAV, UTILITY_NAV } from "@/lib/site-nav";
+import { getMasterSettings, SUBMIT_EVENT_TOKEN } from "@/lib/data/site-settings";
 import { TripProvider } from "@/lib/trip-context";
 import { getSocialLinks, getAllMegaMenus } from "@/lib/data/pages";
 import { SiteHeader } from "@/components/site/site-header";
@@ -24,19 +24,31 @@ const getSubmitEventHref = unstable_cache(
 );
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const [session, socialLinks, megaMenus, submitEventHref] = await Promise.all([
+  const [session, socialLinks, master, submitEventHref] = await Promise.all([
     auth(),
     getSocialLinks(),
-    getAllMegaMenus(MAIN_NAV.map((l) => l.slug)),
+    getMasterSettings(),
     getSubmitEventHref(),
   ]);
+  const megaMenus = await getAllMegaMenus(master.mainNav.map((l) => l.slug));
+  const footerColumns = master.footerColumns.map((c) => ({
+    ...c,
+    links: c.links.map((l) => (l.href === SUBMIT_EVENT_TOKEN ? { ...l, href: submitEventHref } : l)),
+  }));
 
   return (
     <TripProvider>
       <div className="flex min-h-screen flex-col bg-white">
-        <SiteHeader mainNav={MAIN_NAV} utilityNav={UTILITY_NAV} mapNav={MAP_NAV} megaMenus={megaMenus} />
+        <SiteHeader
+          mainNav={master.mainNav}
+          utilityLinks={master.utilityLinks}
+          mapLabel={master.mapLabel}
+          bookLabel={master.bookButtonLabel}
+          bookHref={master.bookButtonHref}
+          megaMenus={megaMenus}
+        />
         <main className="flex-1">{children}</main>
-        <SiteFooter socialLinks={socialLinks} signedIn={!!session?.user} submitEventHref={submitEventHref} />
+        <SiteFooter socialLinks={socialLinks} signedIn={!!session?.user} master={{ ...master, footerColumns }} />
       </div>
     </TripProvider>
   );

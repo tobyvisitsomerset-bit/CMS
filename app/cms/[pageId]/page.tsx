@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getPageById, getChildPages } from "@/lib/data/pages";
 import { getDetailExtras } from "@/lib/data/detail-extras";
+import { getMasterSettings } from "@/lib/data/site-settings";
 import { getAllListingsGrouped } from "@/lib/data/listings";
 import { resolveBlockData } from "@/lib/data/block-data";
 import { listMembers } from "@/lib/data/users";
@@ -38,6 +39,7 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
   const canManageMembers = hasCapability(roleKey, "members.manage");
   const listings = await getAllListingsGrouped();
   const extras = await getDetailExtras(page);
+  const master = await getMasterSettings();
   const childPages = page.contentBlocks.length === 0 ? await getChildPages(page.id) : [];
   const blockData = await resolveBlockData(page.contentBlocks);
   const members = canManageMembers ? await listMembers() : [];
@@ -52,6 +54,7 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
       isMember={!isAdmin(roleKey)}
       listings={listings}
       extras={extras}
+      master={master}
       childPages={childPages}
       blockData={blockData}
       members={members}

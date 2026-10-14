@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -30,6 +30,13 @@ export function SeoTab({ page, readOnly }: { page: PageDetail; readOnly: boolean
     socialShareImage: page.socialShareImage ?? "",
     schemaMarkup: page.schemaMarkup ?? "",
   });
+
+  const saveRef = useRef<() => void>(() => {});
+  useEffect(() => {
+    const onSave = () => saveRef.current();
+    window.addEventListener("cms:save", onSave);
+    return () => window.removeEventListener("cms:save", onSave);
+  }, []);
 
   function set(patch: Partial<typeof values>) {
     setValues((v) => ({ ...v, ...patch }));
@@ -69,6 +76,12 @@ export function SeoTab({ page, readOnly }: { page: PageDetail; readOnly: boolean
       }
     });
   }
+
+  useEffect(() => {
+    saveRef.current = () => {
+      if (!readOnly && dirty) handleSave();
+    };
+  });
 
   return (
     <div className="grid grid-cols-1 gap-8 p-6 lg:grid-cols-[1fr_360px]">

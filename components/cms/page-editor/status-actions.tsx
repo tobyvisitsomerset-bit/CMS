@@ -13,8 +13,6 @@ import {
   submitForReviewAction,
   unpublishPageAction,
 } from "@/app/cms/actions";
-import { AuditLogSheet } from "./audit-log-sheet";
-import { VersionHistorySheet } from "./version-history-sheet";
 import { NotificationsBell } from "./notifications-bell";
 
 export function StatusActions({
@@ -23,8 +21,8 @@ export function StatusActions({
   canPublish,
   canArchive,
   canReview,
-  canEdit,
   isMember,
+  notify,
   onViewLive,
 }: {
   pageId: string;
@@ -32,8 +30,8 @@ export function StatusActions({
   canPublish: boolean;
   canArchive: boolean;
   canReview: boolean;
-  canEdit: boolean;
   isMember: boolean;
+  notify: boolean;
   onViewLive: () => void;
 }) {
   const [pending, startTransition] = useTransition();
@@ -60,7 +58,7 @@ export function StatusActions({
       )}
       {status === "PENDING_APPROVAL" && canReview && (
         <>
-          <Button size="sm" disabled={pending} onClick={() => run(() => publishPageAction(pageId), "Approved and published")}>
+          <Button size="sm" disabled={pending} onClick={() => run(() => publishPageAction(pageId, { notify }), "Approved and published")}>
             Approve &amp; Publish
           </Button>
           <Button size="sm" variant="outline" disabled={pending} onClick={() => run(() => unpublishPageAction(pageId), "Sent back to draft")}>
@@ -69,7 +67,7 @@ export function StatusActions({
         </>
       )}
       {status === "DRAFT" && canPublish && !isMember && (
-        <Button size="sm" disabled={pending} onClick={() => run(() => publishPageAction(pageId), "Published")}>
+        <Button size="sm" disabled={pending} onClick={() => run(() => publishPageAction(pageId, { notify }), "Published")}>
           Publish
         </Button>
       )}
@@ -94,8 +92,6 @@ export function StatusActions({
       <Button size="sm" variant="outline" onClick={onViewLive}>
         <ExternalLink className="h-4 w-4" /> View Live
       </Button>
-      <VersionHistorySheet pageId={pageId} canEdit={canEdit} />
-      <AuditLogSheet pageId={pageId} />
       <NotificationsBell />
     </div>
   );

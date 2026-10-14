@@ -73,6 +73,10 @@ export const BLOCK_DEFS: { type: BlockType; label: string; description: string; 
   { type: "partners_row", label: "Partners Row", description: "Row of real featured members (highest tier first)", icon: Handshake },
 ];
 
+export function blockIcon(type: string): typeof LayoutTemplate {
+  return BLOCK_DEFS.find((b) => b.type === type)?.icon ?? LayoutTemplate;
+}
+
 export function blockLabel(type: string): string {
   return BLOCK_DEFS.find((b) => b.type === type)?.label ?? type;
 }

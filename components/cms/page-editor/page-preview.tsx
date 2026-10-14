@@ -35,6 +35,7 @@ export function PagePreview({
   linkBase = "/cms",
   initialSearchText = "",
   searchParams = {},
+  wrapBlock,
 }: {
   page: PageDetail;
   listings: ListingsByCategory;
@@ -44,19 +45,24 @@ export function PagePreview({
   linkBase?: string;
   initialSearchText?: string;
   searchParams?: Record<string, string | undefined>;
+  /** Editor "Page" tab: wrap each widget so it can be clicked to edit. */
+  wrapBlock?: (blockId: string, type: string, node: React.ReactNode) => React.ReactNode;
 }) {
   if (page.contentBlocks.length > 0) {
-    const blockList = page.contentBlocks.map((block) => (
-      <BlockRenderer
-        key={block.id}
-        type={block.type}
-        config={JSON.parse(block.config || "{}")}
-        listings={listings}
-        realData={blockData[block.id]}
-        pageSlug={page.slug}
-        pageTitle={page.title}
-      />
-    ));
+    const blockList = page.contentBlocks.map((block) => {
+      const node = (
+        <BlockRenderer
+          key={block.id}
+          type={block.type}
+          config={JSON.parse(block.config || "{}")}
+          listings={listings}
+          realData={blockData[block.id]}
+          pageSlug={page.slug}
+          pageTitle={page.title}
+        />
+      );
+      return wrapBlock ? <div key={block.id}>{wrapBlock(block.id, block.type, node)}</div> : node;
+    });
     const hasSearchBlock = page.contentBlocks.some((block) => block.type === "listing_search");
     const category = hasSearchBlock ? resolveDirectoryCategory(page.contentBlocks) : null;
 

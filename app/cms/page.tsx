@@ -1,4 +1,5 @@
-import { FileText } from "lucide-react";
+import Link from "next/link";
+import { BookOpen, FileText, Images, Inbox, LayoutTemplate, ListChecks } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { isAdmin } from "@/lib/permissions";
 import { getDashboardStats } from "@/lib/data/dashboard";
@@ -19,6 +20,15 @@ function StatCard({ label, value, accent }: { label: string; value: number | str
   );
 }
 
+const APPS = [
+  { href: "/cms", label: "Pages", hint: "Edit the content tree", icon: FileText },
+  { href: "/cms/media", label: "Media library", hint: "Images and files", icon: Images },
+  { href: "/cms/approvals", label: "Approvals", hint: "Content waiting for review", icon: ListChecks },
+  { href: "/cms/enquiries", label: "Enquiries", hint: "Stay enquiries & newsletter signups", icon: Inbox },
+  { href: "/cms/widgets", label: "Widgets", hint: "Catalogue & training guide", icon: LayoutTemplate },
+  { href: "/cms/widgets/guide", label: "Editor guide", hint: "Printable how-to for the team", icon: BookOpen },
+];
+
 export default async function CmsHomePage() {
   const session = await auth();
   const roleKey = session?.user.roleKey;
@@ -37,6 +47,20 @@ export default async function CmsHomePage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-6">
       <h1 className="text-lg font-semibold text-neutral-800">Dashboard</h1>
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {APPS.map((a) => (
+          <Link key={a.label} href={a.href} className="flex items-start gap-3 rounded-lg border bg-white p-4 hover:border-somerset-green hover:shadow-sm">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-somerset-green/10 text-somerset-green">
+              <a.icon className="h-4 w-4" />
+            </span>
+            <span>
+              <span className="block text-sm font-semibold text-neutral-900">{a.label}</span>
+              <span className="block text-xs text-neutral-500">{a.hint}</span>
+            </span>
+          </Link>
+        ))}
+      </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard label="Total pages" value={stats.totalPages} />

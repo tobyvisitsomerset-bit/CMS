@@ -369,3 +369,12 @@ model BookingRequest {
   @@index([pageId])
   @@index([createdAt])
 }
+
+// Site-wide settings edited in the CMS "Master page" tab (header, main
+// navigation, footer). One JSON document per key; additive model.
+model SiteSetting {
+  key         String   @id
+  value       String // JSON
+  updatedById String?
+  updatedAt   DateTime @updatedAt
+}

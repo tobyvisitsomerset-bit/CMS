@@ -104,13 +104,15 @@ export async function deletePageAction(pageId: string) {
   revalidatePath("/cms");
 }
 
-export async function publishPageAction(pageId: string) {
+export async function publishPageAction(pageId: string, opts: { notify?: boolean } = {}) {
   const session = await requireSession();
   if (!hasCapability(session.user.roleKey, "pages.publish")) throw new Error("Not permitted");
 
   const page = await pagesData.setPageStatus(pageId, "PUBLISHED");
   await logAudit({ userId: session.user.id, pageId: page.id, action: "published" });
-  await notificationsData.notifyPublished(page.title, page.id, page.assignedMemberId);
+  // The "Send notification emails" checkbox in the editor toolbar. Members
+  // are notified in their portal / notification bell (no email service yet).
+  if (opts.notify !== false) await notificationsData.notifyPublished(page.title, page.id, page.assignedMemberId);
   revalidatePath("/cms");
   return page;
 }
@@ -502,4 +504,16 @@ export async function markNotificationReadAction(id: string) {
 export async function markAllNotificationsReadAction() {
   const session = await requireSession();
   await notificationsData.markAllNotificationsRead(session.user.id);
+}
+
+
+// Master page tab — the site-wide header / navigation / footer.
+export async function saveMasterPageAction(settings: import("@/lib/data/site-settings").MasterSettings) {
+  const session = await requireSession();
+  if (!hasCapability(session.user.roleKey, "pages.publish")) throw new Error("Not permitted");
+  const { saveMasterSettings } = await import("@/lib/data/site-settings");
+  const saved = await saveMasterSettings(settings, session.user.id);
+  await logAudit({ userId: session.user.id, action: "updated", details: "Master page (header/footer)" });
+  revalidatePath("/", "layout");
+  return saved;
 }

@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { getAssignedPageTree, getFullPageTree } from "@/lib/data/pages";
 import { hasCapability, isAdmin } from "@/lib/permissions";
 import { CmsShell } from "@/components/cms/cms-shell";
+import { TripProvider } from "@/lib/trip-context";
 
 export default async function CmsLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -21,6 +22,9 @@ export default async function CmsLayout({ children }: { children: React.ReactNod
   };
 
   return (
+    // The Page tab renders the real public components, some of which use the
+    // visitor trip store — give the editor the same provider.
+    <TripProvider>
     <CmsShell
       user={{ name: name ?? "User", roleName }}
       tree={tree}
@@ -31,5 +35,6 @@ export default async function CmsLayout({ children }: { children: React.ReactNod
     >
       {children}
     </CmsShell>
+    </TripProvider>
   );
 }

@@ -17,15 +17,20 @@ type NavItem = { label: string; slug: string };
 
 export function SiteHeader({
   mainNav,
-  utilityNav,
-  mapNav,
+  utilityLinks,
+  mapLabel,
+  bookLabel,
+  bookHref,
   megaMenus,
 }: {
   mainNav: NavItem[];
-  utilityNav: NavItem[];
-  mapNav: NavItem;
+  utilityLinks: { label: string; href: string }[];
+  mapLabel: string;
+  bookLabel: string;
+  bookHref: string;
   megaMenus: Record<string, MegaMenuColumn[]>;
 }) {
+  const mapNav = { label: mapLabel, slug: "interactive-map" };
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -53,8 +58,8 @@ export function SiteHeader({
             <span className="hidden text-white/80 sm:inline">English (UK)</span>
           </div>
           <nav className="hidden items-center gap-5 md:flex" aria-label="Utility">
-            {utilityNav.map((l) => (
-              <Link key={l.slug} href={`/${l.slug}`} className="hover:underline">
+            {utilityLinks.map((l) => (
+              <Link key={l.href + l.label} href={l.href} className="hover:underline">
                 {l.label}
               </Link>
             ))}
@@ -121,10 +126,10 @@ export function SiteHeader({
             <Search className="size-4" />
           </Link>
           <Link
-            href="/places-to-stay"
+            href={bookHref}
             className="hidden rounded-full bg-damson px-5 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90 sm:inline-block"
           >
-            Book a stay
+            {bookLabel}
           </Link>
           <button
             type="button"
@@ -149,8 +154,8 @@ export function SiteHeader({
             ))}
           </nav>
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 border-t border-stone-100 pt-3 text-sm text-stone-600">
-            {utilityNav.map((l) => (
-              <Link key={l.slug} href={`/${l.slug}`} onClick={() => setMobileOpen(false)}>
+            {utilityLinks.map((l) => (
+              <Link key={l.href + l.label} href={l.href} onClick={() => setMobileOpen(false)}>
                 {l.label}
               </Link>
             ))}
@@ -159,11 +164,11 @@ export function SiteHeader({
             </Link>
           </div>
           <Link
-            href="/places-to-stay"
+            href={bookHref}
             onClick={() => setMobileOpen(false)}
             className="mt-4 inline-block rounded-full bg-damson px-5 py-2.5 text-sm font-bold text-white"
           >
-            Book a stay
+            {bookLabel}
           </Link>
         </div>
       )}

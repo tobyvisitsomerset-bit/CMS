@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -98,6 +98,14 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
   const [publishDate, setPublishDate] = useState(dateToIso(page.publishDate));
   const [expiryDate, setExpiryDate] = useState(dateToIso(page.expiryDate));
   const [dirty, setDirty] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // The toolbar's Save button (Kentico-style, above the tabs) triggers this.
+  useEffect(() => {
+    const onSave = () => formRef.current?.requestSubmit();
+    window.addEventListener("cms:save", onSave);
+    return () => window.removeEventListener("cms:save", onSave);
+  }, []);
 
   function set(key: string, value: string) {
     setCfState((f) => setCF(f, key, value));
@@ -157,20 +165,12 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
     });
   }
 
-  const canSave = !readOnly && (isDirty || dirty);
+  void isDirty;
+  void dirty;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto max-w-4xl p-6">
-      <fieldset disabled={readOnly} className="space-y-4 disabled:opacity-60">
-        <div className="sticky top-0 z-10 -mx-6 flex items-center gap-2 border-b bg-white px-6 py-3">
-          <Button type="submit" disabled={pending || !canSave}>
-            {pending ? "Saving..." : "Save"}
-          </Button>
-          <Button type="button" variant="outline" disabled>
-            Spell check
-          </Button>
-        </div>
-
+    <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="mx-auto max-w-4xl p-6">
+      <fieldset disabled={readOnly || pending} className="space-y-4 disabled:opacity-60">
         <Section title="General">
           <Field label="Membership">
             <Select

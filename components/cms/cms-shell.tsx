@@ -18,6 +18,7 @@ const NAMED_ROUTES: Record<string, string> = {
   media: "Media Library",
   approvals: "Approvals",
   enquiries: "Enquiries",
+  widgets: "Widgets",
 };
 
 export function CmsShell({

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, LayoutGrid } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,11 +38,27 @@ export function TopBar({
       <Image src="/logo-visit-somerset.png" alt="Visit Somerset" width={419} height={113} className="h-7 w-auto" />
 
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-1 font-semibold text-white hover:text-white/70">
-          Content Hub
+        <DropdownMenuTrigger className="flex items-center gap-2 rounded px-2 py-1 font-semibold text-white hover:bg-white/10">
+          <LayoutGrid className="h-4 w-4" />
+          Applications
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          <DropdownMenuItem render={<Link href="/cms">Content tree</Link>} />
+        <DropdownMenuContent align="start" className="w-64">
+          <div className="px-2 py-1 text-[11px] font-semibold tracking-wide text-neutral-400 uppercase">Content</div>
+          <DropdownMenuItem render={<Link href="/cms">Dashboard</Link>} />
+          <DropdownMenuItem render={<Link href="/cms">Pages</Link>} />
+          {canManageMedia && <DropdownMenuItem render={<Link href="/cms/media">Media library</Link>} />}
+          {canReviewWorkflow && (
+            <>
+              <DropdownMenuSeparator />
+              <div className="px-2 py-1 text-[11px] font-semibold tracking-wide text-neutral-400 uppercase">Workflow &amp; forms</div>
+              <DropdownMenuItem render={<Link href="/cms/approvals">Approvals</Link>} />
+              <DropdownMenuItem render={<Link href="/cms/enquiries">Enquiries &amp; newsletter signups</Link>} />
+            </>
+          )}
+          <DropdownMenuSeparator />
+          <div className="px-2 py-1 text-[11px] font-semibold tracking-wide text-neutral-400 uppercase">Development</div>
+          <DropdownMenuItem render={<Link href="/cms/widgets">Widgets &amp; editor guide</Link>} />
+          <DropdownMenuSeparator />
           <DropdownMenuItem render={<Link href="/portal">Member portal</Link>} />
         </DropdownMenuContent>
       </DropdownMenu>
@@ -64,25 +80,9 @@ export function TopBar({
 
       <div className="flex-1" />
 
-      {canManageMedia && (
-        <Link href="/cms/media" className="rounded px-2 py-1 text-white/70 hover:bg-white/10 hover:text-white">
-          Media
-        </Link>
-      )}
-      {canReviewWorkflow && (
-        <Link href="/cms/approvals" className="rounded px-2 py-1 text-white/70 hover:bg-white/10 hover:text-white">
-          Approvals
-        </Link>
-      )}
-      {canReviewWorkflow && (
-        <Link href="/cms/enquiries" className="rounded px-2 py-1 text-white/70 hover:bg-white/10 hover:text-white">
-          Enquiries
-        </Link>
-      )}
-
-      <button className="rounded p-1.5 text-white/60 hover:bg-white/10 hover:text-white" title="Help">
+      <Link href="/cms/widgets" className="rounded p-1.5 text-white/60 hover:bg-white/10 hover:text-white" title="Editor guide">
         <HelpCircle className="h-4 w-4" />
-      </button>
+      </Link>
 
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-2 rounded p-1 hover:bg-white/10">
