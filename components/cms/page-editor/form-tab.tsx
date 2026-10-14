@@ -19,12 +19,12 @@ import { saveContentAction } from "@/app/cms/actions";
 import { type CustomField, getCF, parseCustomFieldsArray, serializeCustomFields, setCF } from "@/lib/custom-fields";
 import type { getPageById } from "@/lib/data/pages";
 import type { MembershipTier } from "@prisma/client";
+import { toLevel } from "@/lib/membership";
 
 const MEMBERSHIP_TIERS: { value: MembershipTier; label: string }[] = [
-  { value: "PLATINUM", label: "Platinum" },
-  { value: "GOLD", label: "Gold" },
-  { value: "SILVER", label: "Silver" },
-  { value: "BRONZE", label: "Bronze" },
+  { value: "PREMIUM", label: "Premium (priority 3, featured member)" },
+  { value: "PARTNER", label: "Partner (priority 2)" },
+  { value: "GROWTH", label: "Growth (priority 1)" },
 ];
 
 type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
@@ -100,7 +100,9 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
   const [gallery, setGallery] = useState<string[]>(() => (page.galleryUrls ? JSON.parse(page.galleryUrls) : []));
   const [galleryPickerOpen, setGalleryPickerOpen] = useState(false);
   const [heroImageUrl, setHeroImageUrl] = useState(page.heroImageUrl ?? "");
-  const [membershipTier, setMembershipTier] = useState<MembershipTier | null>(page.membershipTier);
+  const [membershipTier, setMembershipTier] = useState<MembershipTier | null>(
+    (toLevel(page.membershipTier) as MembershipTier | null) ?? null,
+  );
   const [publishDate, setPublishDate] = useState(dateToIso(page.publishDate));
   const [expiryDate, setExpiryDate] = useState(dateToIso(page.expiryDate));
   const [dirty, setDirty] = useState(false);

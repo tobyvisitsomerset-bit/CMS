@@ -26,12 +26,17 @@ enum ListingCategory {
   EVENT
 }
 
-// Ordered low to high — higher tiers sort first and get a badge on listings.
+// Current levels are GROWTH, PARTNER, PREMIUM (see lib/membership.ts). The four
+// Kentico-era values are kept so existing rows stay valid; they are mapped onto
+// the three levels when read.
 enum MembershipTier {
   BRONZE
   SILVER
   GOLD
   PLATINUM
+  GROWTH
+  PARTNER
+  PREMIUM
 }
 
 model Role {

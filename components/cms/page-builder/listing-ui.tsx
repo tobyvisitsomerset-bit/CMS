@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
+import { isFeatured } from "@/lib/membership";
 
 export function tierBadgeLabel(tier: string | null): string | null {
-  if (tier === "PLATINUM") return "Platinum Member";
-  if (tier === "GOLD") return "Gold Member";
-  return null;
+  // Only Premium carries a badge; Partner and Growth sort by priority only.
+  return isFeatured(tier) ? "Premium Member" : null;
 }
 
 export function Img({

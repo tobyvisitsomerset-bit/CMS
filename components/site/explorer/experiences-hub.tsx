@@ -102,7 +102,7 @@ export function ExperiencesHubView({
                     <Img src={item.heroImageUrl} alt="" label={item.title} className="aspect-[16/10] w-full" />
                   </Link>
                   <TripHeart id={item.id} title={item.title} slug={item.slug} heroImageUrl={item.heroImageUrl} className="absolute right-3 top-3" />
-                  {item.tier && (item.tier === "GOLD" || item.tier === "PLATINUM") && (
+                  {item.tier === "PREMIUM" && (
                     <span className="absolute left-3 top-3 rounded-full bg-damson px-3 py-1 text-[10px] font-bold tracking-wider text-white uppercase">Featured member</span>
                   )}
                 </div>

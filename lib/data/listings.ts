@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import type { ListingCategory, MembershipTier } from "@prisma/client";
+import { isFeatured, priorityOf } from "@/lib/membership";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- only used via `typeof` below, which is the standard Prisma.validator pattern
 const listingWithFacilities = Prisma.validator<Prisma.ListingDefaultArgs>()({
@@ -8,22 +9,14 @@ const listingWithFacilities = Prisma.validator<Prisma.ListingDefaultArgs>()({
 });
 export type ListingWithFacilities = Prisma.ListingGetPayload<typeof listingWithFacilities>;
 
-const TIER_RANK: Record<MembershipTier, number> = {
-  PLATINUM: 0,
-  GOLD: 1,
-  SILVER: 2,
-  BRONZE: 3,
-};
-
-// GOLD/PLATINUM members get the "Featured member" placement in hub-page grids.
+// Premium members get the "Featured member" placement in hub-page grids.
 export function isFeaturedTier(tier: MembershipTier | null): boolean {
-  return tier === "PLATINUM" || tier === "GOLD";
+  return isFeatured(tier);
 }
 
 function byTierThenSortOrder(a: ListingWithFacilities, b: ListingWithFacilities): number {
-  const rankA = a.membershipTier ? TIER_RANK[a.membershipTier] : TIER_RANK.BRONZE + 1;
-  const rankB = b.membershipTier ? TIER_RANK[b.membershipTier] : TIER_RANK.BRONZE + 1;
-  if (rankA !== rankB) return rankA - rankB;
+  const diff = priorityOf(b.membershipTier) - priorityOf(a.membershipTier);
+  if (diff !== 0) return diff;
   return a.sortOrder - b.sortOrder;
 }
 

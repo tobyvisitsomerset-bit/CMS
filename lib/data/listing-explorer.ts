@@ -1,6 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
+import { priorityOf, toLevel } from "@/lib/membership";
 
 // Real-data listing engine (Phase 12) behind the accommodation, things-to-do,
 // food & drink and festivals & events landing pages. Everything here is
@@ -19,7 +20,7 @@ export type ExplorerItem = {
   heroImageUrl: string | null;
   summary: string | null;
   town: string | null;
-  tier: "BRONZE" | "SILVER" | "GOLD" | "PLATINUM" | null;
+  tier: "GROWTH" | "PARTNER" | "PREMIUM" | null;
   type: string; // section label, e.g. "Hotels"
   typeSlug: string; // second slug segment under the root
   priceFrom: number | null;
@@ -35,7 +36,6 @@ export type ExplorerItem = {
   bookingLabel: string | null;
 };
 
-const TIER_RANK: Record<string, number> = { PLATINUM: 4, GOLD: 3, SILVER: 2, BRONZE: 1 };
 
 export function parsePrice(admission: string | null): { from: number | null; unit: string | null } {
   if (!admission) return { from: null, unit: null };
@@ -116,7 +116,7 @@ async function loadExplorerItems(rootSlug: string): Promise<ExplorerItem[]> {
       heroImageUrl: r.heroImageUrl,
       summary: summarise(r.bodyContent),
       town: info?.town ?? null,
-      tier: r.membershipTier,
+      tier: toLevel(r.membershipTier),
       type: sectionLabel.get(`${rootSlug}/${typeSlug}`) ?? "",
       typeSlug,
       priceFrom: price.from,
@@ -251,7 +251,7 @@ export async function queryExplorer(kind: ExplorerKind, rootSlug: string, params
     if (params.town && i.town !== params.town) return false;
     if (params.graded && !i.grading) return false;
     if (params.bookable && !i.hasBooking) return false;
-    if (params.featured && !(i.tier === "GOLD" || i.tier === "PLATINUM")) return false;
+    if (params.featured && i.tier !== "PREMIUM") return false;
     if (params.free && !isFree(i)) return false;
     if (params.when && params.when !== "all" && !eventMatchesWhen(i, params.when, now)) return false;
     if (!ignoreDay && params.day && !eventOnDay(i, params.day)) return false;
@@ -294,7 +294,7 @@ export async function queryExplorer(kind: ExplorerKind, rootSlug: string, params
   } else {
     // recommended: higher membership tier first (the pack's featured-member
     // rule), otherwise the editorial order already in the tree.
-    filtered.sort((a, b) => (TIER_RANK[b.tier ?? ""] ?? 0) - (TIER_RANK[a.tier ?? ""] ?? 0));
+    filtered.sort((a, b) => priorityOf(b.tier) - priorityOf(a.tier));
   }
 
   const pageSize = kind === "events" ? 20 : PAGE_SIZE;
@@ -302,13 +302,13 @@ export async function queryExplorer(kind: ExplorerKind, rootSlug: string, params
   const page = Math.min(Math.max(1, params.page ?? 1), pageCount);
   const pageItems = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  // The pack's "Featured member" placement: the top-ranked Gold/Platinum
+  // The pack's "Featured member" placement: the top-ranked Premium
   // listing is pinned above the list on the first page of the recommended
   // sort, and removed from the normal run so it never shows twice.
   let featured: ExplorerItem | null = null;
   let items = pageItems;
   if (kind !== "events" && page === 1 && sort === "recommended") {
-    const top = pageItems.find((i) => i.tier === "GOLD" || i.tier === "PLATINUM");
+    const top = pageItems.find((i) => i.tier === "PREMIUM");
     if (top) {
       featured = top;
       items = pageItems.filter((i) => i.id !== top.id);
@@ -347,7 +347,7 @@ export async function queryExplorer(kind: ExplorerKind, rootSlug: string, params
     counts: {
       graded: base.filter((i) => i.grading).length,
       bookable: base.filter((i) => i.hasBooking).length,
-      featured: base.filter((i) => i.tier === "GOLD" || i.tier === "PLATINUM").length,
+      featured: base.filter((i) => i.tier === "PREMIUM").length,
       free: base.filter(isFree).length,
     },
   };

@@ -1,12 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
+import { levelLabel } from "@/lib/membership";
 
 // Everything the Member Portal shows is read from the same database as the
 // Content Hub and public site. Nothing here is estimated or invented: counts
 // are real rows, and "listing strength" is a transparent checklist over real
 // fields.
 
-const TIER_LABEL: Record<string, string> = { BRONZE: "Bronze", SILVER: "Silver", GOLD: "Gold", PLATINUM: "Platinum" };
 
 const STATUS_LABEL: Record<string, string> = {
   DRAFT: "Draft",
@@ -117,7 +117,7 @@ export async function getMemberListings(userId: string): Promise<MemberListing[]
       slug: p.slug,
       status: p.status,
       statusLabel: STATUS_LABEL[p.status] ?? p.status,
-      tierLabel: p.membershipTier ? (TIER_LABEL[p.membershipTier] ?? p.membershipTier) : null,
+      tierLabel: levelLabel(p.membershipTier),
       heroImageUrl: p.heroImageUrl,
       town: info?.town ?? null,
       summary: decodeKenticoText(p.subtitle) ?? p.tagline,

@@ -5,6 +5,7 @@ import { TripHeart } from "@/components/trip/trip-heart";
 import { cn } from "@/lib/utils";
 import type { ExplorerItem, ExplorerResult } from "@/lib/data/listing-explorer";
 import { ExplorerMap } from "./explorer-map";
+import { LEVEL_LABEL } from "@/lib/membership";
 
 export type ExplorerConfig = {
   kind: "accommodation" | "things" | "food";
@@ -116,8 +117,7 @@ function ListCard({ item, sp, featured, kind }: { item: ExplorerItem; sp: SP; fe
         <div className="flex flex-wrap gap-1.5">
           {item.grading && <span className="rounded-full bg-cool-grey px-2.5 py-1 text-xs text-stone-700">{item.grading}</span>}
           {item.hasBooking && <span className="rounded-full bg-damson/10 px-2.5 py-1 text-xs font-medium text-damson">Book online</span>}
-          {item.tier === "PLATINUM" && <span className="rounded-full bg-cool-grey px-2.5 py-1 text-xs text-stone-700">Platinum member</span>}
-          {item.tier === "GOLD" && <span className="rounded-full bg-cool-grey px-2.5 py-1 text-xs text-stone-700">Gold member</span>}
+          {item.tier && <span className="rounded-full bg-cool-grey px-2.5 py-1 text-xs text-stone-700">{LEVEL_LABEL[item.tier]} member</span>}
         </div>
         <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-1">
           <div>

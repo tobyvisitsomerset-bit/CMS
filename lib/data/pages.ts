@@ -3,6 +3,7 @@ import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { MembershipTier, Page, PageStatus } from "@prisma/client";
 import { parseCustomFields, getBusinessInfo } from "@/lib/kentico-item-fields";
+import { LEVELS_BY_PRIORITY, LEVEL_VALUES } from "@/lib/membership";
 
 export type PageTreeNode = Pick<
   Page,
@@ -305,14 +306,17 @@ export async function getFeaturedRealBusinesses(rootSlug: string, limit: number)
   };
   const picked: FeaturedPageTile[] = [];
   const seen = new Set<string>();
-  const tiers: (MembershipTier | null)[] = ["PLATINUM", "GOLD", "SILVER", "BRONZE", null];
+  const tiers: (MembershipTier[] | null)[] = [
+    ...LEVELS_BY_PRIORITY.map((l) => LEVEL_VALUES[l] as MembershipTier[]),
+    null,
+  ];
   for (const withImage of [true, false]) {
     for (const tier of tiers) {
       if (picked.length >= limit) break;
       const rows = await prisma.page.findMany({
         where: {
           ...where,
-          membershipTier: tier,
+          membershipTier: tier ? { in: tier } : null,
           heroImageUrl: withImage ? { not: null } : null,
           id: { notIn: [...seen] },
         },

@@ -11,6 +11,7 @@ import { queryExplorer, type ExplorerKind, type ExplorerParams } from "@/lib/dat
 import { getShopProducers } from "@/lib/data/shop";
 import { getExperiencesHub } from "@/lib/data/experiences";
 import type { RealBlockData } from "@/components/cms/page-builder/block-renderer";
+import { priorityOf } from "@/lib/membership";
 
 type BlockLike = { id: string; type: string; config: string };
 export type RawSearchParams = Record<string, string | string[] | undefined>;
@@ -143,10 +144,9 @@ export async function resolveBlockData(
         case "map_band": {
           const all = await getPagesWithCoordinates();
           // A representative, deterministic sample: the highest-tier members first.
-          const rank: Record<string, number> = { PLATINUM: 0, GOLD: 1, SILVER: 2, BRONZE: 3 };
           const sample = all
             .filter((p) => p.isBusiness && !p.startDate)
-            .sort((a, b) => (rank[a.tier ?? ""] ?? 4) - (rank[b.tier ?? ""] ?? 4))
+            .sort((a, b) => priorityOf(b.tier) - priorityOf(a.tier))
             .slice(0, 60)
             .map((p) => ({ id: p.id, lat: p.lat, lng: p.lng, title: p.title, href: `/${p.slug}` }));
           return [block.id, { type: "map_band", pins: sample }];
