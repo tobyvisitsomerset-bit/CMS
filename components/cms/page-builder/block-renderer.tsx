@@ -12,7 +12,7 @@ import { ListingSearchBar } from "./listing-search-bar";
 import { InteractiveListingGrid } from "./interactive-listing-grid";
 import { InteractiveEventCalendar } from "./interactive-event-calendar";
 import { HomepageSearchBar } from "@/components/site/homepage-search-bar";
-import { AreaTiles, EventsTeaser, MoodTiles, StaysTeaser, TownsRow } from "@/components/site/home-sections";
+import { AreaTiles, EventsTeaser, MapBand, MoodTiles, PartnersRow, StaysTeaser, TownsRow } from "@/components/site/home-sections";
 import { ListingExplorer } from "@/components/site/explorer/listing-explorer";
 import { EventsExplorer } from "@/components/site/explorer/events-explorer";
 import { ExperiencesHubView } from "@/components/site/explorer/experiences-hub";
@@ -40,6 +40,8 @@ export type RealBlockData =
   | { type: "real_teaser"; items: FeaturedPageTile[]; total: number }
   | { type: "towns_row"; towns: TownTile[] }
   | { type: "mood_tiles"; moods: { label: string; query: string; count: number }[] }
+  | { type: "map_band"; pins: { id: string; lat: number; lng: number; title: string; href: string }[] }
+  | { type: "partners_row"; items: FeaturedPageTile[] }
   | { type: "producer_shop"; producers: ShopProducer[] }
   | { type: "experiences_hub"; hub: ExperiencesHub; searchParams: Record<string, string | undefined> }
   | {
@@ -369,6 +371,33 @@ export function BlockRenderer({
           }}
           result={realData.result}
           searchParams={realData.searchParams}
+        />
+      );
+    }
+
+    case "map_band": {
+      if (!realData || realData.type !== "map_band") return <RealDataUnavailable />;
+      return (
+        <MapBand
+          eyebrow={config.eyebrow}
+          heading={config.heading}
+          text={config.text}
+          primary={{ label: config.primaryLabel, url: config.primaryUrl }}
+          secondary={{ label: config.secondaryLabel, url: config.secondaryUrl }}
+          pins={realData.pins}
+        />
+      );
+    }
+
+    case "partners_row": {
+      if (!realData || realData.type !== "partners_row") return <RealDataUnavailable />;
+      return (
+        <PartnersRow
+          eyebrow={config.eyebrow}
+          title={config.title}
+          items={realData.items}
+          seeAllLabel={config.seeAllLabel}
+          seeAllHref={config.seeAllHref}
         />
       );
     }

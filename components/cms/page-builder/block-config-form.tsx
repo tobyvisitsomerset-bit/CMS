@@ -537,6 +537,63 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
         </div>
       );
 
+    case "map_band":
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">Shows a live map of real places. Live preview isn&apos;t available - save to see it on the real page.</p>
+          <Field label="Eyebrow">
+            <Input value={config.eyebrow ?? ""} onChange={(e) => set({ eyebrow: e.target.value })} />
+          </Field>
+          <Field label="Heading">
+            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          </Field>
+          <Field label="Text">
+            <Textarea rows={3} value={config.text ?? ""} onChange={(e) => set({ text: e.target.value })} />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Primary button label">
+              <Input value={config.primaryLabel ?? ""} onChange={(e) => set({ primaryLabel: e.target.value })} />
+            </Field>
+            <Field label="Primary button URL">
+              <Input value={config.primaryUrl ?? ""} onChange={(e) => set({ primaryUrl: e.target.value })} />
+            </Field>
+            <Field label="Secondary button label">
+              <Input value={config.secondaryLabel ?? ""} onChange={(e) => set({ secondaryLabel: e.target.value })} />
+            </Field>
+            <Field label="Secondary button URL">
+              <Input value={config.secondaryUrl ?? ""} onChange={(e) => set({ secondaryUrl: e.target.value })} />
+            </Field>
+          </div>
+        </div>
+      );
+
+    case "partners_row":
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">Shows real businesses, highest membership tier first. Live preview isn&apos;t available - save to see it on the real page.</p>
+          <Field label="Eyebrow">
+            <Input value={config.eyebrow ?? ""} onChange={(e) => set({ eyebrow: e.target.value })} />
+          </Field>
+          <Field label="Title">
+            <Input value={config.title ?? ""} onChange={(e) => set({ title: e.target.value })} />
+          </Field>
+          <Field label="Section slug to pull from">
+            <Input value={config.rootSlug ?? ""} onChange={(e) => set({ rootSlug: e.target.value })} />
+          </Field>
+          <div className="grid grid-cols-3 gap-3">
+            <Field label="How many">
+              <Input type="number" min={1} max={12} value={config.limit ?? 6} onChange={(e) => set({ limit: Number(e.target.value) })} />
+            </Field>
+            <Field label="See-all label">
+              <Input value={config.seeAllLabel ?? ""} onChange={(e) => set({ seeAllLabel: e.target.value })} />
+            </Field>
+            <Field label="See-all link">
+              <Input value={config.seeAllHref ?? ""} onChange={(e) => set({ seeAllHref: e.target.value })} />
+            </Field>
+          </div>
+        </div>
+      );
+
     case "producer_shop":
       return (
         <div className="space-y-4">

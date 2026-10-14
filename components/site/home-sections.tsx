@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Img } from "@/components/cms/page-builder/listing-ui";
 import { TripHeart } from "@/components/trip/trip-heart";
 import { parsePrice } from "@/lib/data/listing-explorer";
+import { MapBandMap } from "./map-band-map";
 import type { ExploreAreaTile, FeaturedPageTile, TownTile } from "@/lib/data/pages";
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
@@ -210,15 +211,103 @@ export function TownsRow({ towns, title }: { towns: TownTile[]; title?: string }
   return (
     <section className="px-6 py-14">
       <div className="mx-auto max-w-7xl">
-        <Eyebrow>Towns &amp; cities</Eyebrow>
-        <h2 className="mt-1 font-serif text-3xl font-black text-stone-900 sm:text-4xl">{title || "Find your Somerset"}</h2>
+        <h2 className="font-serif text-3xl font-black text-stone-900 sm:text-4xl">{title || "Towns & cities"}</h2>
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {towns.map((town) => (
-            <Link key={town.id} href={`/${town.slug}`} className="group">
-              <div className="overflow-hidden rounded-3xl">
-                <Img src={town.heroImageUrl} alt="" label={town.title} className="aspect-[4/5] w-full transition-transform duration-300 group-hover:scale-105" />
-              </div>
-              <p className="mt-3 font-serif text-lg font-black text-stone-900 group-hover:text-somerset-green">{town.title}</p>
+            <Link key={town.id} href={`/${town.slug}`} className="group relative block overflow-hidden rounded-3xl">
+              <Img src={town.heroImageUrl} alt="" label={town.title} className="aspect-[4/5] w-full transition-transform duration-300 group-hover:scale-105" />
+              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/45 to-transparent px-4 pt-10 pb-4 font-serif text-xl font-black text-white">
+                {town.title}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// "See it all on the map" band: copy on the left, a live map of real pins on
+// the right.
+export function MapBand({
+  eyebrow,
+  heading,
+  text,
+  primary,
+  secondary,
+  pins,
+}: {
+  eyebrow?: string;
+  heading?: string;
+  text?: string;
+  primary?: { label: string; url: string };
+  secondary?: { label: string; url: string };
+  pins: { id: string; lat: number; lng: number; title: string; href: string }[];
+}) {
+  return (
+    <section className="bg-somerset-green px-6 py-14 text-white">
+      <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[1fr_1.2fr]">
+        <div>
+          <p className="text-[11px] font-semibold tracking-[0.2em] text-white/70 uppercase">{eyebrow || "Everything, everywhere"}</p>
+          <h2 className="mt-2 font-serif text-4xl font-black sm:text-5xl">{heading || "See it all on the map"}</h2>
+          {text && <p className="mt-3 max-w-md text-white/90">{text}</p>}
+          <div className="mt-6 flex flex-wrap gap-3">
+            {primary?.label && (
+              <Link href={primary.url || "/interactive-map"} className="rounded-full bg-white px-6 py-3 text-sm font-bold text-deep-green hover:opacity-90">
+                {primary.label}
+              </Link>
+            )}
+            {secondary?.label && (
+              <Link href={secondary.url || "/interactive-map"} className="rounded-full border border-white/70 px-6 py-3 text-sm font-bold text-white hover:bg-white/10">
+                {secondary.label}
+              </Link>
+            )}
+          </div>
+        </div>
+        <div className="h-72 overflow-hidden rounded-[2rem] sm:h-80">
+          <MapBandMap pins={pins} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// "Made in Somerset" — real featured members, highest tier first.
+export function PartnersRow({
+  eyebrow,
+  title,
+  items,
+  seeAllLabel,
+  seeAllHref,
+}: {
+  eyebrow?: string;
+  title?: string;
+  items: FeaturedPageTile[];
+  seeAllLabel?: string;
+  seeAllHref?: string;
+}) {
+  return (
+    <section className="px-6 py-14">
+      <div className="mx-auto max-w-7xl">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <Eyebrow>{eyebrow || "Members & partners"}</Eyebrow>
+            <h2 className="mt-1 font-serif text-3xl font-black text-stone-900 sm:text-4xl">{title || "Made in Somerset"}</h2>
+          </div>
+          {seeAllHref && (
+            <Link href={seeAllHref} className="text-sm font-bold text-somerset-green hover:underline">
+              {seeAllLabel || "See all"} →
+            </Link>
+          )}
+        </div>
+        <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          {items.map((p) => (
+            <Link
+              key={p.id}
+              href={`/${p.slug}`}
+              className="flex aspect-[4/3] items-center justify-center rounded-3xl bg-cool-grey p-4 text-center font-serif text-base leading-tight font-black text-stone-700 transition-colors hover:bg-somerset-green/10 hover:text-somerset-green"
+            >
+              {p.title}
             </Link>
           ))}
         </div>

@@ -19,6 +19,7 @@ import {
   ListFilter,
   ShoppingBag,
   Compass,
+  Handshake,
 } from "lucide-react";
 
 export type BlockType =
@@ -42,7 +43,9 @@ export type BlockType =
   | "mood_tiles"
   | "listing_explorer"
   | "producer_shop"
-  | "experiences_hub";
+  | "experiences_hub"
+  | "map_band"
+  | "partners_row";
 
 export const BLOCK_DEFS: { type: BlockType; label: string; description: string; icon: typeof LayoutTemplate }[] = [
   { type: "hero", label: "Hero", description: "Full-width banner with heading and CTA", icon: LayoutTemplate },
@@ -66,6 +69,8 @@ export const BLOCK_DEFS: { type: BlockType; label: string; description: string; 
   { type: "listing_explorer", label: "Listing Explorer", description: "Searchable, filterable list of real businesses or events with a map", icon: ListFilter },
   { type: "producer_shop", label: "Producer Shop", description: "One block per real producer with their live products and Buy Now links", icon: ShoppingBag },
   { type: "experiences_hub", label: "Experiences Hub", description: "Book-direct experiences landing section with search and live listings", icon: Compass },
+  { type: "map_band", label: "Map Band", description: "Green band with copy and a live map of real places", icon: MapIcon },
+  { type: "partners_row", label: "Partners Row", description: "Row of real featured members (highest tier first)", icon: Handshake },
 ];
 
 export function blockLabel(type: string): string {
@@ -137,6 +142,25 @@ export function defaultConfigFor(type: BlockType): Record<string, unknown> {
       };
     case "listing_explorer":
       return { kind: "accommodation", rootSlug: "places-to-stay", title: "", intro: "", noun: "places to stay", parentLabel: "", parentHref: "" };
+    case "map_band":
+      return {
+        eyebrow: "Everything, everywhere",
+        heading: "See it all on the map",
+        text: "Turn categories on and off, pin places into a trip and take it with you.",
+        primaryLabel: "Open the map",
+        primaryUrl: "/interactive-map",
+        secondaryLabel: "What's near me",
+        secondaryUrl: "/interactive-map",
+      };
+    case "partners_row":
+      return {
+        eyebrow: "Members & partners",
+        title: "Made in Somerset",
+        rootSlug: "things-to-do/food-drink-more",
+        limit: 6,
+        seeAllLabel: "All food & drink",
+        seeAllHref: "/things-to-do/food-drink-more",
+      };
     case "producer_shop":
       return { rootSlug: "virtual-highstreet", intro: "" };
     case "experiences_hub":

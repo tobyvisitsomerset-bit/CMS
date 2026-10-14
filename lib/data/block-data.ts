@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { ExploreAreaTile, TownTile } from "@/lib/data/pages";
 import {
+  getPagesWithCoordinates,
   countPlacesMatching,
   countRealBusinesses,
   getFeaturedRealBusinesses,
@@ -139,6 +140,25 @@ export async function resolveBlockData(
             },
           ];
         }
+        case "map_band": {
+          const all = await getPagesWithCoordinates();
+          // A representative, deterministic sample: the highest-tier members first.
+          const rank: Record<string, number> = { PLATINUM: 0, GOLD: 1, SILVER: 2, BRONZE: 3 };
+          const sample = all
+            .filter((p) => p.isBusiness && !p.startDate)
+            .sort((a, b) => (rank[a.tier ?? ""] ?? 4) - (rank[b.tier ?? ""] ?? 4))
+            .slice(0, 60)
+            .map((p) => ({ id: p.id, lat: p.lat, lng: p.lng, title: p.title, href: `/${p.slug}` }));
+          return [block.id, { type: "map_band", pins: sample }];
+        }
+        case "partners_row":
+          return [
+            block.id,
+            {
+              type: "partners_row",
+              items: await getFeaturedRealBusinesses(config.rootSlug || "things-to-do/food-drink-more", Number(config.limit) || 6),
+            },
+          ];
         case "producer_shop":
           return [block.id, { type: "producer_shop", producers: await getShopProducers(config.rootSlug || "virtual-highstreet") }];
         case "experiences_hub":

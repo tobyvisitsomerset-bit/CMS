@@ -116,7 +116,9 @@ async function ensureHome() {
   if (!page) return;
   const hadStrip = await prisma.contentBlock.count({ where: { pageId: page.id, type: "book_strip" } });
   const hadMoods = await prisma.contentBlock.count({ where: { pageId: page.id, type: "mood_tiles" } });
-  if (hadStrip > 0 && hadMoods > 0) return;
+  const hadMapBand = await prisma.contentBlock.count({ where: { pageId: page.id, type: "map_band" } });
+  const hadPartners = await prisma.contentBlock.count({ where: { pageId: page.id, type: "partners_row" } });
+  if (hadStrip > 0 && hadMoods > 0 && hadMapBand > 0 && hadPartners > 0) return;
 
   if (hadStrip === 0) {
     await prisma.contentBlock.create({
@@ -157,6 +159,45 @@ async function ensureHome() {
     });
   }
 
+  // The homepage's old centred "map" CTA becomes the mockup's map band.
+  const oldCta = await prisma.contentBlock.findFirst({
+    where: { pageId: page.id, type: "cta_banner", config: { contains: "interactive-map" } },
+  });
+  if (oldCta) {
+    await prisma.contentBlock.update({
+      where: { id: oldCta.id },
+      data: {
+        type: "map_band",
+        config: JSON.stringify({
+          eyebrow: "Everything, everywhere",
+          heading: "See it all on the map",
+          text: "Turn categories on and off, pin places into a trip and take it with you. Works from wherever you are staying.",
+          primaryLabel: "Open the map",
+          primaryUrl: "/interactive-map",
+          secondaryLabel: "What's near me",
+          secondaryUrl: "/interactive-map",
+        }),
+      },
+    });
+  }
+  if ((await prisma.contentBlock.count({ where: { pageId: page.id, type: "partners_row" } })) === 0) {
+    await prisma.contentBlock.create({
+      data: {
+        pageId: page.id,
+        type: "partners_row",
+        sortOrder: 2000,
+        config: JSON.stringify({
+          eyebrow: "Members & partners",
+          title: "Made in Somerset",
+          rootSlug: "things-to-do/food-drink-more",
+          limit: 6,
+          seeAllLabel: "All food & drink",
+          seeAllHref: "/things-to-do/food-drink-more",
+        }),
+      },
+    });
+  }
+
   // First-time ordering to match the mockup: hero, book strip, moods, events,
   // stays, towns, area tiles, then anything else (map CTA etc.).
   const blocks = await prisma.contentBlock.findMany({ where: { pageId: page.id } });
@@ -180,10 +221,13 @@ async function ensureHome() {
         return 5;
       case "explore_area_tiles":
         return 6;
+      case "map_band":
       case "cta_banner":
         return 7;
-      default:
+      case "partners_row":
         return 8;
+      default:
+        return 9;
     }
   };
   const ordered = [...blocks].sort((a, b) => rank(a) - rank(b) || a.sortOrder - b.sortOrder);
