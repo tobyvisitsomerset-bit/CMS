@@ -46,6 +46,13 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           bookLabel={master.bookButtonLabel}
           bookHref={master.bookButtonHref}
           megaMenus={megaMenus}
+          account={
+            !session?.user
+              ? { href: "/login", label: "Sign in" }
+              : session.user.roleKey === "MEMBER"
+                ? { href: "/portal", label: "Member portal" }
+                : { href: "/cms", label: "Content Hub" }
+          }
         />
         <main className="flex-1">{children}</main>
         <SiteFooter socialLinks={socialLinks} signedIn={!!session?.user} master={{ ...master, footerColumns }} />

@@ -379,3 +379,22 @@ model SiteSetting {
   updatedById String?
   updatedAt   DateTime @updatedAt
 }
+
+// A member's proposed edit to a listing. The live page is never touched until
+// the team approves it (status SUBMITTED -> APPROVED applies it).
+model ChangeRequest {
+  id          String    @id @default(cuid())
+  pageId      String
+  authorId    String
+  status      String    @default("DRAFT") // DRAFT | SUBMITTED | APPROVED | REJECTED
+  proposal    String // JSON, see lib/data/change-requests.ts
+  note        String? // reviewer's reason when rejected
+  decidedById String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  submittedAt DateTime?
+  decidedAt   DateTime?
+
+  @@index([pageId, status])
+  @@index([status])
+}

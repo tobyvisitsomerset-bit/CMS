@@ -9,6 +9,11 @@ import { kindFromMimeType } from "@/lib/data/media";
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const MAX_SIZE = 15 * 1024 * 1024; // 15MB, dev-only guard
 
+// Files are served from the site's own origin, so anything the browser would
+// execute (html, svg, js) must never be accepted. Members may add photos only.
+const IMAGE_EXT = ["jpg", "jpeg", "png", "gif", "webp", "avif"];
+const STAFF_EXT = [...IMAGE_EXT, "pdf", "mp4", "webm", "mov", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "csv", "txt", "zip"];
+
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -25,6 +30,15 @@ export async function POST(request: Request) {
   }
   if (file.size > MAX_SIZE) {
     return NextResponse.json({ error: "File too large (15MB limit in dev)" }, { status: 400 });
+  }
+
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+  const allowed = session.user.roleKey === "MEMBER" ? IMAGE_EXT : STAFF_EXT;
+  if (!allowed.includes(ext)) {
+    return NextResponse.json(
+      { error: session.user.roleKey === "MEMBER" ? "Please upload a photo (JPG, PNG, GIF or WebP)." : "That file type is not allowed." },
+      { status: 400 },
+    );
   }
 
   await mkdir(UPLOAD_DIR, { recursive: true });

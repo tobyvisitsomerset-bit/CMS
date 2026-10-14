@@ -22,6 +22,7 @@ export function SiteHeader({
   bookLabel,
   bookHref,
   megaMenus,
+  account,
 }: {
   mainNav: NavItem[];
   utilityLinks: { label: string; href: string }[];
@@ -29,6 +30,7 @@ export function SiteHeader({
   bookLabel: string;
   bookHref: string;
   megaMenus: Record<string, MegaMenuColumn[]>;
+  account: { href: string; label: string };
 }) {
   const mapNav = { label: mapLabel, slug: "interactive-map" };
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
@@ -68,8 +70,8 @@ export function SiteHeader({
               My Trip
               <TripNavBadge />
             </Link>
-            <Link href="/sign-in" className="font-semibold hover:underline">
-              Sign in
+            <Link href={account.href} className="font-semibold hover:underline">
+              {account.label}
             </Link>
           </nav>
           <Link href="/my-trip" className="flex items-center gap-1.5 md:hidden">
@@ -159,8 +161,8 @@ export function SiteHeader({
                 {l.label}
               </Link>
             ))}
-            <Link href="/sign-in" onClick={() => setMobileOpen(false)}>
-              Sign in
+            <Link href={account.href} onClick={() => setMobileOpen(false)}>
+              {account.label}
             </Link>
           </div>
           <Link

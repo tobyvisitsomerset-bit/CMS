@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
-import { hasCapability, canAccessPage, isAdmin } from "@/lib/permissions";
+import { hasCapability, canAccessPage, canEditLive, isAdmin } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import * as pagesData from "@/lib/data/pages";
@@ -159,7 +159,7 @@ export async function saveContentAction(
   const existing = await pagesData.getPageById(pageId);
   if (!existing) throw new Error("Page not found");
   if (!canAccessPage(session.user.roleKey, session.user.id, existing)) throw new Error("Not permitted");
-  if (session.user.roleKey === "READ_ONLY") throw new Error("Not permitted");
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
 
   const page = await pagesData.updatePage(pageId, data);
   if (relations) {
@@ -188,7 +188,7 @@ export async function saveSeoAction(
   const existing = await pagesData.getPageById(pageId);
   if (!existing) throw new Error("Page not found");
   if (!canAccessPage(session.user.roleKey, session.user.id, existing)) throw new Error("Not permitted");
-  if (session.user.roleKey === "READ_ONLY") throw new Error("Not permitted");
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
 
   const page = await prisma.page.update({ where: { id: pageId }, data });
   await logAudit({ userId: session.user.id, pageId: page.id, action: "updated", details: "SEO settings" });
@@ -204,7 +204,7 @@ export async function addContentBlockAction(pageId: string, type: string) {
   const existing = await pagesData.getPageById(pageId);
   if (!existing) throw new Error("Page not found");
   if (!canAccessPage(session.user.roleKey, session.user.id, existing)) throw new Error("Not permitted");
-  if (session.user.roleKey === "READ_ONLY") throw new Error("Not permitted");
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
 
   const count = await prisma.contentBlock.count({ where: { pageId } });
   const block = await prisma.contentBlock.create({
@@ -216,7 +216,7 @@ export async function addContentBlockAction(pageId: string, type: string) {
 
 export async function updateContentBlockAction(blockId: string, config: Record<string, unknown>) {
   const session = await requireSession();
-  if (session.user.roleKey === "READ_ONLY") throw new Error("Not permitted");
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
   const block = await prisma.contentBlock.update({
     where: { id: blockId },
     data: { config: JSON.stringify(config) },
@@ -228,7 +228,7 @@ export async function updateContentBlockAction(blockId: string, config: Record<s
 
 export async function deleteContentBlockAction(blockId: string) {
   const session = await requireSession();
-  if (session.user.roleKey === "READ_ONLY") throw new Error("Not permitted");
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
   const block = await prisma.contentBlock.delete({ where: { id: blockId } });
   await versionsData.createVersionSnapshot(block.pageId, session.user.id, "Section removed");
   revalidatePath("/cms");
@@ -237,7 +237,7 @@ export async function deleteContentBlockAction(blockId: string) {
 
 export async function reorderContentBlocksAction(pageId: string, orderedBlockIds: string[]) {
   const session = await requireSession();
-  if (session.user.roleKey === "READ_ONLY") throw new Error("Not permitted");
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
   await Promise.all(
     orderedBlockIds.map((id, index) => prisma.contentBlock.update({ where: { id }, data: { sortOrder: index } })),
   );
@@ -251,7 +251,7 @@ export async function reorderContentBlocksAction(pageId: string, orderedBlockIds
 
 async function assertCanEditPage(pageId: string) {
   const session = await requireSession();
-  if (session.user.roleKey === "READ_ONLY") throw new Error("Not permitted");
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
   const page = await pagesData.getPageById(pageId);
   if (!page) throw new Error("Page not found");
   if (!canAccessPage(session.user.roleKey, session.user.id, page)) throw new Error("Not permitted");
@@ -415,7 +415,7 @@ export async function listVersionsAction(pageId: string) {
 
 export async function rollbackVersionAction(versionId: string) {
   const session = await requireSession();
-  if (session.user.roleKey === "READ_ONLY") throw new Error("Not permitted");
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
   const version = await versionsData.getVersion(versionId);
   if (!version) throw new Error("Version not found");
   if (!hasCapability(session.user.roleKey, "pages.edit") && session.user.roleKey !== "MEMBER") {

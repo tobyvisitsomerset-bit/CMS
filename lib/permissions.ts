@@ -76,7 +76,15 @@ export function isAdmin(role: RoleKey): boolean {
   return role === ROLE_KEYS.SUPER_ADMIN || role === ROLE_KEYS.CONTENT_ADMIN;
 }
 
-/** Members can only touch pages assigned to them; admins can touch anything; read-only never. */
+/**
+ * Only staff change the live site. Members propose edits through the Member
+ * Portal (a ChangeRequest) and a team member approves them.
+ */
+export function canEditLive(role: RoleKey): boolean {
+  return isAdmin(role);
+}
+
+/** Admins can touch anything; read-only can view; members never edit live pages directly. */
 export function canAccessPage(
   role: RoleKey,
   userId: string,
@@ -84,6 +92,7 @@ export function canAccessPage(
 ): boolean {
   if (isAdmin(role)) return true;
   if (role === ROLE_KEYS.READ_ONLY) return true;
-  if (role === ROLE_KEYS.MEMBER) return page.assignedMemberId === userId;
+  void userId;
+  void page;
   return false;
 }

@@ -14,7 +14,7 @@ export async function loginAction(
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/cms",
+      redirectTo: "/login/continue",
     });
     return {};
   } catch (error) {

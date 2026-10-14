@@ -42,6 +42,24 @@ export async function notifySubmittedForReview(pageTitle: string, pageId: string
   });
 }
 
+export async function notifyChangeDecision(
+  memberId: string,
+  pageTitle: string,
+  pageId: string,
+  approved: boolean,
+  note?: string | null,
+) {
+  await prisma.notification.create({
+    data: {
+      userId: memberId,
+      message: approved
+        ? `Your changes to "${pageTitle}" were approved and are now live`
+        : `Your changes to "${pageTitle}" need another look${note ? `: ${note}` : ""}`,
+      pageId,
+    },
+  });
+}
+
 export async function notifyPublished(pageTitle: string, pageId: string, assignedMemberId: string | null) {
   if (!assignedMemberId) return;
   await prisma.notification.create({
