@@ -75,7 +75,7 @@ export function LeafletMap({
         {pins.length > 1 && <FitToPins pins={pins} />}
         <MarkerClusterGroup chunkedLoading maxClusterRadius={60}>
           {pins.map((pin) => (
-            <Marker key={pin.id} position={[pin.lat, pin.lng]} icon={pin.label ? pillIcon(pin.label) : undefined}>
+            <Marker key={pin.id} position={[pin.lat, pin.lng]} {...(pin.label ? { icon: pillIcon(pin.label) } : {})}>
               <Popup>
                 {pin.href ? (
                   <Link href={pin.href} className="font-medium text-somerset-green hover:underline">

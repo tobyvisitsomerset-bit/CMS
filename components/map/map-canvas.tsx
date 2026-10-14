@@ -43,7 +43,9 @@ function Fit({ pins, focus }: { pins: { lat: number; lng: number }[]; focus: { l
       map.setView([focus.lat, focus.lng], focus.zoom);
       return;
     }
-    if (pins.length > 1) {
+    // Only zoom-to-fit narrowed results; the full set includes far-flung
+    // outliers and should open on Somerset itself.
+    if (pins.length > 1 && pins.length <= 150) {
       map.fitBounds(
         pins.map((p) => [p.lat, p.lng]),
         { padding: [40, 40], maxZoom: 13 },
