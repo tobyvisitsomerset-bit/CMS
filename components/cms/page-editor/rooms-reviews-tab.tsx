@@ -48,7 +48,7 @@ export function RoomsReviewsTab({ page, readOnly }: { page: PageDetail; readOnly
         <div>
           <h3 className="text-sm font-semibold">Rooms available</h3>
           <p className="text-xs text-neutral-400">
-            Only shown on the consumer page once at least one room is added. Accommodation listings only.
+            Shown on the public page as soon as a room is added — remember to fill in its details and press Save on the room.
           </p>
         </div>
         {page.rooms.map((room) => (
@@ -134,6 +134,7 @@ function RoomCard({
   const [imageUrl, setImageUrl] = useState(room.imageUrl ?? "");
   const [priceLabel, setPriceLabel] = useState(room.priceLabel ?? "");
   const [features, setFeatures] = useState(parseFeatures(room.features));
+  const [bookingUrl, setBookingUrl] = useState(room.bookingUrl ?? "");
 
   function save() {
     startTransition(async () => {
@@ -143,6 +144,7 @@ function RoomCard({
           description,
           imageUrl,
           priceLabel,
+          bookingUrl: bookingUrl.trim(),
           features: features
             .split(",")
             .map((s) => s.trim())
@@ -170,6 +172,17 @@ function RoomCard({
         <div className="space-y-1">
           <Label>Photo</Label>
           <MediaPickerField value={imageUrl} onChange={setImageUrl} disabled={readOnly} />
+        </div>
+        <div className="col-span-2 space-y-1">
+          <Label>Booking link</Label>
+          <Input
+            placeholder="https://… — where visitors book this room (optional)"
+            value={bookingUrl}
+            onChange={(e) => setBookingUrl(e.target.value)}
+          />
+          <p className="text-xs text-neutral-400">
+            Shown as a &ldquo;Book this room&rdquo; button. Leave blank to use the listing&apos;s main booking link.
+          </p>
         </div>
         <div className="col-span-2 space-y-1">
           <Label>Description</Label>

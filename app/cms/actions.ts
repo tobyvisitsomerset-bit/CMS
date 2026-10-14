@@ -258,7 +258,7 @@ async function assertCanEditPage(pageId: string) {
   return session;
 }
 
-export async function addRoomAction(pageId: string, data: { name: string; description?: string | null; imageUrl?: string | null; priceLabel?: string | null; features?: string[] }) {
+export async function addRoomAction(pageId: string, data: { name: string; description?: string | null; imageUrl?: string | null; priceLabel?: string | null; features?: string[]; bookingUrl?: string | null }) {
   await assertCanEditPage(pageId);
   const count = await prisma.room.count({ where: { pageId } });
   const room = await prisma.room.create({
@@ -269,14 +269,17 @@ export async function addRoomAction(pageId: string, data: { name: string; descri
       imageUrl: data.imageUrl || null,
       priceLabel: data.priceLabel || null,
       features: data.features?.length ? JSON.stringify(data.features) : null,
+      bookingUrl: data.bookingUrl || null,
       sortOrder: count,
     },
   });
   revalidatePath("/cms");
+  const owner = await prisma.page.findUnique({ where: { id: pageId }, select: { slug: true } });
+  if (owner) revalidatePath(`/${owner.slug}`);
   return room;
 }
 
-export async function updateRoomAction(roomId: string, data: { name: string; description?: string | null; imageUrl?: string | null; priceLabel?: string | null; features?: string[] }) {
+export async function updateRoomAction(roomId: string, data: { name: string; description?: string | null; imageUrl?: string | null; priceLabel?: string | null; features?: string[]; bookingUrl?: string | null }) {
   const room = await prisma.room.findUnique({ where: { id: roomId } });
   if (!room) throw new Error("Room not found");
   await assertCanEditPage(room.pageId);
@@ -288,9 +291,13 @@ export async function updateRoomAction(roomId: string, data: { name: string; des
       imageUrl: data.imageUrl || null,
       priceLabel: data.priceLabel || null,
       features: data.features?.length ? JSON.stringify(data.features) : null,
+      bookingUrl: data.bookingUrl || null,
     },
   });
   revalidatePath("/cms");
+  // Rooms show on the public page too — refresh it straight away.
+  const owner = await prisma.page.findUnique({ where: { id: room.pageId }, select: { slug: true } });
+  if (owner) revalidatePath(`/${owner.slug}`);
   return updated;
 }
 

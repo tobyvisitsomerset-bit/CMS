@@ -5,6 +5,7 @@ import { ListingDetailPreview } from "@/components/cms/page-editor/listing-detai
 import { Img } from "@/components/cms/page-builder/listing-ui";
 import Link from "next/link";
 import { PlainPage } from "@/components/site/plain-page";
+import { RoomsSection } from "@/components/site/detail/rooms-section";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
 import type { getPageById, ChildPageTile } from "@/lib/data/pages";
 import { EMPTY_EXTRAS, type DetailExtras } from "@/lib/data/detail-extras";
@@ -79,6 +80,7 @@ export function PagePreview({
         ) : (
           blockList
         )}
+        <RoomsSection rooms={page.rooms} hasEnquiryForm={false} embedded />
       </div>
     );
   }
@@ -108,6 +110,7 @@ export function PagePreview({
   // Public site: banner + prose + child-page grid (components/site/plain-page.tsx).
   if (linkBase !== "/cms") {
     return (
+      <>
       <PlainPage
         title={page.title}
         subtitle={subtitle}
@@ -117,6 +120,8 @@ export function PagePreview({
         childPages={childPages}
         cta={page.callToActionLabel ? { label: page.callToActionLabel, url: page.callToActionUrl || "#" } : null}
       />
+      <RoomsSection rooms={page.rooms} hasEnquiryForm={false} embedded />
+      </>
     );
   }
 
