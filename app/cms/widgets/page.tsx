@@ -5,6 +5,8 @@ import { auth } from "@/lib/auth";
 import { getWidgetUsage } from "@/lib/data/widget-usage";
 import { WIDGETS, WIDGET_CATEGORIES } from "@/lib/widget-catalogue";
 import { blockIcon } from "@/components/cms/page-builder/block-types";
+import { PreviewFrame, WidgetPreview } from "@/components/cms/widgets/widget-preview";
+import { HEAVY_PREVIEW } from "@/lib/widget-samples";
 
 export const dynamic = "force-dynamic";
 
@@ -59,15 +61,19 @@ export default async function WidgetsApplicationPage() {
                 const Icon = blockIcon(w.type);
                 const used = usage[w.type]?.length ?? 0;
                 return (
-                  <Link
-                    key={w.type}
-                    href={`/cms/widgets/${w.type}`}
-                    className="flex gap-3 rounded-lg border bg-white p-4 transition-shadow hover:shadow-md"
-                  >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-somerset-green/10 text-somerset-green">
-                      <Icon className="h-4 w-4" />
-                    </span>
-                    <span className="min-w-0">
+                  <div key={w.type} className="relative flex flex-col gap-3 rounded-lg border bg-white p-3 transition-shadow hover:shadow-md">
+                    {/* The whole card is clickable; the link sits over it (previews contain links of their own). */}
+                    <Link href={`/cms/widgets/${w.type}`} aria-label={w.name} className="absolute inset-0 z-10 rounded-lg" />
+                    {HEAVY_PREVIEW.includes(w.type) || w.legacy ? (
+                      <div className="flex h-40 items-center justify-center rounded-lg bg-[#f1fafa] text-[#26688a]">
+                        <Icon className="h-8 w-8" />
+                      </div>
+                    ) : (
+                      <PreviewFrame scale={0.32} height={160}>
+                        <WidgetPreview type={w.type} />
+                      </PreviewFrame>
+                    )}
+                    <span className="min-w-0 px-1">
                       <span className="block text-sm font-semibold text-neutral-900">{w.name}</span>
                       <span className="mt-0.5 line-clamp-2 block text-xs text-neutral-500">{w.summary}</span>
                       <span className="mt-2 flex flex-wrap gap-1.5 text-[11px]">
@@ -77,7 +83,7 @@ export default async function WidgetsApplicationPage() {
                         </span>
                       </span>
                     </span>
-                  </Link>
+                  </div>
                 );
               })}
             </div>

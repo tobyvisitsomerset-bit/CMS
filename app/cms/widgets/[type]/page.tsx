@@ -4,6 +4,9 @@ import { ArrowLeft } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getWidgetUsage } from "@/lib/data/widget-usage";
 import { widgetByType } from "@/lib/widget-catalogue";
+import { PreviewFrame, WidgetPreview } from "@/components/cms/widgets/widget-preview";
+import { PANEL_PREVIEW_LAYOUTS } from "@/lib/widget-samples";
+import { PANEL_LAYOUTS } from "@/components/site/content-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +19,7 @@ export default async function WidgetDetailPage({ params }: { params: Promise<{ t
   const usage = (await getWidgetUsage())[widget.type] ?? [];
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6 p-6">
+    <div className="mx-auto max-w-5xl space-y-6 p-6">
       <Link href="/cms/widgets" className="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-800">
         <ArrowLeft className="h-4 w-4" /> All widgets
       </Link>
@@ -24,6 +27,33 @@ export default async function WidgetDetailPage({ params }: { params: Promise<{ t
         <p className="text-xs font-medium tracking-wide text-neutral-400 uppercase">{widget.category}</p>
         <h1 className="text-2xl font-semibold text-neutral-900">{widget.name}</h1>
         <p className="mt-2 text-neutral-600">{widget.summary}</p>
+      </div>
+
+      <div className="space-y-4">
+        <h2 className="text-sm font-semibold text-neutral-800">
+          {widget.type === "content_panel" ? "Preview of every layout" : "Preview"}
+        </h2>
+        {widget.type === "content_panel" ? (
+          PANEL_PREVIEW_LAYOUTS.map((key) => (
+            <div key={key}>
+              <p className="mb-1 text-xs font-medium text-neutral-500">
+                {PANEL_LAYOUTS.find((l) => l.key === key)?.label ?? key}
+              </p>
+              <PreviewFrame>
+                <WidgetPreview type="content_panel" layout={key} />
+              </PreviewFrame>
+            </div>
+          ))
+        ) : widget.legacy ? (
+          <p className="text-sm text-neutral-500">Legacy widget — no preview.</p>
+        ) : (
+          <PreviewFrame>
+            <WidgetPreview type={widget.type} />
+          </PreviewFrame>
+        )}
+        <p className="text-xs text-neutral-400">
+          Shown with example wording{widget.data === "Live data from the site" ? " and real data from the site" : ""}. Pictures appear as grey tiles until you choose one.
+        </p>
       </div>
 
       <dl className="divide-y rounded-lg border bg-white text-sm">

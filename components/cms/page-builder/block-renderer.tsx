@@ -19,7 +19,18 @@ import { ExperiencesHubView } from "@/components/site/explorer/experiences-hub";
 import { ProducerShop } from "@/components/site/shop/producer-shop";
 import type { ShopProducer } from "@/lib/data/shop";
 import { ContentPanel } from "@/components/site/content-panel";
-import { AdBar, ButtonWidget, ContactFormWidget, NewsletterBar, PageCards, Spotlight } from "@/components/site/small-widgets";
+import {
+  AdBar,
+  AvailabilitySearch,
+  ButtonWidget,
+  ContactFormWidget,
+  EmbedWidget,
+  EventFormWidget,
+  NewsletterBar,
+  PageCards,
+  SocialPanel,
+  Spotlight,
+} from "@/components/site/small-widgets";
 import type { ExperiencesHub } from "@/lib/data/experiences";
 
 export type ListingsByCategory = Record<ListingCategory, ListingWithFacilities[]>;
@@ -433,6 +444,18 @@ export function BlockRenderer({
 
     case "ad_bar":
       return <AdBar imageUrl={config.imageUrl} url={config.url} alt={config.alt} label={config.label} />;
+
+    case "availability_search":
+      return <AvailabilitySearch title={config.title} text={config.text} />;
+
+    case "event_form":
+      return <EventFormWidget heading={config.heading} intro={config.intro} pageId={pageId} />;
+
+    case "embed":
+      return <EmbedWidget heading={config.heading} url={config.url} height={config.height} linkLabel={config.linkLabel} />;
+
+    case "social_panel":
+      return <SocialPanel heading={config.heading} handle={config.handle} profileUrl={config.profileUrl} images={config.images} />;
 
     case "contact_form":
       return <ContactFormWidget heading={config.heading} intro={config.intro} pageId={pageId} pageTitle={pageTitle} />;

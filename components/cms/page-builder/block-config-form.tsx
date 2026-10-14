@@ -541,8 +541,8 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
     case "content_panel": {
       const items: any[] = config.items ?? [];
       const update = (i: number, patch: any) => set({ items: items.map((x, idx) => (idx === i ? { ...x, ...patch } : x)) });
-      const cardLayout = ["text_cards", "feature_cards", "highlight_cards", "simple_grid", "carousel"].includes(config.layout);
-      const imageLayout = ["text_image", "image_text", "text_image_split", "image_text_split", "video_text"].includes(config.layout);
+      const cardLayout = ["text_cards", "feature_cards", "highlight_cards", "simple_grid", "carousel", "text_image_carousel", "image_text_carousel", "text_image_grid"].includes(config.layout);
+      const imageLayout = ["text_image", "image_text", "text_image_split", "image_text_split", "video_text", "text_image_carousel", "image_text_carousel", "text_image_grid"].includes(config.layout);
       return (
         <div className="space-y-4">
           <Field label="Layout">
@@ -751,6 +751,90 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
           <Field label="Pages (use each page's slug, from Properties › URLs)">
             <StringListEditor values={slugs} onChange={(slugs) => set({ slugs })} placeholder="e.g. things-to-do/attractions/cheddar-gorge" />
           </Field>
+        </div>
+      );
+    }
+
+    case "availability_search":
+      return (
+        <div className="space-y-4">
+          <Field label="Heading">
+            <Input value={config.title ?? ""} onChange={(e) => set({ title: e.target.value })} />
+          </Field>
+          <Field label="Text (optional)">
+            <Textarea rows={2} value={config.text ?? ""} onChange={(e) => set({ text: e.target.value })} />
+          </Field>
+          <p className="text-xs text-neutral-400">The search panel itself is fixed: Stay, Things to do, Eat &amp; drink and What&apos;s on.</p>
+        </div>
+      );
+
+    case "event_form":
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">Submissions are stored under Forms (Enquiries) in the CMS for the team to review.</p>
+          <Field label="Heading">
+            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          </Field>
+          <Field label="Introduction">
+            <Textarea rows={3} value={config.intro ?? ""} onChange={(e) => set({ intro: e.target.value })} />
+          </Field>
+        </div>
+      );
+
+    case "embed":
+      return (
+        <div className="space-y-4">
+          <Field label="Heading">
+            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          </Field>
+          <Field label="Address of the tool (must start with https://)">
+            <Input value={config.url ?? ""} onChange={(e) => set({ url: e.target.value })} />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Height (pixels)">
+              <Input type="number" min={200} max={1400} value={config.height ?? 600} onChange={(e) => set({ height: Number(e.target.value) })} />
+            </Field>
+            <Field label="Link label">
+              <Input value={config.linkLabel ?? ""} onChange={(e) => set({ linkLabel: e.target.value })} />
+            </Field>
+          </div>
+          <p className="text-xs text-neutral-400">Some tools refuse to be shown inside another site — the link underneath always works.</p>
+        </div>
+      );
+
+    case "social_panel": {
+      const images: any[] = config.images ?? [];
+      const update = (i: number, patch: any) => set({ images: images.map((x, idx) => (idx === i ? { ...x, ...patch } : x)) });
+      return (
+        <div className="space-y-4">
+          <Field label="Heading">
+            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Handle">
+              <Input value={config.handle ?? ""} onChange={(e) => set({ handle: e.target.value })} />
+            </Field>
+            <Field label="Profile link">
+              <Input value={config.profileUrl ?? ""} onChange={(e) => set({ profileUrl: e.target.value })} />
+            </Field>
+          </div>
+          <div className="space-y-3">
+            <Label>Pictures</Label>
+            {images.map((img, i) => (
+              <div key={i} className="space-y-2 rounded-lg border p-3">
+                <div className="flex justify-end">
+                  <Button type="button" size="icon" variant="ghost" onClick={() => set({ images: images.filter((_, idx) => idx !== i) })}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+                <MediaPickerField value={img.imageUrl ?? ""} onChange={(url) => update(i, { imageUrl: url })} />
+                <Input placeholder="Link to the post" value={img.url ?? ""} onChange={(e) => update(i, { url: e.target.value })} />
+              </div>
+            ))}
+            <Button type="button" size="sm" variant="outline" disabled={images.length >= 12} onClick={() => set({ images: [...images, { imageUrl: "", url: "" }] })}>
+              <Plus className="h-3.5 w-3.5" /> Add picture
+            </Button>
+          </div>
         </div>
       );
     }

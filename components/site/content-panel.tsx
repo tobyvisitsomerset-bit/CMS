@@ -31,6 +31,9 @@ export const PANEL_LAYOUTS: { key: string; label: string }[] = [
   { key: "highlight_cards", label: "Highlight cards" },
   { key: "simple_grid", label: "Simple header with grid" },
   { key: "carousel", label: "Carousel" },
+  { key: "text_image_carousel", label: "Text & image with carousel" },
+  { key: "image_text_carousel", label: "Image & text with carousel" },
+  { key: "text_image_grid", label: "Text & image with simple grid" },
 ];
 
 const BG: Record<string, { wrap: string; dark: boolean }> = {
@@ -154,6 +157,35 @@ export function ContentPanel({ config }: { config: ContentPanelConfig }) {
       <div className="mx-auto max-w-7xl">{children}</div>
     </section>
   );
+
+  if (layout === "text_image_carousel" || layout === "image_text_carousel" || layout === "text_image_grid") {
+    const imageFirst = layout === "image_text_carousel";
+    return shell(
+      <div className="space-y-10">
+        <div className="grid items-center gap-10 md:grid-cols-2">
+          <div className={cn(imageFirst && "md:order-2")}>
+            <Copy c={config} dark={bg.dark} />
+          </div>
+          <div className={cn(imageFirst && "md:order-1")}>{image}</div>
+        </div>
+        {layout === "text_image_grid" ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {items.map((it, i) => (
+              <Card key={i} item={{ ...it, imageUrl: undefined }} dark={bg.dark} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex snap-x gap-4 overflow-x-auto pb-3">
+            {items.map((it, i) => (
+              <div key={i} className="w-72 shrink-0 snap-start">
+                <Card item={it} dark={bg.dark} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>,
+    );
+  }
 
   if (layout === "text_image" || layout === "image_text") {
     const imageFirst = layout === "image_text";

@@ -27,6 +27,10 @@ import {
   Megaphone as AdIcon,
   MessageSquare,
   ThumbsUp,
+  CalendarPlus,
+  AppWindow,
+  Share2 as SocialIcon,
+  BedDouble,
 } from "lucide-react";
 
 export type BlockType =
@@ -59,7 +63,11 @@ export type BlockType =
   | "spotlight"
   | "ad_bar"
   | "contact_form"
-  | "page_cards";
+  | "page_cards"
+  | "availability_search"
+  | "event_form"
+  | "embed"
+  | "social_panel";
 
 export const BLOCK_DEFS: { type: BlockType; label: string; description: string; icon: typeof LayoutTemplate }[] = [
   { type: "hero", label: "Hero", description: "Full-width banner with heading and CTA", icon: LayoutTemplate },
@@ -92,6 +100,10 @@ export const BLOCK_DEFS: { type: BlockType; label: string; description: string; 
   { type: "ad_bar", label: "Ad bar", description: "A banner image that links out", icon: AdIcon },
   { type: "contact_form", label: "Contact form", description: "A simple message form", icon: MessageSquare },
   { type: "page_cards", label: "You might like", description: "Cards linking to real pages you choose", icon: ThumbsUp },
+  { type: "availability_search", label: "Availability search", description: "Stay / things to do / eat & drink / what's on search panel", icon: BedDouble },
+  { type: "event_form", label: "Event form", description: "Lets organisers submit an event for review", icon: CalendarPlus },
+  { type: "embed", label: "External tool (embed)", description: "Show an external tool such as the Traveline journey planner", icon: AppWindow },
+  { type: "social_panel", label: "Social panel", description: "A row of linked pictures with a link to your profile", icon: SocialIcon },
 ];
 
 export function blockIcon(type: string): typeof LayoutTemplate {
@@ -193,6 +205,14 @@ export function defaultConfigFor(type: BlockType): Record<string, unknown> {
       return { heading: "Get in touch", intro: "" };
     case "page_cards":
       return { title: "You might like", slugs: [] };
+    case "availability_search":
+      return { title: "Find somewhere to stay", text: "" };
+    case "event_form":
+      return { heading: "Submit your event", intro: "Tell us about your festival or event and we'll review it for the site." };
+    case "embed":
+      return { heading: "Plan your journey", url: "", height: 600, linkLabel: "Open in a new tab" };
+    case "social_panel":
+      return { heading: "On Instagram", handle: "@visitsomerset", profileUrl: "", images: [] };
     case "map_band":
       return {
         eyebrow: "Everything, everywhere",
