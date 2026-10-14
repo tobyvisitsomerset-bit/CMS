@@ -97,9 +97,42 @@ export type BusinessInfo = {
   mapLat: number | null;
   mapLng: number | null;
   memberName: string | null;
+  facebook: string | null;
+  twitter: string | null;
+  instagram: string | null;
+  videoLink: string | null;
+  starRating: number | null;
   startDate: string | null;
   endDate: string | null;
 };
+
+// A member page is always rendered with the listing template, even before any
+// of its form boxes have been filled in, so that the template (and not a
+// separately rebuilt page) shows each field as soon as it is entered.
+export function emptyBusinessInfo(): BusinessInfo {
+  return {
+    address: null,
+    town: null,
+    postcode: null,
+    phone: null,
+    email: null,
+    website: null,
+    bookingUrl: null,
+    bookingLabel: "Book Now",
+    openingTimes: null,
+    admission: null,
+    mapLat: null,
+    mapLng: null,
+    memberName: null,
+    facebook: null,
+    twitter: null,
+    instagram: null,
+    videoLink: null,
+    starRating: null,
+    startDate: null,
+    endDate: null,
+  };
+}
 
 export function getBusinessInfo(fields: ItemFields): BusinessInfo | null {
   const address = [fields.ItemAddress1, fields.ItemAddress2].filter(Boolean).join(", ") || null;
@@ -115,11 +148,32 @@ export function getBusinessInfo(fields: ItemFields): BusinessInfo | null {
   const mapLat = fields.ItemMapLatitude ? Number(fields.ItemMapLatitude) : null;
   const mapLng = fields.ItemMapLongitude ? Number(fields.ItemMapLongitude) : null;
   const memberName = fields.ItemMemberName || null;
+  const facebook = fields.ItemFacebook || null;
+  const twitter = fields.ItemTwitter || null;
+  const instagram = fields.ItemInstagram || null;
+  const videoLink = fields.ItemVideoLink || null;
+  const stars = Number(fields.ItemStarRating);
+  const starRating = Number.isInteger(stars) && stars >= 1 && stars <= 5 ? stars : null;
   const startDate = fields.ItemStartDate || null;
   const endDate = fields.ItemEndDate || null;
 
   const hasAnything =
-    address || phone || email || website || bookingUrl || openingTimes || admission || (mapLat && mapLng) || startDate;
+    address ||
+    phone ||
+    email ||
+    website ||
+    bookingUrl ||
+    openingTimes ||
+    admission ||
+    (mapLat && mapLng) ||
+    startDate ||
+    facebook ||
+    twitter ||
+    instagram ||
+    videoLink ||
+    starRating ||
+    town ||
+    postcode;
   if (!hasAnything) return null;
 
   return {
@@ -136,6 +190,11 @@ export function getBusinessInfo(fields: ItemFields): BusinessInfo | null {
     mapLat: Number.isFinite(mapLat) ? mapLat : null,
     mapLng: Number.isFinite(mapLng) ? mapLng : null,
     memberName,
+    facebook,
+    twitter,
+    instagram,
+    videoLink,
+    starRating,
     startDate,
     endDate,
   };

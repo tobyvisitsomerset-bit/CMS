@@ -6,7 +6,7 @@ import { Img } from "@/components/cms/page-builder/listing-ui";
 import Link from "next/link";
 import { PlainPage } from "@/components/site/plain-page";
 import { RoomsSection } from "@/components/site/detail/rooms-section";
-import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
+import { decodeKenticoText, emptyBusinessInfo, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
 import type { getPageById, ChildPageTile } from "@/lib/data/pages";
 import { EMPTY_EXTRAS, type DetailExtras } from "@/lib/data/detail-extras";
 
@@ -86,7 +86,10 @@ export function PagePreview({
   }
 
   const fields = parseCustomFields(page.customFields);
-  const info = getBusinessInfo(fields);
+  // Member businesses always use the listing template; it reads the Form tab
+  // boxes directly, so there is nothing to rebuild per page.
+  const isMemberPage = !!page.membershipTier || !!page.assignedMemberId || page.rooms.length > 0;
+  const info = getBusinessInfo(fields) ?? (isMemberPage ? emptyBusinessInfo() : null);
   const gallery: string[] = page.galleryUrls ? JSON.parse(page.galleryUrls) : [];
   const subtitle = decodeKenticoText(page.subtitle);
   const bodyContent = decodeKenticoText(page.bodyContent);

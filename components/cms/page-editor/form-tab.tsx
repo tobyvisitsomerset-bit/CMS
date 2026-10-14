@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MediaPickerField } from "@/components/cms/media-library/media-picker-field";
 import { MediaPickerDialog } from "@/components/cms/media-library/media-picker-dialog";
@@ -208,9 +207,6 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
         </Section>
 
         <Section title="Main Details">
-          <Field label="Image">
-            <MediaPickerField value={getCF(cf, "ItemImage")} onChange={(v) => set("ItemImage", v)} disabled={readOnly} />
-          </Field>
           <Field label="Hero image">
             <MediaPickerField value={heroImageUrl} onChange={setHeroImageUrl} disabled={readOnly} />
           </Field>
@@ -221,31 +217,14 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
           <Field label="Tagline">
             <Input placeholder="e.g. Somerset's finest cyder press" {...register("tagline")} />
           </Field>
-          <Field label="Subtitle">
-            <Input value={getCF(cf, "ItemSubtitle")} onChange={(e) => set("ItemSubtitle", e.target.value)} />
-          </Field>
           <Field label="Summary" full>
             <Textarea rows={3} {...register("summary")} />
-          </Field>
-          <Field label="Card Summary" full>
-            <Textarea
-              rows={2}
-              value={getCF(cf, "ItemCardSummary")}
-              onChange={(e) => set("ItemCardSummary", e.target.value)}
-            />
           </Field>
           <Field label="Description" full>
             <Textarea rows={8} {...register("bodyContent")} />
           </Field>
           <Field label="Video Link">
             <Input value={getCF(cf, "ItemVideoLink")} onChange={(e) => set("ItemVideoLink", e.target.value)} />
-          </Field>
-          <Field label="Video preview image">
-            <MediaPickerField
-              value={getCF(cf, "ItemVideoPreviewImage")}
-              onChange={(v) => set("ItemVideoPreviewImage", v)}
-              disabled={readOnly}
-            />
           </Field>
           <div className="col-span-2 space-y-1.5">
             <div className="flex items-center justify-between">
@@ -298,20 +277,8 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
           <Field label="Address 2">
             <Input value={getCF(cf, "ItemAddress2")} onChange={(e) => set("ItemAddress2", e.target.value)} />
           </Field>
-          <Field label="Address 3">
-            <Input value={getCF(cf, "ItemAddress3")} onChange={(e) => set("ItemAddress3", e.target.value)} />
-          </Field>
-          <Field label="Address 4">
-            <Input value={getCF(cf, "ItemAddress4")} onChange={(e) => set("ItemAddress4", e.target.value)} />
-          </Field>
           <Field label="Town">
             <Input value={getCF(cf, "ItemTown")} onChange={(e) => set("ItemTown", e.target.value)} />
-          </Field>
-          <Field label="County">
-            <Input value={getCF(cf, "ItemCounty")} onChange={(e) => set("ItemCounty", e.target.value)} />
-          </Field>
-          <Field label="Country">
-            <Input value={getCF(cf, "ItemCountry")} onChange={(e) => set("ItemCountry", e.target.value)} />
           </Field>
           <Field label="Postcode">
             <Input value={getCF(cf, "ItemPostcode")} onChange={(e) => set("ItemPostcode", e.target.value)} />
@@ -321,9 +288,6 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
         <Section title="Contact" defaultOpen={false}>
           <Field label="Phone">
             <Input value={getCF(cf, "ItemPhone")} onChange={(e) => set("ItemPhone", e.target.value)} />
-          </Field>
-          <Field label="Fax">
-            <Input value={getCF(cf, "ItemFax")} onChange={(e) => set("ItemFax", e.target.value)} />
           </Field>
           <Field label="Email">
             <Input value={getCF(cf, "ItemEmail")} onChange={(e) => set("ItemEmail", e.target.value)} />
@@ -398,9 +362,6 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
           <Field label="Grading">
             <Input value={getCF(cf, "ItemGrading")} onChange={(e) => set("ItemGrading", e.target.value)} />
           </Field>
-          <Field label="Award">
-            <Input value={getCF(cf, "ItemAward")} onChange={(e) => set("ItemAward", e.target.value)} />
-          </Field>
         </Section>
 
         <Section title="Event Specific" defaultOpen={false}>
@@ -426,102 +387,12 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
           </Field>
         </Section>
 
-        <Section title="Widgets" defaultOpen={false}>
-          <Field label="Trip Advisor" full>
-            <Textarea
-              rows={2}
-              placeholder="Generate at tripadvisor.co.uk/Widgets"
-              value={getCF(cf, "ItemWidgetTripAdvisor")}
-              onChange={(e) => set("ItemWidgetTripAdvisor", e.target.value)}
-            />
-          </Field>
-          <Field label="Facebook widget" full>
-            <Textarea
-              rows={2}
-              placeholder="Generate at developers.facebook.com/docs/plugins/page-plugin"
-              value={getCF(cf, "ItemWidgetFacebook")}
-              onChange={(e) => set("ItemWidgetFacebook", e.target.value)}
-            />
-            <label className="flex items-center gap-2 text-xs text-neutral-500">
-              <Checkbox
-                checked={getCF(cf, "ItemWidgetFacebookAuto") === "true"}
-                onCheckedChange={(c) => set("ItemWidgetFacebookAuto", c ? "true" : "false")}
-              />
-              Generate automatically from Facebook address above
-            </label>
-          </Field>
-          <Field label="Twitter widget" full>
-            <Textarea
-              rows={2}
-              placeholder="Generate at publish.twitter.com"
-              value={getCF(cf, "ItemWidgetTwitter")}
-              onChange={(e) => set("ItemWidgetTwitter", e.target.value)}
-            />
-            <label className="flex items-center gap-2 text-xs text-neutral-500">
-              <Checkbox
-                checked={getCF(cf, "ItemWidgetTwitterAuto") === "true"}
-                onCheckedChange={(c) => set("ItemWidgetTwitterAuto", c ? "true" : "false")}
-              />
-              Generate automatically from Twitter address above
-            </label>
-          </Field>
-        </Section>
-
         <Section title="Map" defaultOpen={false}>
           <Field label="Latitude">
             <Input value={getCF(cf, "ItemMapLatitude")} onChange={(e) => set("ItemMapLatitude", e.target.value)} />
           </Field>
           <Field label="Longitude">
             <Input value={getCF(cf, "ItemMapLongitude")} onChange={(e) => set("ItemMapLongitude", e.target.value)} />
-          </Field>
-        </Section>
-
-        <Section title="Facilities" defaultOpen={false}>
-          <p className="col-span-2 text-sm text-neutral-400">
-            Not yet connected to the facility taxonomy used by listings — coming soon.
-          </p>
-        </Section>
-
-        <Section title="Beyonk" defaultOpen={false}>
-          <Field label="Embed code (full width)" full>
-            <Textarea rows={2} value={getCF(cf, "ItemBeyonkFullWidth")} onChange={(e) => set("ItemBeyonkFullWidth", e.target.value)} />
-          </Field>
-          <Field label="Embed code (right column)" full>
-            <Textarea
-              rows={2}
-              value={getCF(cf, "ItemBeyonkRightColumn")}
-              onChange={(e) => set("ItemBeyonkRightColumn", e.target.value)}
-            />
-          </Field>
-        </Section>
-
-        <Section title="Staylists" defaultOpen={false}>
-          <div className="col-span-2 flex items-center gap-2">
-            <Checkbox
-              checked={getCF(cf, "ItemRemoveStaylist") === "true"}
-              onCheckedChange={(c) => set("ItemRemoveStaylist", c ? "true" : "false")}
-            />
-            <Label className="font-normal">Remove Staylist?</Label>
-          </div>
-          <Field label="Staylists reference">
-            <Input value={getCF(cf, "ItemStaylistsReference")} onChange={(e) => set("ItemStaylistsReference", e.target.value)} />
-          </Field>
-          <Field label="Staylists ID">
-            <Input value={getCF(cf, "ItemStaylistsId")} onChange={(e) => set("ItemStaylistsId", e.target.value)} />
-          </Field>
-        </Section>
-
-        <Section title="eCommerce" defaultOpen={false}>
-          <p className="col-span-2 text-sm text-neutral-400">Reserved for future Shopify / WooCommerce integration.</p>
-        </Section>
-
-        <Section title="Availability" defaultOpen={false}>
-          <Field label="User">
-            <Input value={getCF(cf, "ItemAvailabilityUser")} onChange={(e) => set("ItemAvailabilityUser", e.target.value)} />
-          </Field>
-          <Field label="TXGB Shortname">
-            <Input value={getCF(cf, "ItemTxgbShortname")} onChange={(e) => set("ItemTxgbShortname", e.target.value)} />
-            <p className="text-xs text-neutral-400">Used for TXGB availability search</p>
           </Field>
         </Section>
 

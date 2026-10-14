@@ -153,6 +153,11 @@ export function ListingDetail({
             {g}
           </span>
         ))}
+        {info.starRating && (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-cool-grey px-3 py-1 text-xs font-medium text-stone-700">
+            <Stars rating={info.starRating} size={12} /> {info.starRating} star
+          </span>
+        )}
         {isEvent && <span className="rounded-full bg-cool-grey px-3 py-1 text-xs font-medium text-stone-700">Event</span>}
       </div>
       <h1 className="mt-3 font-serif text-4xl leading-tight font-black tracking-tight text-stone-900 sm:text-5xl">{page.title}</h1>
@@ -492,13 +497,35 @@ export function ListingDetail({
                   </a>
                 </li>
               )}
+              {info.videoLink && (
+                <li className="flex items-center gap-3">
+                  <ExternalLink className="size-4 shrink-0 text-somerset-green" />
+                  <a href={info.videoLink} target="_blank" rel="noreferrer" className="font-semibold text-somerset-green hover:underline">
+                    Watch the video
+                  </a>
+                </li>
+              )}
+              {[
+                { label: "Facebook", href: info.facebook },
+                { label: "Instagram", href: info.instagram },
+                { label: "X / Twitter", href: info.twitter },
+              ]
+                .filter((l): l is { label: string; href: string } => !!l.href)
+                .map((l) => (
+                  <li key={l.label} className="flex items-center gap-3">
+                    <ExternalLink className="size-4 shrink-0 text-somerset-green" />
+                    <a href={l.href} target="_blank" rel="noreferrer" className="hover:text-somerset-green hover:underline">
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
               {info.openingTimes && !isEvent && (
                 <li className="flex items-start gap-3">
                   <Clock className="mt-0.5 size-4 shrink-0 text-somerset-green" />
                   <span className="line-clamp-4">{info.openingTimes}</span>
                 </li>
               )}
-              {!info.phone && !info.email && !website && <li className="text-stone-500">Contact details aren&apos;t listed yet.</li>}
+              {!info.phone && !info.email && !website && !info.facebook && !info.instagram && !info.twitter && <li className="text-stone-500">Contact details aren&apos;t listed yet.</li>}
             </ul>
           </div>
 
