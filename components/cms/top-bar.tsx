@@ -74,6 +74,11 @@ export function TopBar({
           Approvals
         </Link>
       )}
+      {canReviewWorkflow && (
+        <Link href="/cms/enquiries" className="rounded px-2 py-1 text-white/70 hover:bg-white/10 hover:text-white">
+          Enquiries
+        </Link>
+      )}
 
       <button className="rounded p-1.5 text-white/60 hover:bg-white/10 hover:text-white" title="Help">
         <HelpCircle className="h-4 w-4" />

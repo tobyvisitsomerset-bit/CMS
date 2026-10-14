@@ -1,9 +1,18 @@
 import { prisma } from "@/lib/prisma";
 import type { ExploreAreaTile, TownTile } from "@/lib/data/pages";
-import { getFeaturedRealBusinesses, getUpcomingRealEvents } from "@/lib/data/pages";
+import {
+  countPlacesMatching,
+  countRealBusinesses,
+  getFeaturedRealBusinesses,
+  getUpcomingRealEvents,
+} from "@/lib/data/pages";
+import { queryExplorer, type ExplorerKind, type ExplorerParams } from "@/lib/data/listing-explorer";
+import { getShopProducers } from "@/lib/data/shop";
+import { getExperiencesHub } from "@/lib/data/experiences";
 import type { RealBlockData } from "@/components/cms/page-builder/block-renderer";
 
 type BlockLike = { id: string; type: string; config: string };
+export type RawSearchParams = Record<string, string | string[] | undefined>;
 
 async function resolveExploreAreaTiles(
   areas: { label: string; rootSlug: string; href: string; noun: string }[],
@@ -11,7 +20,7 @@ async function resolveExploreAreaTiles(
   return Promise.all(
     areas.map(async (area) => {
       const count = await prisma.page.count({
-        where: { status: "PUBLISHED", OR: [{ slug: area.rootSlug }, { slug: { startsWith: `${area.rootSlug}/` } }] },
+        where: { status: "PUBLISHED", linkedPageId: null, OR: [{ slug: area.rootSlug }, { slug: { startsWith: `${area.rootSlug}/` } }] },
       });
       return { label: area.label, href: area.href, count, description: `${count} ${area.noun}` };
     }),
@@ -35,12 +44,41 @@ async function resolveTownsRow(towns: { title: string; slug: string }[]): Promis
     .filter((t): t is TownTile => !!t);
 }
 
-// Real per-block data for Phase 10's homepage widget blocks — resolved once
-// upfront per page render (same "fetch once, pass down flat" pattern
-// `getAllListingsGrouped()` already established for `listings`), keyed by
-// block id since each instance's own config decides what real data it needs.
-// BlockRenderer itself stays synchronous — it never fetches.
-export async function resolveBlockData(blocks: BlockLike[]): Promise<Record<string, RealBlockData>> {
+function first(v: string | string[] | undefined): string | undefined {
+  return Array.isArray(v) ? v[0] : v;
+}
+
+function flatten(sp: RawSearchParams): Record<string, string | undefined> {
+  const out: Record<string, string | undefined> = {};
+  for (const [k, v] of Object.entries(sp)) out[k] = first(v);
+  return out;
+}
+
+async function findPageBySlugTitle(rootSlug: string, titleContains: string) {
+  const row = await prisma.page.findFirst({
+    where: {
+      status: "PUBLISHED",
+      linkedPageId: null,
+      slug: { startsWith: `${rootSlug}/` },
+      title: { contains: titleContains, mode: "insensitive" },
+    },
+    select: { title: true, slug: true, subtitle: true, bodyContent: true },
+    orderBy: { sortOrder: "asc" },
+  });
+  return row;
+}
+
+// Real per-block data for widget blocks — resolved once upfront per page
+// render (same "fetch once, pass down flat" pattern `getAllListingsGrouped()`
+// established for `listings`), keyed by block id since each instance's own
+// config decides what real data it needs. BlockRenderer itself stays
+// synchronous — it never fetches. `searchParams` feeds the listing
+// explorers (filters/sort/pagination are plain URL params).
+export async function resolveBlockData(
+  blocks: BlockLike[],
+  searchParams: RawSearchParams = {},
+): Promise<Record<string, RealBlockData>> {
+  const sp = flatten(searchParams);
   const entries = await Promise.all(
     blocks.map(async (block): Promise<[string, RealBlockData] | null> => {
       const config = JSON.parse(block.config || "{}");
@@ -49,14 +87,69 @@ export async function resolveBlockData(blocks: BlockLike[]): Promise<Record<stri
           return [block.id, { type: "explore_area_tiles", tiles: await resolveExploreAreaTiles(config.areas ?? []) }];
         case "real_teaser": {
           const limit = Number(config.limit) || 4;
-          const items =
-            config.mode === "businesses"
-              ? await getFeaturedRealBusinesses(config.rootSlug ?? "", limit)
-              : await getUpcomingRealEvents(config.rootSlug ?? "", limit);
-          return [block.id, { type: "real_teaser", items }];
+          const rootSlug = config.rootSlug ?? "";
+          const isBusinesses = config.mode === "businesses";
+          const [items, total] = await Promise.all([
+            isBusinesses ? getFeaturedRealBusinesses(rootSlug, limit) : getUpcomingRealEvents(rootSlug, limit),
+            isBusinesses ? countRealBusinesses(rootSlug) : Promise.resolve(0),
+          ]);
+          return [block.id, { type: "real_teaser", items, total }];
         }
         case "towns_row":
           return [block.id, { type: "towns_row", towns: await resolveTownsRow(config.towns ?? []) }];
+        case "mood_tiles": {
+          const moods: { label: string; query: string }[] = config.moods ?? [];
+          const resolved = await Promise.all(
+            moods.map(async (m) => ({ label: m.label, query: m.query, count: await countPlacesMatching(m.query) })),
+          );
+          return [block.id, { type: "mood_tiles", moods: resolved }];
+        }
+        case "listing_explorer": {
+          const kind = (config.kind ?? "accommodation") as ExplorerKind;
+          const rootSlug: string = config.rootSlug ?? "";
+          const params: ExplorerParams = {
+            q: sp.q,
+            type: sp.type,
+            town: sp.town,
+            sort: sp.sort,
+            page: sp.page ? Number(sp.page) || 1 : 1,
+            when: sp.when,
+            day: sp.day,
+            free: !!sp.free,
+            graded: !!sp.graded,
+            bookable: !!sp.bookable,
+            featured: !!sp.featured,
+          };
+          const [result, submit, carnival] = await Promise.all([
+            queryExplorer(kind, rootSlug, params),
+            kind === "events" ? findPageBySlugTitle(rootSlug, "Submit") : Promise.resolve(null),
+            kind === "events" ? findPageBySlugTitle(rootSlug, "Carnival") : Promise.resolve(null),
+          ]);
+          return [
+            block.id,
+            {
+              type: "listing_explorer",
+              kind,
+              result,
+              searchParams: sp,
+              submitHref: submit ? `/${submit.slug}` : null,
+              carnival: carnival
+                ? { title: carnival.title, summary: carnival.subtitle, href: `/${carnival.slug}` }
+                : null,
+            },
+          ];
+        }
+        case "producer_shop":
+          return [block.id, { type: "producer_shop", producers: await getShopProducers(config.rootSlug || "virtual-highstreet") }];
+        case "experiences_hub":
+          return [
+            block.id,
+            {
+              type: "experiences_hub",
+              hub: await getExperiencesHub({ q: sp.q, town: sp.town, page: sp.page ? Number(sp.page) || 1 : 1, sort: sp.sort }),
+              searchParams: sp,
+            },
+          ];
         default:
           return null;
       }

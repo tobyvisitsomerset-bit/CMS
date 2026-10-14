@@ -64,6 +64,9 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
           <Field label="Heading">
             <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
           </Field>
+          <Field label="Eyebrow (small line above the heading)">
+            <Input value={config.eyebrow ?? ""} onChange={(e) => set({ eyebrow: e.target.value })} />
+          </Field>
           <Field label="Subheading">
             <Textarea rows={2} value={config.subheading ?? ""} onChange={(e) => set({ subheading: e.target.value })} />
           </Field>
@@ -371,6 +374,9 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
           <Field label="Title">
             <Input value={config.title ?? ""} onChange={(e) => set({ title: e.target.value })} />
           </Field>
+          <Field label="Eyebrow (small line above the title; events default to the current month)">
+            <Input value={config.eyebrow ?? ""} onChange={(e) => set({ eyebrow: e.target.value })} />
+          </Field>
           <Field label="Content type">
             <Select value={config.mode ?? "events"} onValueChange={(v) => set({ mode: v })}>
               <SelectTrigger className="w-48">
@@ -422,6 +428,144 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
         </div>
       );
     }
+
+    case "book_strip": {
+      const buttons: any[] = config.buttons ?? [];
+      const update = (i: number, patch: any) => set({ buttons: buttons.map((x, idx) => (idx === i ? { ...x, ...patch } : x)) });
+      return (
+        <div className="space-y-4">
+          <Field label="Lead-in text">
+            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          </Field>
+          <div className="space-y-3">
+            {buttons.map((b, i) => (
+              <div key={i} className="flex gap-2">
+                <Input placeholder="Label" value={b.label ?? ""} onChange={(e) => update(i, { label: e.target.value })} />
+                <Input placeholder="/link" value={b.url ?? ""} onChange={(e) => update(i, { url: e.target.value })} />
+                <Button type="button" size="icon" variant="ghost" onClick={() => set({ buttons: buttons.filter((_, idx) => idx !== i) })}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            ))}
+          </div>
+          <Button type="button" size="sm" variant="outline" onClick={() => set({ buttons: [...buttons, { label: "", url: "" }] })}>
+            <Plus className="h-3.5 w-3.5" /> Add button
+          </Button>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Text link label (optional)">
+              <Input value={config.linkLabel ?? ""} onChange={(e) => set({ linkLabel: e.target.value })} />
+            </Field>
+            <Field label="Text link URL">
+              <Input value={config.linkUrl ?? ""} onChange={(e) => set({ linkUrl: e.target.value })} />
+            </Field>
+          </div>
+        </div>
+      );
+    }
+
+    case "mood_tiles": {
+      const moods: any[] = config.moods ?? [];
+      const update = (i: number, patch: any) => set({ moods: moods.map((x, idx) => (idx === i ? { ...x, ...patch } : x)) });
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">
+            Each tile is a keyword search over real business pages; the place count shown is the real number of matches. Live preview isn&apos;t available - save to see it on the real page.
+          </p>
+          <Field label="Eyebrow">
+            <Input value={config.eyebrow ?? ""} onChange={(e) => set({ eyebrow: e.target.value })} />
+          </Field>
+          <Field label="Title">
+            <Input value={config.title ?? ""} onChange={(e) => set({ title: e.target.value })} />
+          </Field>
+          <Field label="Subtitle">
+            <Input value={config.subtitle ?? ""} onChange={(e) => set({ subtitle: e.target.value })} />
+          </Field>
+          <div className="space-y-3">
+            {moods.map((m, i) => (
+              <div key={i} className="flex gap-2">
+                <Input placeholder="Label, e.g. Coast & piers" value={m.label ?? ""} onChange={(e) => update(i, { label: e.target.value })} />
+                <Input placeholder="Search word" value={m.query ?? ""} onChange={(e) => update(i, { query: e.target.value })} />
+                <Button type="button" size="icon" variant="ghost" onClick={() => set({ moods: moods.filter((_, idx) => idx !== i) })}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            ))}
+          </div>
+          <Button type="button" size="sm" variant="outline" onClick={() => set({ moods: [...moods, { label: "", query: "" }] })}>
+            <Plus className="h-3.5 w-3.5" /> Add mood
+          </Button>
+        </div>
+      );
+    }
+
+    case "listing_explorer":
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">
+            A searchable, filterable list of real pages under a section, with a map. Live preview isn&apos;t available - save to see it on the real page.
+          </p>
+          <Field label="What it lists">
+            <Select value={config.kind ?? "accommodation"} onValueChange={(v) => set({ kind: v })}>
+              <SelectTrigger className="w-56">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="accommodation">Accommodation (dates + map)</SelectItem>
+                <SelectItem value="things">Things to do</SelectItem>
+                <SelectItem value="food">Food &amp; drink</SelectItem>
+                <SelectItem value="events">Festivals &amp; events</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+          <Field label="Section slug to list from">
+            <Input placeholder="e.g. places-to-stay" value={config.rootSlug ?? ""} onChange={(e) => set({ rootSlug: e.target.value })} />
+          </Field>
+          <Field label="Page heading">
+            <Input value={config.title ?? ""} onChange={(e) => set({ title: e.target.value })} />
+          </Field>
+          <Field label="Intro sentence (optional)">
+            <Textarea rows={2} value={config.intro ?? ""} onChange={(e) => set({ intro: e.target.value })} />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Noun for counts">
+              <Input placeholder="places to stay" value={config.noun ?? ""} onChange={(e) => set({ noun: e.target.value })} />
+            </Field>
+            <Field label="Breadcrumb parent label">
+              <Input placeholder="Things to do" value={config.parentLabel ?? ""} onChange={(e) => set({ parentLabel: e.target.value })} />
+            </Field>
+          </div>
+        </div>
+      );
+
+    case "producer_shop":
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">
+            Lists every real producer under a section, each with their live products read from their own shop. Live preview isn&apos;t available - save to see it on the real page.
+          </p>
+          <Field label="Section slug to list producers from">
+            <Input placeholder="virtual-highstreet" value={config.rootSlug ?? ""} onChange={(e) => set({ rootSlug: e.target.value })} />
+          </Field>
+          <Field label="Introduction (blank line between paragraphs)">
+            <Textarea rows={6} value={config.intro ?? ""} onChange={(e) => set({ intro: e.target.value })} />
+          </Field>
+        </div>
+      );
+
+    case "experiences_hub":
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">
+            The Book Experiences landing: search, live bookable listings (with the operator&apos;s own booking links), stats and category tiles. Live preview isn&apos;t available - save to see it on the real page.
+          </p>
+          <Field label="Heading">
+            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          </Field>
+          <Field label="Intro sentence (blank = automatic, with the real count)">
+            <Textarea rows={2} value={config.intro ?? ""} onChange={(e) => set({ intro: e.target.value })} />
+          </Field>
+        </div>
+      );
 
     default:
       return <p className="text-sm text-neutral-400">No settings for this section type.</p>;

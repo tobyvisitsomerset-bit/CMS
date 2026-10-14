@@ -31,6 +31,27 @@ export const NAV_LINKS = [
   { label: "My Trip", slug: "my-trip" },
 ];
 
+// Phase 12 header chrome (mockup pack screen 01): a green utility strip over
+// a white main row. Every target is a real route or a real published page
+// (confirmed in the page tree) — nothing here is a placeholder.
+export const MAIN_NAV = [
+  { label: "Book Experiences", slug: "book-experiences" },
+  { label: "Discover Somerset", slug: "discover-somerset" },
+  { label: "Things to do", slug: "things-to-do" },
+  { label: "Places to Stay", slug: "places-to-stay" },
+  { label: "Festivals & Events", slug: "festivals-events" },
+];
+
+export const MAP_NAV = { label: "Map", slug: "interactive-map" };
+
+export const UTILITY_NAV = [
+  { label: "Business", slug: "business" },
+  { label: "Bath", slug: "bath" },
+  { label: "Taunton", slug: "taunton" },
+  { label: "Media", slug: "media" },
+  { label: "News", slug: "news" },
+];
+
 export function labelForSlugSegment(segment: string): string {
   return NAV_LINKS.find((link) => link.slug === segment)?.label ?? segment;
 }

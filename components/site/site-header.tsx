@@ -3,27 +3,31 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Heart, MapPin, Menu, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TripNavBadge } from "@/components/trip/trip-nav-badge";
 import type { MegaMenuColumn } from "@/lib/data/pages";
 
-// Full-width mega-menu panel shared by the whole header (Phase 11) — matches
-// the real visitsomerset.co.uk site's actual layout, confirmed by inspecting
-// it directly: one full-bleed band below the entire header whose content
-// swaps with whichever nav item is hovered, not a narrow popup anchored
-// under a single word (which is what Phase 10 built). Hover-open/close-delay
-// timing carried over unchanged from Phase 10's per-item version.
+// Header chrome from the mockup pack (screen 01): a green utility strip over
+// a white main row, with one shared full-width mega-menu panel below the
+// whole header whose content swaps with whichever nav item is hovered.
 const CLOSE_DELAY_MS = 150;
 
+type NavItem = { label: string; slug: string };
+
 export function SiteHeader({
-  navLinks,
+  mainNav,
+  utilityNav,
+  mapNav,
   megaMenus,
 }: {
-  navLinks: { label: string; slug: string }[];
+  mainNav: NavItem[];
+  utilityNav: NavItem[];
+  mapNav: NavItem;
   megaMenus: Record<string, MegaMenuColumn[]>;
 }) {
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function openNow(slug: string) {
@@ -38,39 +42,57 @@ export function SiteHeader({
   const activeColumns = activeSlug ? (megaMenus[activeSlug] ?? []) : [];
 
   return (
-    <header className="sticky top-0 z-30 border-b border-stone-200 bg-white/95 backdrop-blur" onMouseLeave={closeSoon}>
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-        <Link href="/" className="flex items-center">
-          <Image
-            src="/logo-visit-somerset.png"
-            alt="Visit Somerset"
-            width={419}
-            height={113}
-            priority
-            className="h-9 w-auto"
-          />
+    <header className="sticky top-0 z-30 bg-white shadow-[0_1px_0_0_rgba(0,0,0,0.06)]" onMouseLeave={closeSoon}>
+      {/* Utility strip */}
+      <div className="bg-somerset-green text-[12px] font-medium text-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-1.5">
+          <div className="flex items-center gap-5">
+            <Link href="/accessibility" className="hover:underline">
+              Accessibility
+            </Link>
+            <span className="hidden text-white/80 sm:inline">English (UK)</span>
+          </div>
+          <nav className="hidden items-center gap-5 md:flex" aria-label="Utility">
+            {utilityNav.map((l) => (
+              <Link key={l.slug} href={`/${l.slug}`} className="hover:underline">
+                {l.label}
+              </Link>
+            ))}
+            <Link href="/my-trip" className="flex items-center gap-1.5 hover:underline">
+              <Heart className="size-3.5" />
+              My Trip
+              <TripNavBadge />
+            </Link>
+            <Link href="/sign-in" className="font-semibold hover:underline">
+              Sign in
+            </Link>
+          </nav>
+          <Link href="/my-trip" className="flex items-center gap-1.5 md:hidden">
+            <Heart className="size-3.5" />
+            My Trip
+            <TripNavBadge />
+          </Link>
+        </div>
+      </div>
+
+      {/* Main row */}
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3">
+        <Link href="/" className="flex shrink-0 items-center">
+          <Image src="/logo-visit-somerset.png" alt="Visit Somerset" width={419} height={113} priority className="h-10 w-auto" />
         </Link>
-        <nav className="hidden items-center gap-6 text-sm font-medium text-stone-600 sm:flex">
-          {navLinks.map((link) => {
-            if (link.slug === "my-trip") {
-              return (
-                <Link
-                  key={link.slug}
-                  href={`/${link.slug}`}
-                  className="flex items-center gap-1.5 rounded-full bg-damson px-4 py-1.5 text-white transition-colors hover:opacity-90"
-                >
-                  {link.label}
-                  <TripNavBadge />
-                </Link>
-              );
-            }
+
+        <nav className="hidden items-center gap-6 text-[15px] font-semibold text-stone-900 lg:flex" aria-label="Main">
+          {mainNav.map((link) => {
             const hasMenu = (megaMenus[link.slug]?.length ?? 0) > 0;
             return (
               <Link
                 key={link.slug}
                 href={`/${link.slug}`}
-                className="flex items-center gap-1 transition-colors hover:text-somerset-green"
-                onMouseEnter={() => hasMenu && openNow(link.slug)}
+                className={cn(
+                  "flex items-center gap-1 py-1 transition-colors hover:text-somerset-green",
+                  activeSlug === link.slug && "text-somerset-green",
+                )}
+                onMouseEnter={() => (hasMenu ? openNow(link.slug) : closeSoon())}
                 onFocus={() => hasMenu && openNow(link.slug)}
               >
                 {link.label}
@@ -80,15 +102,79 @@ export function SiteHeader({
               </Link>
             );
           })}
+          <Link
+            href={`/${mapNav.slug}`}
+            className="flex items-center gap-1.5 py-1 text-somerset-green transition-opacity hover:opacity-80"
+            onMouseEnter={closeSoon}
+          >
+            <MapPin className="size-4" />
+            {mapNav.label}
+          </Link>
         </nav>
+
+        <div className="flex items-center gap-3">
+          <Link
+            href="/search"
+            aria-label="Search the site"
+            className="flex size-10 items-center justify-center rounded-full border border-stone-200 text-stone-700 transition-colors hover:bg-cool-grey"
+          >
+            <Search className="size-4" />
+          </Link>
+          <Link
+            href="/places-to-stay"
+            className="hidden rounded-full bg-damson px-5 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90 sm:inline-block"
+          >
+            Book a stay
+          </Link>
+          <button
+            type="button"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((v) => !v)}
+            className="flex size-10 items-center justify-center rounded-full border border-stone-200 text-stone-700 lg:hidden"
+          >
+            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
       </div>
 
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="border-t border-stone-200 bg-white px-6 py-4 lg:hidden">
+          <nav className="flex flex-col gap-1 text-[15px] font-semibold text-stone-900">
+            {[...mainNav, mapNav].map((l) => (
+              <Link key={l.slug} href={`/${l.slug}`} onClick={() => setMobileOpen(false)} className="rounded-lg px-2 py-2.5 hover:bg-cool-grey">
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 border-t border-stone-100 pt-3 text-sm text-stone-600">
+            {utilityNav.map((l) => (
+              <Link key={l.slug} href={`/${l.slug}`} onClick={() => setMobileOpen(false)}>
+                {l.label}
+              </Link>
+            ))}
+            <Link href="/sign-in" onClick={() => setMobileOpen(false)}>
+              Sign in
+            </Link>
+          </div>
+          <Link
+            href="/places-to-stay"
+            onClick={() => setMobileOpen(false)}
+            className="mt-4 inline-block rounded-full bg-damson px-5 py-2.5 text-sm font-bold text-white"
+          >
+            Book a stay
+          </Link>
+        </div>
+      )}
+
+      {/* Shared mega-menu panel */}
       {activeColumns.length > 0 && (
         <div
-          className="absolute inset-x-0 top-full border-t border-white/10 bg-deep-green shadow-xl"
+          className="absolute inset-x-0 top-full hidden border-t border-white/10 bg-deep-green shadow-xl lg:block"
           onMouseEnter={() => activeSlug && openNow(activeSlug)}
         >
-          <div className="mx-auto flex max-w-6xl flex-wrap gap-x-10 gap-y-6 px-6 py-8">
+          <div className="mx-auto flex max-w-7xl flex-wrap gap-x-10 gap-y-6 px-6 py-8">
             {activeColumns.map((col, i) =>
               col.heading ? (
                 <div key={i} className="min-w-[11rem]">
@@ -105,11 +191,7 @@ export function SiteHeader({
                 </div>
               ) : (
                 // flex-wrap (not a rigid grid-flow-col) so a long flat list
-                // (e.g. Festivals & Events' uncategorised leaf pages) wraps
-                // within the panel's real width instead of spilling into an
-                // ever-wider row of columns — confirmed this was a genuine
-                // overflow bug before the fix (46 items pushed the panel to
-                // 2.7x the viewport width).
+                // wraps within the panel's real width instead of spilling.
                 <div key={i} className="flex flex-1 flex-wrap content-start gap-x-8 gap-y-2">
                   {col.links.slice(0, 24).map((l) => (
                     <Link

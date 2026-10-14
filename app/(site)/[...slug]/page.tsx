@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { getPageBySlug, getPageById, getNearbyPages, getChildPages } from "@/lib/data/pages";
+import { getPageBySlug, getPageById, getChildPages } from "@/lib/data/pages";
+import { getDetailExtras } from "@/lib/data/detail-extras";
 import { getAllListingsGrouped } from "@/lib/data/listings";
 import { resolveBlockData } from "@/lib/data/block-data";
 import { PagePreview } from "@/components/cms/page-editor/page-preview";
@@ -27,10 +28,14 @@ export default async function PublicPage({
   searchParams,
 }: {
   params: Promise<Params>;
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { slug } = await params;
-  const { q } = await searchParams;
+  const sp = await searchParams;
+  const q = typeof sp.q === "string" ? sp.q : undefined;
+  const flatSp: Record<string, string | undefined> = Object.fromEntries(
+    Object.entries(sp).map(([k, v]) => [k, Array.isArray(v) ? v[0] : v]),
+  );
   const page = await getPageBySlug(slug.join("/"));
   if (!page || page.status !== "PUBLISHED") notFound();
 
@@ -42,16 +47,16 @@ export default async function PublicPage({
     notFound();
   }
 
-  const [listings, nearby, childPages, blockData] = await Promise.all([
+  const [listings, extras, childPages, blockData] = await Promise.all([
     getAllListingsGrouped(),
-    getNearbyPages(page.id, page.parentId),
+    page.contentBlocks.length === 0 ? getDetailExtras(page) : Promise.resolve(undefined),
     page.contentBlocks.length === 0 ? getChildPages(page.id) : Promise.resolve([]),
-    resolveBlockData(page.contentBlocks),
+    resolveBlockData(page.contentBlocks, sp),
   ]);
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-10">
-      <PagePreview page={page} listings={listings} nearby={nearby} childPages={childPages} blockData={blockData} linkBase="" initialSearchText={q ?? ""} />
+    <div>
+      <PagePreview page={page} listings={listings} extras={extras} childPages={childPages} blockData={blockData} linkBase="" initialSearchText={q ?? ""} searchParams={flatSp} />
     </div>
   );
 }

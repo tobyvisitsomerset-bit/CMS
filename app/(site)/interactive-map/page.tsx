@@ -1,22 +1,42 @@
 import type { Metadata } from "next";
 import { getPagesWithCoordinates } from "@/lib/data/pages";
-import { InteractiveMapView } from "@/components/map/interactive-map-view";
+import { MapExplorer, type MapPinInput } from "@/components/map/map-explorer";
 
 export const metadata: Metadata = {
   title: "Interactive Map | Visit Somerset",
   description: "Explore places to stay, things to do, food & drink and events across Somerset on one map.",
 };
 
-export default async function InteractiveMapPage() {
-  const pins = await getPagesWithCoordinates();
+function layerFor(slug: string, isBusiness: boolean, startDate: string | null): MapPinInput["layer"] {
+  if (startDate) return "events";
+  if (slug.startsWith("places-to-stay/")) return "stay";
+  if (slug.startsWith("things-to-do/food-drink-more")) return "eat";
+  if (slug.startsWith("festivals-events/")) return "events";
+  if (isBusiness) return "do";
+  return "places";
+}
 
-  return (
-    <div className="mx-auto max-w-6xl px-6 py-10">
-      <h1 className="font-serif text-3xl font-black text-stone-900">Explore Somerset on the map</h1>
-      <p className="mt-1 text-stone-500">{pins.length} places with a known location.</p>
-      <div className="mt-6">
-        <InteractiveMapView pins={pins} />
-      </div>
-    </div>
-  );
+export default async function InteractiveMapPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  const { q } = await searchParams;
+  const all = await getPagesWithCoordinates();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const pins: MapPinInput[] = all
+    // Events that have already finished don't belong on a "what's here" map.
+    .filter((p) => !p.startDate || new Date(p.endDate ?? p.startDate) >= today)
+    .map((p) => ({
+      id: p.id,
+      title: p.title,
+      slug: p.slug,
+      lat: p.lat,
+      lng: p.lng,
+      town: p.town,
+      heroImageUrl: p.heroImageUrl,
+      layer: layerFor(p.slug, p.isBusiness, p.startDate),
+      startDate: p.startDate,
+      endDate: p.endDate,
+    }));
+
+  return <MapExplorer pins={pins} initialQuery={q ?? ""} />;
 }

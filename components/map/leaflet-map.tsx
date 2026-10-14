@@ -27,7 +27,17 @@ export type MapPinData = {
   lng: number;
   title: string;
   href?: string;
+  /** Short text (e.g. "£145") — when set the pin renders as a price pill instead of the default marker. */
+  label?: string;
 };
+
+function pillIcon(label: string) {
+  return L.divIcon({
+    className: "",
+    html: `<span style="display:inline-block;transform:translate(-50%,-50%);background:#fff;color:#1c1917;border:1px solid rgba(0,0,0,.12);border-radius:999px;padding:3px 9px;font:700 12px/1.2 system-ui,sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.18);white-space:nowrap">${label.replace(/[<>&]/g, "")}</span>`,
+    iconSize: [0, 0],
+  });
+}
 
 function FitToPins({ pins }: { pins: MapPinData[] }) {
   const map = useMap();
@@ -56,7 +66,7 @@ export function LeafletMap({
   const initialCenter: [number, number] = center ?? (pins[0] ? [pins[0].lat, pins[0].lng] : [51.1, -2.9]);
 
   return (
-    <div style={{ height }} className="overflow-hidden rounded-2xl">
+    <div style={{ height }} className="h-full overflow-hidden rounded-2xl">
       <MapContainer center={initialCenter} zoom={zoom} scrollWheelZoom style={{ height: "100%", width: "100%" }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -65,7 +75,7 @@ export function LeafletMap({
         {pins.length > 1 && <FitToPins pins={pins} />}
         <MarkerClusterGroup chunkedLoading maxClusterRadius={60}>
           {pins.map((pin) => (
-            <Marker key={pin.id} position={[pin.lat, pin.lng]}>
+            <Marker key={pin.id} position={[pin.lat, pin.lng]} icon={pin.label ? pillIcon(pin.label) : undefined}>
               <Popup>
                 {pin.href ? (
                   <Link href={pin.href} className="font-medium text-somerset-green hover:underline">

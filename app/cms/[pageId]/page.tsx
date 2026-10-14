@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getPageById, getNearbyPages, getChildPages } from "@/lib/data/pages";
+import { getPageById, getChildPages } from "@/lib/data/pages";
+import { getDetailExtras } from "@/lib/data/detail-extras";
 import { getAllListingsGrouped } from "@/lib/data/listings";
 import { resolveBlockData } from "@/lib/data/block-data";
 import { listMembers } from "@/lib/data/users";
@@ -36,7 +37,7 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
   const canReview = hasCapability(roleKey, "workflow.review");
   const canManageMembers = hasCapability(roleKey, "members.manage");
   const listings = await getAllListingsGrouped();
-  const nearby = await getNearbyPages(page.id, page.parentId);
+  const extras = await getDetailExtras(page);
   const childPages = page.contentBlocks.length === 0 ? await getChildPages(page.id) : [];
   const blockData = await resolveBlockData(page.contentBlocks);
   const members = canManageMembers ? await listMembers() : [];
@@ -50,7 +51,7 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
       canReview={canReview}
       isMember={!isAdmin(roleKey)}
       listings={listings}
-      nearby={nearby}
+      extras={extras}
       childPages={childPages}
       blockData={blockData}
       members={members}

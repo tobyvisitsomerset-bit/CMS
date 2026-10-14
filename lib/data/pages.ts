@@ -243,25 +243,101 @@ export async function getAllMegaMenus(slugs: string[]): Promise<Record<string, M
   return Object.fromEntries(entries);
 }
 
-export type FeaturedPageTile = { id: string; title: string; subtitle: string | null; slug: string; heroImageUrl: string | null };
+export type FeaturedPageTile = {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  slug: string;
+  heroImageUrl: string | null;
+  town?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  tier?: MembershipTier | null;
+  admission?: string | null;
+  bookingUrl?: string | null;
+};
+
+const TILE_SELECT = {
+  id: true,
+  title: true,
+  subtitle: true,
+  slug: true,
+  heroImageUrl: true,
+  customFields: true,
+  membershipTier: true,
+} as const;
+
+function toTile(r: {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  slug: string;
+  heroImageUrl: string | null;
+  customFields: string | null;
+  membershipTier: MembershipTier | null;
+}): FeaturedPageTile {
+  const info = getBusinessInfo(parseCustomFields(r.customFields));
+  return {
+    id: r.id,
+    title: r.title,
+    subtitle: r.subtitle,
+    slug: r.slug,
+    heroImageUrl: r.heroImageUrl,
+    town: info?.town ?? null,
+    startDate: info?.startDate ?? null,
+    endDate: info?.endDate ?? null,
+    tier: r.membershipTier,
+    admission: info?.admission ? info.admission.slice(0, 80) : null,
+    bookingUrl: info?.bookingUrl ?? null,
+  };
+}
 
 // Real accommodation businesses for the homepage teaser (Phase 9 — replaces
-// the mock Listing table). Prefers pages with a real photo (only ~3% of real
-// business pages have one) so the teaser looks its best, backfilling with
-// photo-less ones if not enough exist. No rating/price shown — that data
-// doesn't exist for real pages.
+// the mock Listing table). Prefers higher membership tiers, then pages with a
+// real photo (only ~15% of real business pages have one), backfilling with
+// the rest. No rating/price is invented — only real fields are surfaced.
 export async function getFeaturedRealBusinesses(rootSlug: string, limit: number): Promise<FeaturedPageTile[]> {
-  const select = { id: true, title: true, subtitle: true, slug: true, heroImageUrl: true } as const;
-  const where = { status: "PUBLISHED" as const, slug: { startsWith: `${rootSlug}/` }, customFields: { contains: "sz.touristitem" } };
-  const withImage = await prisma.page.findMany({ where: { ...where, heroImageUrl: { not: null } }, select, take: limit, orderBy: { sortOrder: "asc" } });
-  if (withImage.length >= limit) return withImage;
-  const rest = await prisma.page.findMany({
-    where: { ...where, heroImageUrl: null, id: { notIn: withImage.map((p) => p.id) } },
-    select,
-    take: limit - withImage.length,
-    orderBy: { sortOrder: "asc" },
+  const where = {
+    status: "PUBLISHED" as const,
+    linkedPageId: null,
+    slug: { startsWith: `${rootSlug}/` },
+    customFields: { contains: "sz.touristitem" },
+  };
+  const picked: FeaturedPageTile[] = [];
+  const seen = new Set<string>();
+  const tiers: (MembershipTier | null)[] = ["PLATINUM", "GOLD", "SILVER", "BRONZE", null];
+  for (const withImage of [true, false]) {
+    for (const tier of tiers) {
+      if (picked.length >= limit) break;
+      const rows = await prisma.page.findMany({
+        where: {
+          ...where,
+          membershipTier: tier,
+          heroImageUrl: withImage ? { not: null } : null,
+          id: { notIn: [...seen] },
+        },
+        select: TILE_SELECT,
+        take: limit - picked.length,
+        orderBy: { sortOrder: "asc" },
+      });
+      for (const r of rows) {
+        seen.add(r.id);
+        picked.push(toTile(r));
+      }
+    }
+  }
+  return picked.slice(0, limit);
+}
+
+export async function countRealBusinesses(rootSlug: string): Promise<number> {
+  return prisma.page.count({
+    where: {
+      status: "PUBLISHED",
+      linkedPageId: null,
+      slug: { startsWith: `${rootSlug}/` },
+      customFields: { contains: "sz.touristitem" },
+    },
   });
-  return [...withImage, ...rest];
 }
 
 // Real upcoming festivals/events, sorted by real ItemStartDate — parsed in
@@ -269,16 +345,51 @@ export async function getFeaturedRealBusinesses(rootSlug: string, limit: number)
 // (a JSON-string customFields column can't be filtered/sorted by date in SQL).
 export async function getUpcomingRealEvents(rootSlug: string, limit: number): Promise<FeaturedPageTile[]> {
   const rows = await prisma.page.findMany({
-    where: { status: "PUBLISHED", slug: { startsWith: `${rootSlug}/` }, customFields: { contains: "sz.touristitem" } },
-    select: { id: true, title: true, subtitle: true, slug: true, heroImageUrl: true, customFields: true },
+    where: {
+      status: "PUBLISHED",
+      linkedPageId: null,
+      slug: { startsWith: `${rootSlug}/` },
+      customFields: { contains: "sz.touristitem" },
+    },
+    select: TILE_SELECT,
   });
-  const now = Date.now();
-  return rows
-    .map((r) => ({ ...r, startDate: getBusinessInfo(parseCustomFields(r.customFields))?.startDate }))
-    .filter((r): r is typeof r & { startDate: string } => !!r.startDate && new Date(r.startDate).getTime() >= now)
-    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
-    .slice(0, limit)
-    .map(({ id, title, subtitle, slug, heroImageUrl }) => ({ id, title, subtitle, slug, heroImageUrl }));
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const t0 = startOfToday.getTime();
+  const live = rows
+    .map((r) => toTile(r))
+    .filter((t) => !!t.startDate && new Date(t.endDate ?? t.startDate).getTime() >= t0);
+  // Events that start soonest come first; long-running ones that began
+  // earlier (exhibitions, seasonal attractions) follow, ending-soonest first —
+  // so "what's on" leads with things people can actually plan around.
+  const upcoming = live
+    .filter((t) => new Date(t.startDate!).getTime() >= t0)
+    .sort((a, b) => new Date(a.startDate!).getTime() - new Date(b.startDate!).getTime());
+  const ongoing = live
+    .filter((t) => new Date(t.startDate!).getTime() < t0)
+    .sort((a, b) => new Date(a.endDate ?? a.startDate!).getTime() - new Date(b.endDate ?? b.startDate!).getTime());
+  return [...upcoming, ...ongoing].slice(0, limit);
+}
+
+// Keyword-backed "mood" counts for the homepage (Phase 12). There is no
+// tagging taxonomy in the imported data, so a mood is an honest keyword
+// search over real business titles/subtitles/body copy — the number shown is
+// exactly the number of real places that search returns.
+export function placeKeywordWhere(query: string) {
+  return {
+    status: "PUBLISHED" as const,
+    linkedPageId: null,
+    customFields: { contains: "sz.touristitem" },
+    OR: [
+      { title: { contains: query, mode: "insensitive" as const } },
+      { subtitle: { contains: query, mode: "insensitive" as const } },
+      { bodyContent: { contains: query, mode: "insensitive" as const } },
+    ],
+  };
+}
+
+export async function countPlacesMatching(query: string): Promise<number> {
+  return prisma.page.count({ where: placeKeywordWhere(query) });
 }
 
 export type PageMapPin = {
@@ -289,6 +400,11 @@ export type PageMapPin = {
   lat: number;
   lng: number;
   category: string;
+  town: string | null;
+  tier: MembershipTier | null;
+  startDate: string | null;
+  endDate: string | null;
+  isBusiness: boolean;
 };
 
 // Loose UK+Ireland bounding box. A handful of real Kentico rows (~14 of
@@ -305,10 +421,12 @@ const UK_BOUNDS = { minLat: 49, maxLat: 61, minLng: -11, maxLng: 2 };
 // live inside `customFields` (ItemMapLatitude/ItemMapLongitude), not a native
 // column, so they can't be filtered in SQL and must be parsed in application
 // code, same as `getBusinessInfo()` already does for the business detail page.
-export const getPagesWithCoordinates = cache(async (): Promise<PageMapPin[]> => {
+// Cached across requests (5 min): it parses ~5k rows and is read by the map,
+// every detail page's "nearby" and the search results.
+async function loadPins(): Promise<PageMapPin[]> {
   const rows = await prisma.page.findMany({
-    where: { status: "PUBLISHED", customFields: { not: null } },
-    select: { id: true, title: true, slug: true, heroImageUrl: true, customFields: true },
+    where: { status: "PUBLISHED", linkedPageId: null, customFields: { not: null } },
+    select: { id: true, title: true, slug: true, heroImageUrl: true, customFields: true, membershipTier: true },
   });
 
   const pins: PageMapPin[] = [];
@@ -326,10 +444,17 @@ export const getPagesWithCoordinates = cache(async (): Promise<PageMapPin[]> => 
       lat: lat as number,
       lng: lng as number,
       category: row.slug.split("/")[0],
+      town: fields.ItemTown || null,
+      tier: row.membershipTier,
+      startDate: fields.ItemStartDate || null,
+      endDate: fields.ItemEndDate || null,
+      isBusiness: row.customFields?.includes("sz.touristitem") ?? false,
     });
   }
   return pins;
-});
+}
+
+export const getPagesWithCoordinates = unstable_cache(loadPins, ["pages-with-coordinates"], { revalidate: 300 });
 
 export type SocialLink = { platform: string; url: string };
 

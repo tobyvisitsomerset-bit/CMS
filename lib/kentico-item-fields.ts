@@ -31,21 +31,54 @@ export function getAllFieldValues(customFields: string | null, key: string): str
   }
 }
 
+const NAMED_ENTITIES: Record<string, string> = {
+  nbsp: " ",
+  pound: "£",
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  rsquo: "'",
+  lsquo: "'",
+  rdquo: '"',
+  ldquo: '"',
+  ndash: "–",
+  mdash: "—",
+  hellip: "…",
+  frac12: "½",
+  frac14: "¼",
+  frac34: "¾",
+  eacute: "é",
+  egrave: "è",
+  agrave: "à",
+  acirc: "â",
+  ccedil: "ç",
+  ocirc: "ô",
+  uuml: "ü",
+  ouml: "ö",
+  euro: "€",
+  deg: "°",
+  times: "×",
+  copy: "©",
+  reg: "®",
+};
+
+export function decodeEntities(value: string): string {
+  return value
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&([a-z0-9]+);/gi, (m, name) => NAMED_ENTITIES[name] ?? NAMED_ENTITIES[name.toLowerCase()] ?? m);
+}
+
 // Kentico stores rich-text fields (opening times, admission) as HTML and
 // plain fields with HTML entities escaped — decode both for display without
 // resorting to dangerouslySetInnerHTML anywhere in the editor UI.
 export function decodeKenticoText(value: string | null | undefined): string | null {
   if (!value) return null;
-  const decoded = value
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&pound;/g, "£")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&rsquo;|&#8217;/g, "'")
+  const decoded = decodeEntities(value.replace(/<br\s*\/?>/gi, " · ").replace(/<[^>]+>/g, " "))
     .replace(/\s+/g, " ")
+    .replace(/\s·\s·\s/g, " · ")
     .trim();
   return decoded || null;
 }

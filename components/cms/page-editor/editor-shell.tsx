@@ -13,11 +13,11 @@ import { PropertiesTab } from "./properties-tab";
 import { PagePreview } from "./page-preview";
 import { ListingPreview } from "./listing-preview";
 import type { ListingsByCategory, RealBlockData } from "@/components/cms/page-builder/block-renderer";
-import type { getPageById, getNearbyPages, ChildPageTile } from "@/lib/data/pages";
+import type { getPageById, ChildPageTile } from "@/lib/data/pages";
+import type { DetailExtras } from "@/lib/data/detail-extras";
 import type { listMembers } from "@/lib/data/users";
 
 type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
-type NearbyPage = Awaited<ReturnType<typeof getNearbyPages>>[number];
 
 export function EditorShell({
   page,
@@ -27,7 +27,7 @@ export function EditorShell({
   canReview,
   isMember,
   listings,
-  nearby,
+  extras,
   childPages,
   blockData,
   members,
@@ -40,7 +40,7 @@ export function EditorShell({
   canReview: boolean;
   isMember: boolean;
   listings: ListingsByCategory;
-  nearby: NearbyPage[];
+  extras: DetailExtras;
   childPages: ChildPageTile[];
   blockData: Record<string, RealBlockData>;
   members: Awaited<ReturnType<typeof listMembers>>;
@@ -98,7 +98,7 @@ export function EditorShell({
 
       {mode === "preview" && (
         <div className="min-h-0 flex-1 overflow-y-auto bg-stone-100 py-6">
-          <PagePreview page={page} listings={listings} nearby={nearby} childPages={childPages} blockData={blockData} />
+          <PagePreview page={page} listings={listings} extras={extras} childPages={childPages} blockData={blockData} />
         </div>
       )}
 

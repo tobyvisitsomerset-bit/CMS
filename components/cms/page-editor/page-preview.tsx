@@ -4,8 +4,10 @@ import { ListingDirectoryProvider } from "@/components/cms/page-builder/listing-
 import { ListingDetailPreview } from "@/components/cms/page-editor/listing-detail-preview";
 import { Img } from "@/components/cms/page-builder/listing-ui";
 import Link from "next/link";
+import { PlainPage } from "@/components/site/plain-page";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
-import type { getPageById, getNearbyPages, ChildPageTile } from "@/lib/data/pages";
+import type { getPageById, ChildPageTile } from "@/lib/data/pages";
+import { EMPTY_EXTRAS, type DetailExtras } from "@/lib/data/detail-extras";
 
 // Resolve the one category a hub page's `listing_search` block should share
 // state for, from whichever results block (`listing_grid`/`event_calendar`)
@@ -23,24 +25,25 @@ function resolveDirectoryCategory(blocks: { type: string; config: string }[]): L
 }
 
 type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
-type NearbyPage = Awaited<ReturnType<typeof getNearbyPages>>[number];
 
 export function PagePreview({
   page,
   listings,
-  nearby,
+  extras = EMPTY_EXTRAS,
   childPages = [],
   blockData = {},
   linkBase = "/cms",
   initialSearchText = "",
+  searchParams = {},
 }: {
   page: PageDetail;
   listings: ListingsByCategory;
-  nearby: NearbyPage[];
+  extras?: DetailExtras;
   childPages?: ChildPageTile[];
   blockData?: Record<string, RealBlockData>;
   linkBase?: string;
   initialSearchText?: string;
+  searchParams?: Record<string, string | undefined>;
 }) {
   if (page.contentBlocks.length > 0) {
     const blockList = page.contentBlocks.map((block) => (
@@ -50,13 +53,18 @@ export function PagePreview({
         config={JSON.parse(block.config || "{}")}
         listings={listings}
         realData={blockData[block.id]}
+        pageSlug={page.slug}
+        pageTitle={page.title}
       />
     ));
     const hasSearchBlock = page.contentBlocks.some((block) => block.type === "listing_search");
     const category = hasSearchBlock ? resolveDirectoryCategory(page.contentBlocks) : null;
 
+    // Public pages render full-bleed - each block supplies its own inner
+    // max-width. The CMS preview keeps the contained card.
+    const isPublic = linkBase !== "/cms";
     return (
-      <div className="mx-auto max-w-5xl overflow-hidden bg-white shadow-sm">
+      <div className={isPublic ? "bg-white" : "mx-auto max-w-5xl overflow-hidden bg-white shadow-sm"}>
         {category ? (
           <ListingDirectoryProvider items={listings[category]} category={category} initialSearchText={initialSearchText}>
             {blockList}
@@ -83,8 +91,24 @@ export function PagePreview({
         info={info}
         gallery={gallery}
         bodyContent={bodyContent}
-        nearby={nearby}
+        extras={extras}
         linkBase={linkBase}
+        searchParams={searchParams}
+      />
+    );
+  }
+
+  // Public site: banner + prose + child-page grid (components/site/plain-page.tsx).
+  if (linkBase !== "/cms") {
+    return (
+      <PlainPage
+        title={page.title}
+        subtitle={subtitle}
+        body={bodyContent}
+        heroImageUrl={page.heroImageUrl}
+        gallery={gallery}
+        childPages={childPages}
+        cta={page.callToActionLabel ? { label: page.callToActionLabel, url: page.callToActionUrl || "#" } : null}
       />
     );
   }

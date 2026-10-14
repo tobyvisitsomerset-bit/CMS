@@ -339,3 +339,33 @@ model Version {
   changeSummary String?
   createdAt     DateTime @default(now())
 }
+
+// Public newsletter signups from the site footer (Phase 12). Additive model —
+// created by `prisma db push` on deploy, never touches existing tables.
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String? // e.g. "footer", "home"
+  createdAt DateTime @default(now())
+}
+
+// A visitor's stay enquiry sent to a listing (Phase 12). There is no live
+// availability engine — dates are a request the business confirms by hand.
+model BookingRequest {
+  id        String   @id @default(cuid())
+  pageId    String
+  pageTitle String
+  pageSlug  String
+  name      String
+  email     String
+  phone     String?
+  checkIn   String? // ISO date string, as entered
+  checkOut  String?
+  guests    String?
+  message   String?
+  status    String   @default("NEW") // NEW | HANDLED
+  createdAt DateTime @default(now())
+
+  @@index([pageId])
+  @@index([createdAt])
+}

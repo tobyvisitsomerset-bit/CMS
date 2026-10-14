@@ -14,6 +14,11 @@ import {
   LayoutPanelTop,
   Rows3,
   Building2,
+  Ticket,
+  Smile,
+  ListFilter,
+  ShoppingBag,
+  Compass,
 } from "lucide-react";
 
 export type BlockType =
@@ -32,7 +37,12 @@ export type BlockType =
   | "event_calendar"
   | "explore_area_tiles"
   | "real_teaser"
-  | "towns_row";
+  | "towns_row"
+  | "book_strip"
+  | "mood_tiles"
+  | "listing_explorer"
+  | "producer_shop"
+  | "experiences_hub";
 
 export const BLOCK_DEFS: { type: BlockType; label: string; description: string; icon: typeof LayoutTemplate }[] = [
   { type: "hero", label: "Hero", description: "Full-width banner with heading and CTA", icon: LayoutTemplate },
@@ -51,6 +61,11 @@ export const BLOCK_DEFS: { type: BlockType; label: string; description: string; 
   { type: "explore_area_tiles", label: "Explore Area Tiles", description: "Real-count tiles linking to site sections", icon: LayoutPanelTop },
   { type: "real_teaser", label: "Real Content Teaser", description: "A few real businesses or events, with a \"See all\" link", icon: Rows3 },
   { type: "towns_row", label: "Towns Row", description: "Tile row linking to real town pages", icon: Building2 },
+  { type: "book_strip", label: "Book Strip", description: "Ready to book? strip of call-to-action buttons", icon: Ticket },
+  { type: "mood_tiles", label: "Mood Tiles", description: "Circular tiles, each a real keyword search with a live place count", icon: Smile },
+  { type: "listing_explorer", label: "Listing Explorer", description: "Searchable, filterable list of real businesses or events with a map", icon: ListFilter },
+  { type: "producer_shop", label: "Producer Shop", description: "One block per real producer with their live products and Buy Now links", icon: ShoppingBag },
+  { type: "experiences_hub", label: "Experiences Hub", description: "Book-direct experiences landing section with search and live listings", icon: Compass },
 ];
 
 export function blockLabel(type: string): string {
@@ -60,7 +75,7 @@ export function blockLabel(type: string): string {
 export function defaultConfigFor(type: BlockType): Record<string, unknown> {
   switch (type) {
     case "hero":
-      return { heading: "New hero heading", subheading: "", imageUrl: "", ctaLabel: "", ctaUrl: "", showSearchBar: false };
+      return { heading: "New hero heading", subheading: "", imageUrl: "", ctaLabel: "", ctaUrl: "", showSearchBar: false, eyebrow: "" };
     case "text":
       return { heading: "", body: "" };
     case "gallery":
@@ -98,6 +113,34 @@ export function defaultConfigFor(type: BlockType): Record<string, unknown> {
       };
     case "real_teaser":
       return { title: "On this week", mode: "events", rootSlug: "festivals-events", limit: 4, seeAllHref: "/festivals-events" };
+    case "book_strip":
+      return {
+        heading: "Ready to book?",
+        buttons: [
+          { label: "Book experiences", url: "/book-experiences" },
+          { label: "Book accommodation", url: "/places-to-stay" },
+        ],
+      };
+    case "mood_tiles":
+      return {
+        eyebrow: "Where to start",
+        title: "Somerset by mood",
+        subtitle: "Six ways in, each one a search of real places.",
+        moods: [
+          { label: "Coast & piers", query: "coast" },
+          { label: "Caves & gorges", query: "cave" },
+          { label: "Cider & cheese", query: "cider" },
+          { label: "Legends & heritage", query: "legend" },
+          { label: "Exmoor & the hills", query: "exmoor" },
+          { label: "Family days out", query: "family" },
+        ],
+      };
+    case "listing_explorer":
+      return { kind: "accommodation", rootSlug: "places-to-stay", title: "", intro: "", noun: "places to stay", parentLabel: "", parentHref: "" };
+    case "producer_shop":
+      return { rootSlug: "virtual-highstreet", intro: "" };
+    case "experiences_hub":
+      return { heading: "Book experiences", intro: "" };
     case "towns_row":
       return {
         title: "Towns & cities",
