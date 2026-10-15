@@ -67,7 +67,8 @@ export type BlockType =
   | "availability_search"
   | "event_form"
   | "embed"
-  | "social_panel";
+  | "social_panel"
+  | "buy_panel";
 
 export const BLOCK_DEFS: { type: BlockType; label: string; description: string; icon: typeof LayoutTemplate }[] = [
   { type: "hero", label: "Hero", description: "Full-width banner with heading and CTA", icon: LayoutTemplate },
@@ -104,6 +105,7 @@ export const BLOCK_DEFS: { type: BlockType; label: string; description: string; 
   { type: "event_form", label: "Event form", description: "Lets organisers submit an event for review", icon: CalendarPlus },
   { type: "embed", label: "External tool (embed)", description: "Show an external tool such as the Traveline journey planner", icon: AppWindow },
   { type: "social_panel", label: "Social panel", description: "A row of linked pictures with a link to your profile", icon: SocialIcon },
+  { type: "buy_panel", label: "Buy panel", description: "One producer's products with Buy links to their own shop", icon: ShoppingBag },
 ];
 
 export function blockIcon(type: string): typeof LayoutTemplate {
@@ -211,6 +213,8 @@ export function defaultConfigFor(type: BlockType): Record<string, unknown> {
       return { heading: "Submit your event", intro: "Tell us about your festival or event and we'll review it for the site." };
     case "embed":
       return { heading: "Plan your journey", url: "", height: 600, linkLabel: "Open in a new tab" };
+    case "buy_panel":
+      return { heading: "Buy from a Somerset producer", producerSlug: "", limit: 4 };
     case "social_panel":
       return { heading: "On Instagram", handle: "@visitsomerset", profileUrl: "", images: [] };
     case "map_band":

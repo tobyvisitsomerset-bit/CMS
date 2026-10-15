@@ -17,6 +17,7 @@ import { ListingExplorer } from "@/components/site/explorer/listing-explorer";
 import { EventsExplorer } from "@/components/site/explorer/events-explorer";
 import { ExperiencesHubView } from "@/components/site/explorer/experiences-hub";
 import { ProducerShop } from "@/components/site/shop/producer-shop";
+import { BuyPanel } from "@/components/site/shop/buy-panel";
 import type { ShopProducer } from "@/lib/data/shop";
 import { ContentPanel } from "@/components/site/content-panel";
 import {
@@ -60,6 +61,7 @@ export type RealBlockData =
       cards: { id: string; title: string; subtitle: string | null; slug: string; heroImageUrl: string | null }[];
     }
   | { type: "producer_shop"; producers: ShopProducer[] }
+  | { type: "buy_panel"; producer: ShopProducer | null }
   | { type: "experiences_hub"; hub: ExperiencesHub; searchParams: Record<string, string | undefined> }
   | {
       type: "listing_explorer";
@@ -463,6 +465,11 @@ export function BlockRenderer({
     case "page_cards": {
       if (!realData || realData.type !== "page_cards") return <RealDataUnavailable />;
       return <PageCards title={config.title} cards={realData.cards} />;
+    }
+
+    case "buy_panel": {
+      if (!realData || realData.type !== "buy_panel") return <RealDataUnavailable />;
+      return <BuyPanel heading={config.heading} limit={Number(config.limit) || 4} producer={realData.producer} />;
     }
 
     case "producer_shop": {

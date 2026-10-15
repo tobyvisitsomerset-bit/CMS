@@ -100,28 +100,17 @@ async function loadWoo(origin: string): Promise<ShopProduct[]> {
     });
 }
 
-export async function getShopProducers(rootSlug: string): Promise<ShopProducer[]> {
-  const rows = await prisma.page.findMany({
-    where: {
-      status: "PUBLISHED",
-      linkedPageId: null,
-      slug: { startsWith: `${rootSlug}/` },
-      customFields: { contains: "sz.touristitem" },
-    },
-    select: { id: true, slug: true, title: true, subtitle: true, bodyContent: true, heroImageUrl: true, customFields: true },
-    orderBy: { sortOrder: "asc" },
-  });
+type ProducerRow = {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle: string | null;
+  bodyContent: string | null;
+  heroImageUrl: string | null;
+  customFields: string | null;
+};
 
-  // Kentico left a duplicate "-1" copy of most producers — keep one per name.
-  const byName = new Map<string, (typeof rows)[number]>();
-  for (const r of rows) {
-    const key = r.title.trim().toLowerCase();
-    const existing = byName.get(key);
-    if (!existing || (r.customFields?.length ?? 0) > (existing.customFields?.length ?? 0)) byName.set(key, r);
-  }
-
-  const producers = await Promise.all(
-    [...byName.values()].map(async (r): Promise<ShopProducer> => {
+async function toProducer(r: ProducerRow): Promise<ShopProducer> {
       const f = parseCustomFields(r.customFields);
       const platform = (f.Platform || "").toLowerCase();
       let products: ShopProduct[] = [];
@@ -142,8 +131,38 @@ export async function getShopProducers(rootSlug: string): Promise<ShopProducer[]
         buyLabel: f.ItemBookingWebButtonText || "Shop",
         products,
       };
-    }),
-  );
+}
+
+// One producer by page slug (the Buy Panel widget), with live products.
+export async function getShopProducer(slug: string): Promise<ShopProducer | null> {
+  const row = await prisma.page.findFirst({
+    where: { slug, status: "PUBLISHED", linkedPageId: null },
+    select: { id: true, slug: true, title: true, subtitle: true, bodyContent: true, heroImageUrl: true, customFields: true },
+  });
+  return row ? toProducer(row) : null;
+}
+
+export async function getShopProducers(rootSlug: string): Promise<ShopProducer[]> {
+  const rows = await prisma.page.findMany({
+    where: {
+      status: "PUBLISHED",
+      linkedPageId: null,
+      slug: { startsWith: `${rootSlug}/` },
+      customFields: { contains: "sz.touristitem" },
+    },
+    select: { id: true, slug: true, title: true, subtitle: true, bodyContent: true, heroImageUrl: true, customFields: true },
+    orderBy: { sortOrder: "asc" },
+  });
+
+  // Kentico left a duplicate "-1" copy of most producers — keep one per name.
+  const byName = new Map<string, (typeof rows)[number]>();
+  for (const r of rows) {
+    const key = r.title.trim().toLowerCase();
+    const existing = byName.get(key);
+    if (!existing || (r.customFields?.length ?? 0) > (existing.customFields?.length ?? 0)) byName.set(key, r);
+  }
+
+  const producers = await Promise.all([...byName.values()].map(toProducer));
 
   // Producers with live products first, then alphabetical.
   return producers.sort((a, b) => b.products.length - a.products.length || a.title.localeCompare(b.title));

@@ -8,7 +8,7 @@ import {
   getUpcomingRealEvents,
 } from "@/lib/data/pages";
 import { queryExplorer, type ExplorerKind, type ExplorerParams } from "@/lib/data/listing-explorer";
-import { getShopProducers } from "@/lib/data/shop";
+import { getShopProducer, getShopProducers } from "@/lib/data/shop";
 import { getExperiencesHub } from "@/lib/data/experiences";
 import type { RealBlockData } from "@/components/cms/page-builder/block-renderer";
 import { priorityOf } from "@/lib/membership";
@@ -169,6 +169,14 @@ export async function resolveBlockData(
           rows.sort((a, b) => (order.get(a.slug) ?? 0) - (order.get(b.slug) ?? 0));
           return [block.id, { type: "page_cards", cards: rows }];
         }
+        case "buy_panel":
+          return [
+            block.id,
+            {
+              type: "buy_panel",
+              producer: config.producerSlug ? await getShopProducer(String(config.producerSlug).replace(/^\/+/, "")) : null,
+            },
+          ];
         case "producer_shop":
           return [block.id, { type: "producer_shop", producers: await getShopProducers(config.rootSlug || "virtual-highstreet") }];
         case "experiences_hub":

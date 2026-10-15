@@ -36,6 +36,7 @@ export const PANEL_PREVIEW_LAYOUTS = [
   "text_image_carousel",
   "image_text_carousel",
   "text_image_grid",
+  "all_options",
 ];
 
 export function sampleConfig(type: BlockType, layout?: string): Record<string, unknown> {
@@ -85,4 +86,4 @@ export function sampleConfig(type: BlockType, layout?: string): Record<string, u
 }
 
 // Widgets that are expensive to draw dozens of times on the list page.
-export const HEAVY_PREVIEW: BlockType[] = ["producer_shop", "listing_explorer", "experiences_hub", "map_band", "embed", "social_panel"];
+export const HEAVY_PREVIEW: BlockType[] = ["producer_shop", "buy_panel", "listing_explorer", "experiences_hub", "map_band", "embed", "social_panel"];

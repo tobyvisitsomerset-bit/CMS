@@ -541,8 +541,8 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
     case "content_panel": {
       const items: any[] = config.items ?? [];
       const update = (i: number, patch: any) => set({ items: items.map((x, idx) => (idx === i ? { ...x, ...patch } : x)) });
-      const cardLayout = ["text_cards", "feature_cards", "highlight_cards", "simple_grid", "carousel", "text_image_carousel", "image_text_carousel", "text_image_grid"].includes(config.layout);
-      const imageLayout = ["text_image", "image_text", "text_image_split", "image_text_split", "video_text", "text_image_carousel", "image_text_carousel", "text_image_grid"].includes(config.layout);
+      const cardLayout = ["text_cards", "feature_cards", "highlight_cards", "simple_grid", "carousel", "text_image_carousel", "image_text_carousel", "text_image_grid", "all_options"].includes(config.layout);
+      const imageLayout = ["text_image", "image_text", "text_image_split", "image_text_split", "video_text", "text_image_carousel", "image_text_carousel", "text_image_grid", "all_options"].includes(config.layout);
       return (
         <div className="space-y-4">
           <Field label="Layout">
@@ -591,7 +591,7 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
               </Field>
             </>
           )}
-          {config.layout === "video_text" && (
+          {(config.layout === "video_text" || config.layout === "all_options") && (
             <Field label="Video URL (YouTube or Vimeo, https)">
               <Input value={config.videoUrl ?? ""} onChange={(e) => set({ videoUrl: e.target.value })} />
             </Field>
@@ -893,6 +893,24 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
               <Input value={config.seeAllHref ?? ""} onChange={(e) => set({ seeAllHref: e.target.value })} />
             </Field>
           </div>
+        </div>
+      );
+
+    case "buy_panel":
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">
+            Shows one producer&apos;s real products and prices, read from their own online shop, with Buy links that go to that shop. Live preview isn&apos;t available - save to see it on the real page.
+          </p>
+          <Field label="Heading">
+            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          </Field>
+          <Field label="Producer page slug (Properties > URLs)">
+            <Input placeholder="virtual-highstreet/name-of-producer" value={config.producerSlug ?? ""} onChange={(e) => set({ producerSlug: e.target.value })} />
+          </Field>
+          <Field label="How many products (1-12)">
+            <Input type="number" min={1} max={12} value={config.limit ?? 4} onChange={(e) => set({ limit: Number(e.target.value) })} />
+          </Field>
         </div>
       );
 

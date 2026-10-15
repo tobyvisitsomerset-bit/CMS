@@ -34,6 +34,7 @@ export const PANEL_LAYOUTS: { key: string; label: string }[] = [
   { key: "text_image_carousel", label: "Text & image with carousel" },
   { key: "image_text_carousel", label: "Image & text with carousel" },
   { key: "text_image_grid", label: "Text & image with simple grid" },
+  { key: "all_options", label: "All options" },
 ];
 
 const BG: Record<string, { wrap: string; dark: boolean }> = {
@@ -157,6 +158,35 @@ export function ContentPanel({ config }: { config: ContentPanelConfig }) {
       <div className="mx-auto max-w-7xl">{children}</div>
     </section>
   );
+
+  // "All options": every element the panel supports, each shown only when it
+  // has been filled in - copy, picture or video, and a row of cards.
+  if (layout === "all_options") {
+    const hasMedia = !!(video || config.imageUrl);
+    return shell(
+      <div className="space-y-10">
+        <div className={cn("grid items-center gap-10", hasMedia && "md:grid-cols-2")}>
+          <Copy c={config} dark={bg.dark} />
+          {video ? (
+            <div className="aspect-video overflow-hidden rounded-3xl bg-black">
+              <iframe src={video} title={config.heading || "Video"} className="h-full w-full" allow="fullscreen" loading="lazy" />
+            </div>
+          ) : config.imageUrl ? (
+            image
+          ) : null}
+        </div>
+        {items.length > 0 && (
+          <div className="flex snap-x gap-4 overflow-x-auto pb-3">
+            {items.map((it, i) => (
+              <div key={i} className="w-72 shrink-0 snap-start">
+                <Card item={it} dark={bg.dark} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>,
+    );
+  }
 
   if (layout === "text_image_carousel" || layout === "image_text_carousel" || layout === "text_image_grid") {
     const imageFirst = layout === "image_text_carousel";

@@ -104,10 +104,10 @@ export const WIDGETS: WidgetDef[] = [
     name: "Content panel",
     category: "Content panels",
     summary:
-      "A flexible panel of words, pictures, video or cards. Pick a layout: Text only, Text & image, Image & text, Text & image split, Image & text split, Video & text, Text & cards, Feature cards, Highlight cards, Simple header with grid, Carousel, or the three with-carousel and with-simple-grid combinations.",
+      "A flexible panel of words, pictures, video or cards. Pick a layout: Text only, Text & image, Image & text, Text & image split, Image & text split, Video & text, Text & cards, Feature cards, Highlight cards, Simple header with grid, Carousel, the three with-carousel and with-simple-grid combinations, or All options (words, picture or video, and cards together).",
     whenToUse: "Almost any editorial block on a landing page. Add one per section of the page and choose the layout that fits.",
     data: "You type it",
-    kentico: "Content panel – Text only / Text & image / Image & text / Text & image split / Image & text split / Video & text / Text & cards / Feature cards / Highlight cards / Simple header w/ grid / Carousel",
+    kentico: "Content panel – Text only / Text & image / Image & text / Text & image split / Image & text split / Video & text / Text & cards / Feature cards / Highlight cards / Simple header w/ grid / Carousel / All options",
     properties: [
       { name: "Layout", type: "Choice", help: "Which Content panel layout to use (same names as the Kentico widgets)." },
       { name: "Background", type: "Choice", help: "White, light grey, Somerset green or damson purple." },
@@ -456,6 +456,22 @@ export const WIDGETS: WidgetDef[] = [
       { name: "Breadcrumb parent", type: "Text", help: "Optional parent label for the breadcrumb." },
     ],
     tips: ["New listings appear here the moment they are published — nothing to update."],
+  },
+  {
+    type: "buy_panel",
+    name: "Buy panel",
+    category: "Shop & booking",
+    summary: "One producer's real products and prices in a compact panel, each with a Buy link that goes to that producer's own online shop.",
+    whenToUse: "On a producer's page, or a story or offer page that wants to point at one producer's shop.",
+    data: "Live data from the site",
+    kentico: "Buy Panel",
+    dataNote: "Products and prices are read from the producer's own online shop (Shopify or WooCommerce), so they are always theirs. If the shop can't be read, the panel shows a link to it instead. Payment happens on the producer's shop, not on this site.",
+    properties: [
+      { name: "Heading", type: "Text", help: "The words above the panel." },
+      { name: "Producer page slug", type: "Text", help: "The producer's page address from Properties > URLs, e.g. virtual-highstreet/name." },
+      { name: "How many products", type: "Number", help: "1 to 12, in their shop's own order." },
+    ],
+    tips: ["Find the producer under Buy Somerset in the content tree to copy its address."],
   },
   {
     type: "producer_shop",
