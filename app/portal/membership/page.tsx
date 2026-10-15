@@ -19,6 +19,8 @@ export default async function MembershipPage() {
     orderBy: { title: "asc" },
   });
 
+  const offers = await prisma.offer.findMany({ where: { pageId: { in: pages.map((p) => p.id) } }, orderBy: { createdAt: "desc" } });
+
   return (
     <div className="max-w-3xl">
       <h1 className="font-serif text-3xl font-black text-stone-900">Membership</h1>
@@ -38,6 +40,18 @@ export default async function MembershipPage() {
                 </span>
               </div>
               {level && <p className="mt-2 text-sm text-stone-600">{WHAT[level]}</p>}
+              {offers.filter((o) => o.pageId === p.id).length > 0 && (
+                <div className="mt-3 border-t border-stone-100 pt-3">
+                  <p className="text-xs font-semibold tracking-wider text-stone-500 uppercase">Your offers</p>
+                  <ul className="mt-1 space-y-1 text-sm text-stone-700">
+                    {offers
+                      .filter((o) => o.pageId === p.id)
+                      .map((o) => (
+                        <li key={o.id}>{o.title}</li>
+                      ))}
+                  </ul>
+                </div>
+              )}
             </div>
           );
         })}

@@ -53,6 +53,7 @@ export function EditorShell({
   members,
   canManageMembers,
   master,
+  offers,
 }: {
   page: PageDetail;
   canEdit: boolean;
@@ -67,6 +68,7 @@ export function EditorShell({
   members: Awaited<ReturnType<typeof listMembers>>;
   canManageMembers: boolean;
   master: MasterSettings;
+  offers: { id: string; title: string; description: string | null; validFrom: string | null; validTo: string | null }[];
 }) {
   const { mode, setMode } = useEditorMode();
   const [tab, setTab] = useState<Tab>("page");
@@ -184,7 +186,7 @@ export function EditorShell({
             )}
             {tab === "form" && (
               <div>
-                <FormTab page={page} readOnly={!canEdit} />
+                <FormTab page={page} readOnly={!canEdit} offers={offers} />
                 <div className="mx-auto max-w-5xl px-6 pb-10">
                   <h2 className="mb-2 bg-[#e5e5e5] px-4 py-2 text-[15px] font-semibold text-[#262524]">Rooms &amp; reviews</h2>
                   <RoomsReviewsTab page={page} readOnly={!canEdit} />

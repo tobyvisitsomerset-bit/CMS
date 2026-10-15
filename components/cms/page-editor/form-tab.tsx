@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MediaPickerField } from "@/components/cms/media-library/media-picker-field";
 import { GalleryField } from "@/components/cms/media-library/gallery-field";
-import { saveContentAction } from "@/app/cms/actions";
+import { saveContentAction, deleteOfferAction } from "@/app/cms/actions";
 import { type CustomField, getCF, parseCustomFieldsArray, serializeCustomFields, setCF } from "@/lib/custom-fields";
 import type { getPageById } from "@/lib/data/pages";
 import type { MembershipTier } from "@prisma/client";
@@ -92,7 +92,9 @@ function Field({ label, children }: { label: string; full?: boolean; children: R
   );
 }
 
-export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolean }) {
+type OfferRow = { id: string; title: string; description: string | null; validFrom: string | null; validTo: string | null };
+
+export function FormTab({ page, readOnly, offers = [] }: { page: PageDetail; readOnly: boolean; offers?: OfferRow[] }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [cf, setCfState] = useState<CustomField[]>(() => parseCustomFieldsArray(page.customFields));
@@ -361,6 +363,44 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
           <Field label="Longitude">
             <Input value={getCF(cf, "ItemMapLongitude")} onChange={(e) => set("ItemMapLongitude", e.target.value)} />
           </Field>
+        </Section>
+
+        <Section title={`Offers on this page${offers.length ? ` (${offers.length})` : ""}`} defaultOpen={offers.length > 0}>
+          {offers.length === 0 ? (
+            <p className="text-sm text-neutral-500">
+              No offers yet. Members add offers from their portal and they appear here, and on the page, once approved.
+            </p>
+          ) : (
+            <ul className="space-y-2">
+              {offers.map((o) => (
+                <li key={o.id} className="flex items-start justify-between gap-3 rounded-md border bg-white p-3 text-sm">
+                  <span>
+                    <strong>{o.title}</strong>
+                    {o.description && <span className="block text-neutral-600">{o.description}</span>}
+                    <span className="block text-xs text-neutral-500">
+                      {o.validFrom ? `From ${o.validFrom.slice(0, 10)} ` : ""}
+                      {o.validTo ? `Until ${o.validTo.slice(0, 10)}` : "No end date"}
+                    </span>
+                  </span>
+                  {!readOnly && (
+                    <button
+                      type="button"
+                      className="shrink-0 text-xs font-semibold text-red-600 hover:underline"
+                      onClick={() =>
+                        startTransition(async () => {
+                          await deleteOfferAction(o.id);
+                          toast.success("Offer removed");
+                          router.refresh();
+                        })
+                      }
+                    >
+                      Remove
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </Section>
 
         <Section title="Online shop" defaultOpen={false}>

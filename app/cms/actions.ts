@@ -176,6 +176,19 @@ export async function saveContentAction(
   return page;
 }
 
+export async function deleteOfferAction(offerId: string) {
+  const session = await requireSession();
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
+  const offer = await prisma.offer.findUnique({ where: { id: offerId }, select: { pageId: true, title: true } });
+  if (!offer) return;
+  await prisma.offer.delete({ where: { id: offerId } });
+  await logAudit({ userId: session.user.id, pageId: offer.pageId, action: "updated", details: `Offer removed: ${offer.title}` });
+  updateTag("listings");
+  revalidatePath("/cms");
+  const page = await prisma.page.findUnique({ where: { id: offer.pageId }, select: { slug: true } });
+  if (page) revalidatePath(`/${page.slug}`);
+}
+
 export async function saveSeoAction(
   pageId: string,
   data: {

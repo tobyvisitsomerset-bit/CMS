@@ -84,13 +84,7 @@ export async function getDetailExtras(page: {
     heroImageUrl: page.heroImageUrl ?? null,
     customFields: page.customFields,
   });
-  const now = new Date();
-  const offers = await prisma.offer.findMany({
-    where: { pageId: page.id, OR: [{ validTo: null }, { validTo: { gte: now } }], AND: [{ OR: [{ validFrom: null }, { validFrom: { lte: now } }] }] },
-    orderBy: { createdAt: "desc" },
-    take: 5,
-    select: { id: true, title: true, description: true, url: true, validTo: true },
-  });
+  const offers = await getLiveOffers(page.id);
   const info = getBusinessInfo(parseCustomFields(page.customFields));
   if (!info) return { ...EMPTY_EXTRAS, shop, offers };
 
@@ -147,4 +141,20 @@ export async function getDetailExtras(page: {
   }
 
   return extras;
+}
+
+// Offers currently running for a page. An offer "until 20 Nov" is still shown
+// all day on the 20th (dates are stored at midnight UTC).
+export async function getLiveOffers(pageId: string) {
+  const today = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00.000Z`);
+  const endOfToday = new Date(today.getTime() + 86400000 - 1);
+  return prisma.offer.findMany({
+    where: {
+      pageId,
+      AND: [{ OR: [{ validTo: null }, { validTo: { gte: today } }] }, { OR: [{ validFrom: null }, { validFrom: { lte: endOfToday } }] }],
+    },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+    select: { id: true, title: true, description: true, url: true, validTo: true },
+  });
 }

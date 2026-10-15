@@ -7,6 +7,7 @@ import { getAllListingsGrouped } from "@/lib/data/listings";
 import { resolveBlockData } from "@/lib/data/block-data";
 import { listMembers } from "@/lib/data/users";
 import { canAccessPage, hasCapability, isAdmin } from "@/lib/permissions";
+import { prisma } from "@/lib/prisma";
 import { EditorShell } from "@/components/cms/page-editor/editor-shell";
 import { isFormDriven } from "@/components/cms/page-editor/page-preview";
 
@@ -44,6 +45,7 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
   const childPages = isFormDriven(page) ? await getChildPages(page.id) : [];
   const blockData = await resolveBlockData(page.contentBlocks);
   const members = canManageMembers ? await listMembers() : [];
+  const offers = await prisma.offer.findMany({ where: { pageId: page.id }, orderBy: { createdAt: "desc" } });
 
   return (
     <EditorShell
@@ -59,6 +61,7 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
       childPages={childPages}
       blockData={blockData}
       members={members}
+      offers={offers.map((o) => ({ id: o.id, title: o.title, description: o.description, validFrom: o.validFrom?.toISOString() ?? null, validTo: o.validTo?.toISOString() ?? null }))}
       canManageMembers={canManageMembers}
     />
   );

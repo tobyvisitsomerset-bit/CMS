@@ -19,6 +19,7 @@ export default async function PortalListingPage({ params }: { params: Promise<{ 
     prisma.page.findUnique({ where: { id }, include: { rooms: { orderBy: { sortOrder: "asc" } }, tags: { select: { name: true } } } }),
     getActiveRequest(id, userId),
   ]);
+  const offers = await prisma.offer.findMany({ where: { pageId: id }, orderBy: { createdAt: "desc" } });
   const proposal = request ? parseProposal(request.proposal) : null;
   const changes = page && proposal ? diffProposal(proposalFromPage(page), proposal) : [];
 
@@ -74,6 +75,30 @@ export default async function PortalListingPage({ params }: { params: Promise<{ 
       )}
 
       <div className="mt-8 rounded-2xl border bg-white p-6">
+        <div className="flex items-end justify-between">
+          <h2 className="font-serif text-xl font-semibold text-deep-green">Offers on this listing</h2>
+          <Link href={`/portal/submit/offer?listing=${id}`} className="text-sm font-semibold text-somerset-green hover:underline">
+            + Add an offer
+          </Link>
+        </div>
+        {offers.length === 0 ? (
+          <p className="mt-3 text-sm text-neutral-500">No offers yet.</p>
+        ) : (
+          <ul className="mt-3 space-y-2">
+            {offers.map((o) => (
+              <li key={o.id} className="rounded-xl border border-damson/20 bg-damson/5 p-3 text-sm">
+                <strong>{o.title}</strong>
+                {o.description && <span className="block text-neutral-700">{o.description}</span>}
+                <span className="block text-xs text-neutral-500">
+                  {o.validTo ? `Until ${o.validTo.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })}` : "No end date"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="mt-6 rounded-2xl border bg-white p-6">
         <div className="flex items-end justify-between">
           <h2 className="font-serif text-xl font-semibold text-deep-green">Listing strength</h2>
           <p className="font-serif text-3xl font-bold text-somerset-green">{listing.strength.score}%</p>

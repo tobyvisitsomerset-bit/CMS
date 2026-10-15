@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getPageBySlug, getPageById, getChildPages } from "@/lib/data/pages";
-import { getDetailExtras } from "@/lib/data/detail-extras";
+import { EMPTY_EXTRAS, getDetailExtras, getLiveOffers } from "@/lib/data/detail-extras";
 import { getAllListingsGrouped } from "@/lib/data/listings";
 import { resolveBlockData } from "@/lib/data/block-data";
 import { PagePreview, isFormDriven } from "@/components/cms/page-editor/page-preview";
@@ -56,7 +56,9 @@ export default async function PublicPage({
 
   const [listings, extras, childPages, blockData] = await Promise.all([
     getAllListingsGrouped(),
-    isFormDriven(page) ? getDetailExtras(page) : Promise.resolve(undefined),
+    isFormDriven(page)
+      ? getDetailExtras(page)
+      : getLiveOffers(page.id).then((offers) => ({ ...EMPTY_EXTRAS, offers })),
     isFormDriven(page) ? getChildPages(page.id) : Promise.resolve([]),
     isFormDriven(page) ? Promise.resolve({}) : resolveBlockData(page.contentBlocks, sp),
   ]);
