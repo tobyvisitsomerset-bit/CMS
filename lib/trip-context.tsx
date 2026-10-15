@@ -1,6 +1,8 @@
 "use client";
 
-import { createContext, useContext, useMemo, useSyncExternalStore } from "react";
+import { createContext, useContext, useEffect, useMemo, useSyncExternalStore } from "react";
+import { getTripsAction, saveTripsAction } from "@/app/(site)/account/trip-actions";
+import { mergeStores } from "@/lib/trip-merge";
 import {
   addTripItem,
   createTrip,
@@ -47,12 +49,42 @@ type TripContextValue = {
 
 const TripContext = createContext<TripContextValue | null>(null);
 
-export function TripProvider({ children }: { children: React.ReactNode }) {
+export function TripProvider({ children, signedIn = false }: { children: React.ReactNode; signedIn?: boolean }) {
   // Synchronizes with localStorage as an external system — server render
   // and first client paint both see an empty store (real data only exists
   // on the device), then automatically re-renders whenever the store
   // changes, whether from this tab or a merged shared link.
   const store = useSyncExternalStore(subscribeTripStore, getTripStoreSnapshot, getTripStoreServerSnapshot);
+
+  // Signed in: merge this device's trips with the account's, then keep the
+  // account copy up to date as the visitor plans.
+  useEffect(() => {
+    if (!signedIn) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    let unsubscribe: (() => void) | null = null;
+    (async () => {
+      try {
+        const remote = await getTripsAction();
+        if (cancelled) return;
+        const merged = mergeStores(getTripStoreSnapshot(), remote);
+        restoreTripStore(merged);
+        await saveTripsAction(merged);
+        if (cancelled) return;
+        unsubscribe = subscribeTripStore(() => {
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(() => void saveTripsAction(getTripStoreSnapshot()), 1500);
+        });
+      } catch {
+        // Syncing is a convenience; the device copy keeps working.
+      }
+    })();
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+      unsubscribe?.();
+    };
+  }, [signedIn]);
 
   const value = useMemo<TripContextValue>(() => {
     const activeTrip = getActiveTrip(store);

@@ -24,3 +24,8 @@ export async function loginAction(
     throw error;
   }
 }
+
+// Google / Microsoft sign-in (only offered when their credentials are set).
+export async function oauthAction(provider: "google" | "microsoft-entra-id") {
+  await signIn(provider, { redirectTo: "/login/continue" });
+}

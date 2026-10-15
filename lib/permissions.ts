@@ -3,6 +3,7 @@ export const ROLE_KEYS = {
   CONTENT_ADMIN: "CONTENT_ADMIN",
   MEMBER: "MEMBER",
   READ_ONLY: "READ_ONLY",
+  VISITOR: "VISITOR",
 } as const;
 
 export type RoleKey = (typeof ROLE_KEYS)[keyof typeof ROLE_KEYS];
@@ -12,6 +13,7 @@ export const ROLE_LABELS: Record<RoleKey, string> = {
   CONTENT_ADMIN: "Content Admin",
   MEMBER: "Member",
   READ_ONLY: "Read Only",
+  VISITOR: "Visitor",
 };
 
 export type Capability =
@@ -66,6 +68,7 @@ const CAPABILITY_MATRIX: Record<RoleKey, Capability[]> = {
   ],
   MEMBER: ["pages.edit", "pages.clone", "media.upload"],
   READ_ONLY: [],
+  VISITOR: [],
 };
 
 export function hasCapability(role: RoleKey, capability: Capability): boolean {

@@ -482,3 +482,11 @@ model Itinerary {
 
   @@index([userId])
 }
+
+// A signed-in visitor's My Trip, kept so it follows them across devices.
+// data is the same JSON the browser keeps (lib/trip-storage.ts TripStore).
+model UserTrips {
+  userId    String   @id
+  data      String
+  updatedAt DateTime @updatedAt
+}

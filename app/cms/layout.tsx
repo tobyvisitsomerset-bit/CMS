@@ -10,6 +10,7 @@ export default async function CmsLayout({ children }: { children: React.ReactNod
   if (!session?.user) redirect("/login");
   // Members work in the Member Portal; their edits go to the team for approval.
   if (session.user.roleKey === "MEMBER") redirect("/portal");
+  if (session.user.roleKey === "VISITOR") redirect("/account");
 
   const { roleKey, roleName, name } = session.user;
   const flatMember = false;

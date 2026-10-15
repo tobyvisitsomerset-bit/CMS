@@ -381,7 +381,15 @@ async function ensureEditorialMoods() {
   }
 }
 
+async function ensureVisitorRole() {
+  const exists = await prisma.role.findUnique({ where: { key: "VISITOR" }, select: { id: true } });
+  if (exists) return;
+  await prisma.role.create({ data: { key: "VISITOR", name: "Visitor" } });
+  console.log("[ensure-content] added the Visitor role");
+}
+
 async function main() {
+  await ensureVisitorRole();
   await ensureEditorialMoods();
   await ensureSystemTemplates();
   await ensureBusinessTemplate();

@@ -37,7 +37,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   }));
 
   return (
-    <TripProvider>
+    <TripProvider signedIn={!!session?.user}>
       <div className="flex min-h-screen flex-col bg-white">
         <SiteHeader
           mainNav={master.mainNav}
@@ -51,7 +51,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
               ? { href: "/login", label: "Sign in" }
               : session.user.roleKey === "MEMBER"
                 ? { href: "/portal", label: "Member portal" }
-                : { href: "/cms", label: "Content Hub" }
+                : session.user.roleKey === "VISITOR"
+                  ? { href: "/account", label: "My account" }
+                  : { href: "/cms", label: "Content Hub" }
           }
         />
         <main className="flex-1">{children}</main>

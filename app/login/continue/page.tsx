@@ -5,5 +5,6 @@ import { auth } from "@/lib/auth";
 export default async function ContinuePage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  redirect(session.user.roleKey === "MEMBER" ? "/portal" : "/cms");
+  const role = session.user.roleKey;
+  redirect(role === "MEMBER" ? "/portal" : role === "VISITOR" ? "/account" : "/cms");
 }
