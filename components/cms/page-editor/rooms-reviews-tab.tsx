@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MediaPickerField } from "@/components/cms/media-library/media-picker-field";
+import { RoomFeaturesPicker } from "@/components/cms/room-features-picker";
 import {
   addRoomAction,
   updateRoomAction,
@@ -189,8 +190,8 @@ function RoomCard({
           <Textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
         <div className="col-span-2 space-y-1">
-          <Label>Features (comma separated)</Label>
-          <Input placeholder="En-suite, Free WiFi, Dog friendly" value={features} onChange={(e) => setFeatures(e.target.value)} />
+          <Label>Features</Label>
+          <RoomFeaturesPicker value={features} onChange={setFeatures} disabled={readOnly} />
         </div>
       </fieldset>
       {!readOnly && (

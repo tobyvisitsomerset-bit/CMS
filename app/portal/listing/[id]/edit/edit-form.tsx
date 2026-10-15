@@ -9,6 +9,7 @@ import type { Proposal, ProposalRoom } from "@/lib/data/change-requests";
 import { saveChangeAction, withdrawChangeAction } from "@/app/portal/actions";
 import { MediaPickerField } from "@/components/cms/media-library/media-picker-field";
 import { GalleryField } from "@/components/cms/media-library/gallery-field";
+import { RoomFeaturesPicker } from "@/components/cms/room-features-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -418,12 +419,12 @@ export function EditForm({
                     <Field label="Booking link for this room">
                       <Input value={r.bookingUrl} onChange={(e) => setRoom(i, { bookingUrl: e.target.value })} placeholder="https://" />
                     </Field>
-                    <Field label="Features" hint="Separate with commas: Sea view, Sleeps 4, Wi-Fi">
-                      <Input value={r.features} onChange={(e) => setRoom(i, { features: e.target.value })} />
-                    </Field>
                   </div>
                   <Field label="Description">
                     <Textarea rows={3} value={r.description} onChange={(e) => setRoom(i, { description: e.target.value })} />
+                  </Field>
+                  <Field label="What the room has" hint="Tick everything that applies.">
+                    <RoomFeaturesPicker value={r.features} onChange={(v) => setRoom(i, { features: v })} />
                   </Field>
                   <Field label="Photo">
                     <MediaPickerField value={r.imageUrl} onChange={(u) => setRoom(i, { imageUrl: u })} />
