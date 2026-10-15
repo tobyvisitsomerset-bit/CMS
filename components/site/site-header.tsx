@@ -57,6 +57,9 @@ export function SiteHeader({
             <Link href="/accessibility" className="hover:underline">
               Accessibility
             </Link>
+            <Link href="/accessible-somerset" className="font-semibold hover:underline">
+              Accessible Somerset
+            </Link>
             <span className="hidden text-white/80 sm:inline">English (UK)</span>
           </div>
           <nav className="hidden items-center gap-5 md:flex" aria-label="Utility">

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { signOutAction } from "@/app/cms/auth-actions";
 import { ClaimItineraries } from "./claim-itineraries";
 import { PasswordCard } from "./password-card";
+import { getRecommendations } from "@/lib/data/recommendations";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,8 @@ export default async function AccountPage() {
   if (session.user.roleKey === "MEMBER") redirect("/portal");
   if (session.user.roleKey !== "VISITOR") redirect("/cms");
 
-  const [itineraries, trips] = await Promise.all([
+  const [recs, itineraries, trips] = await Promise.all([
+    getRecommendations(session.user.id),
     prisma.itinerary.findMany({ where: { userId: session.user.id }, orderBy: { updatedAt: "desc" }, take: 30 }),
     prisma.userTrips.findUnique({ where: { userId: session.user.id } }),
   ]);
@@ -42,6 +44,26 @@ export default async function AccountPage() {
           Go to My Trip{tripCount > 0 ? ` (${tripCount} trip${tripCount === 1 ? "" : "s"})` : ""}
         </Link>
       </div>
+
+      {recs.length > 0 && (
+        <section className="mt-10">
+          <h2 className="font-serif text-2xl font-black">Recommended for you</h2>
+          <p className="text-sm text-stone-500">Based only on the interests you chose and the places you saved.</p>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {recs.map(({ item, reason }) => (
+              <Link key={item.id} href={`/${item.slug}`} className="group overflow-hidden rounded-3xl border border-stone-200 bg-white">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={item.imageUrl!} alt="" className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+                <div className="p-4">
+                  <p className="font-serif text-lg leading-tight font-black text-stone-900 group-hover:text-somerset-green">{item.title}</p>
+                  <p className="text-xs text-stone-500">{item.town ?? ""}</p>
+                  <p className="mt-1 text-xs font-semibold text-damson">{reason}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mt-10">
         <h2 className="font-serif text-2xl font-black">Your itineraries</h2>
