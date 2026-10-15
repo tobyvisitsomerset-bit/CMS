@@ -76,6 +76,11 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  // Somerset Club (marketing emails): an explicit, un-ticked-by-default opt-in.
+  marketingOptIn     Boolean   @default(false)
+  marketingOptInAt   DateTime?
+  mailerliteSyncedAt DateTime?
+
   pagesAuthored Page[]     @relation("PageAuthor")
   pagesOwned    Page[]     @relation("PageOwner")
   assignedPages Page[]     @relation("PageAssignedMember")
@@ -353,6 +358,7 @@ model NewsletterSubscriber {
   email     String   @unique
   source    String? // e.g. "footer", "home"
   createdAt DateTime @default(now())
+  syncedAt  DateTime? // when it reached MailerLite
 }
 
 // A visitor's stay enquiry sent to a listing (Phase 12). There is no live

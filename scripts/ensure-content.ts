@@ -388,7 +388,35 @@ async function ensureVisitorRole() {
   console.log("[ensure-content] added the Visitor role");
 }
 
+// Opt-ins and newsletter signups that were saved while MailerLite was not
+// configured (or was unreachable) are sent across once it is.
+async function syncMailerLite() {
+  const { addToClub, mailerliteConfigured } = await import("../lib/mailerlite");
+  if (!mailerliteConfigured()) return;
+  const users = await prisma.user.findMany({
+    where: { marketingOptIn: true, mailerliteSyncedAt: null },
+    select: { id: true, email: true, name: true },
+    take: 300,
+  });
+  let n = 0;
+  for (const u of users) {
+    if (await addToClub({ email: u.email, name: u.name })) {
+      await prisma.user.update({ where: { id: u.id }, data: { mailerliteSyncedAt: new Date() } });
+      n++;
+    }
+  }
+  const subs = await prisma.newsletterSubscriber.findMany({ where: { syncedAt: null }, take: 300 });
+  for (const s of subs) {
+    if (await addToClub({ email: s.email })) {
+      await prisma.newsletterSubscriber.update({ where: { id: s.id }, data: { syncedAt: new Date() } });
+      n++;
+    }
+  }
+  if (n > 0) console.log(`[ensure-content] sent ${n} Somerset Club signup(s) to MailerLite`);
+}
+
 async function main() {
+  await syncMailerLite();
   await ensureVisitorRole();
   await ensureEditorialMoods();
   await ensureSystemTemplates();

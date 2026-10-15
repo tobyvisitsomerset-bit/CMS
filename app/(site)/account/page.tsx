@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { signOutAction } from "@/app/cms/auth-actions";
 import { ClaimItineraries } from "./claim-itineraries";
 import { PasswordCard } from "./password-card";
+import { ClubCard } from "./club-card";
+import { mailerliteConfigured } from "@/lib/mailerlite";
 import { getRecommendations } from "@/lib/data/recommendations";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +19,7 @@ export default async function AccountPage() {
   if (session.user.roleKey === "MEMBER") redirect("/portal");
   if (session.user.roleKey !== "VISITOR") redirect("/cms");
 
+  const me = await prisma.user.findUnique({ where: { id: session.user.id }, select: { marketingOptIn: true } });
   const [recs, itineraries, trips] = await Promise.all([
     getRecommendations(session.user.id),
     prisma.itinerary.findMany({ where: { userId: session.user.id }, orderBy: { updatedAt: "desc" }, take: 30 }),
@@ -93,6 +96,7 @@ export default async function AccountPage() {
       </section>
 
       <section className="mt-10 grid gap-6 sm:grid-cols-2">
+        <ClubCard joined={me?.marketingOptIn ?? false} configured={mailerliteConfigured()} />
         <PasswordCard />
         <div className="rounded-3xl border border-stone-200 bg-white p-6">
           <h2 className="font-serif text-xl font-black">Sign out</h2>

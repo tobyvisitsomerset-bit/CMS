@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { auth, signIn } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { addToClub, removeFromClub } from "@/lib/mailerlite";
 
 export type FormState = { error?: string; ok?: boolean } | undefined;
 
@@ -22,9 +23,23 @@ export async function signUpAction(_prev: FormState, formData: FormData): Promis
   const existing = await prisma.user.findUnique({ where: { email }, select: { id: true } });
   if (existing) return { error: "There is already an account with that email. Try signing in." };
 
-  await prisma.user.create({
-    data: { name, email, passwordHash: await bcrypt.hash(password, 12), roleId: role.id },
+  // Joining the Somerset Club is a separate, un-ticked choice: it is about
+  // marketing email, so it needs a clear opt-in and is never a condition of
+  // having an account.
+  const club = formData.get("club") === "on";
+  const user = await prisma.user.create({
+    data: {
+      name,
+      email,
+      passwordHash: await bcrypt.hash(password, 12),
+      roleId: role.id,
+      marketingOptIn: club,
+      marketingOptInAt: club ? new Date() : null,
+    },
   });
+  if (club && (await addToClub({ email, name }))) {
+    await prisma.user.update({ where: { id: user.id }, data: { mailerliteSyncedAt: new Date() } });
+  }
 
   try {
     await signIn("credentials", { email, password, redirectTo: "/account" });
@@ -55,4 +70,24 @@ export async function changeAccountPasswordAction(_prev: FormState, formData: Fo
   if (!user || !(await bcrypt.compare(current, user.passwordHash))) return { error: "Your current password is not right." };
   await prisma.user.update({ where: { id: session.user.id }, data: { passwordHash: await bcrypt.hash(next, 12) } });
   return { ok: true };
+}
+
+// Join or leave the Somerset Club from the account page.
+export async function setClubMembershipAction(join: boolean): Promise<{ ok: boolean; joined: boolean; synced: boolean }> {
+  const session = await auth();
+  if (!session?.user) return { ok: false, joined: false, synced: false };
+  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+  if (!user) return { ok: false, joined: false, synced: false };
+
+  if (join) {
+    const synced = await addToClub({ email: user.email, name: user.name });
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { marketingOptIn: true, marketingOptInAt: new Date(), mailerliteSyncedAt: synced ? new Date() : null },
+    });
+    return { ok: true, joined: true, synced };
+  }
+  const removed = await removeFromClub(user.email);
+  await prisma.user.update({ where: { id: user.id }, data: { marketingOptIn: false, mailerliteSyncedAt: null } });
+  return { ok: true, joined: false, synced: removed };
 }

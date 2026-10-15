@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { addToClub } from "@/lib/mailerlite";
 
 export type FormResult = { ok: true } | { ok: false; error: string };
 
@@ -22,6 +23,10 @@ export async function subscribeNewsletterAction(_prev: FormResult | null, formDa
     create: { email, source },
     update: {},
   });
+  // The signup is an explicit request for the newsletter, so it joins the club list.
+  if (await addToClub({ email })) {
+    await prisma.newsletterSubscriber.update({ where: { email }, data: { syncedAt: new Date() } });
+  }
   return { ok: true };
 }
 

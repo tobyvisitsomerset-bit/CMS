@@ -28,6 +28,15 @@ export default function SignUpPage() {
           <Label htmlFor="password">Password (at least 10 characters)</Label>
           <Input id="password" name="password" type="password" required minLength={10} autoComplete="new-password" />
         </div>
+        <label className="flex items-start gap-3 rounded-2xl bg-cool-grey p-3 text-sm text-stone-700">
+          <input type="checkbox" name="club" className="mt-0.5 size-4 accent-[#3d685b]" />
+          <span>
+            <strong className="text-stone-900">Join the Somerset Club (optional)</strong>
+            <span className="block text-xs text-stone-600">
+              Ideas, events and offers from Visit Somerset by email, a few times a month. You can leave at any time from your account.
+            </span>
+          </span>
+        </label>
         {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
         <button
           type="submit"
