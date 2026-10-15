@@ -500,3 +500,69 @@ model UserTrips {
   data      String
   updatedAt DateTime @updatedAt
 }
+
+// Real click counts on a member's listing: website, booking, phone, email,
+// directions. One counter per page, kind and day.
+model ClickCount {
+  pageId String
+  kind   String // web | booking | phone | email | directions
+  day    String // yyyy-mm-dd
+  clicks Int    @default(0)
+
+  @@id([pageId, kind, day])
+}
+
+// A visitor's saved collection of places, shareable by an unlisted link.
+model Collection {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  token     String   @unique
+  isShared  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  items     CollectionItem[]
+
+  @@index([userId])
+}
+
+model CollectionItem {
+  id           String     @id @default(cuid())
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  pageId       String
+  addedAt      DateTime   @default(now())
+
+  @@unique([collectionId, pageId])
+}
+
+// Visit Somerset's own events for members (networking, training, webinars).
+// Entered by the team, or fed from Eventbrite (source = "eventbrite").
+model VsEvent {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  startsAt    DateTime
+  endsAt      DateTime?
+  location    String?
+  url         String? // where to book, e.g. the Eventbrite page
+  capacity    Int?
+  source      String   @default("manual") // manual | eventbrite
+  externalId  String?  @unique
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  registrations VsEventRegistration[]
+
+  @@index([startsAt])
+}
+
+model VsEventRegistration {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     VsEvent  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@unique([eventId, userId])
+}

@@ -1,4 +1,5 @@
 import { Img } from "@/components/cms/page-builder/listing-ui";
+import { TrackedLink } from "@/components/site/tracked-link";
 
 export type RoomLike = {
   id: string;
@@ -18,12 +19,15 @@ export function RoomsSection({
   fallbackBookingUrl,
   hasEnquiryForm,
   embedded,
+  trackPageId = null,
 }: {
   rooms: RoomLike[];
   fallbackBookingUrl?: string | null;
   hasEnquiryForm: boolean;
   /** Rendered on its own band (block / plain pages) rather than inside the detail layout. */
   embedded?: boolean;
+  /** Count "Book this room" clicks against this listing (public pages only). */
+  trackPageId?: string | null;
 }) {
   if (rooms.length === 0) return null;
 
@@ -59,14 +63,16 @@ export function RoomsSection({
               <div className="flex shrink-0 flex-col items-end gap-2">
                 {room.priceLabel && <span className="font-serif text-xl font-black text-stone-900">{room.priceLabel}</span>}
                 {href ? (
-                  <a
+                  <TrackedLink
+                    pageId={trackPageId}
+                    kind="booking"
                     href={href}
                     target="_blank"
                     rel="noreferrer"
                     className="rounded-full bg-damson px-5 py-2 text-sm font-bold text-white hover:opacity-90"
                   >
                     Book this room
-                  </a>
+                  </TrackedLink>
                 ) : hasEnquiryForm ? (
                   <a href="#enquire" className="rounded-full bg-damson px-5 py-2 text-sm font-bold text-white hover:opacity-90">
                     Enquire

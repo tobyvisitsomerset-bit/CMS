@@ -100,7 +100,7 @@ export function PagePreview({
         ) : (
           blockList
         )}
-        <RoomsSection rooms={page.rooms} hasEnquiryForm={false} embedded />
+        <RoomsSection rooms={page.rooms} hasEnquiryForm={false} embedded trackPageId={linkBase !== "/cms" ? page.id : null} />
         <OffersSection offers={extras.offers} embedded />
       </div>
     );
@@ -159,7 +159,7 @@ export function PagePreview({
         childPages={childPages}
         cta={page.callToActionLabel ? { label: page.callToActionLabel, url: page.callToActionUrl || "#" } : null}
       />
-      <RoomsSection rooms={page.rooms} hasEnquiryForm={false} embedded />
+      <RoomsSection rooms={page.rooms} hasEnquiryForm={false} embedded trackPageId={linkBase !== "/cms" ? page.id : null} />
         <OffersSection offers={extras.offers} embedded />
       </>
     );

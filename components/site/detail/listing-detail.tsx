@@ -7,6 +7,7 @@ import { Img } from "@/components/cms/page-builder/listing-ui";
 import { EnquiryForm } from "./enquiry-form";
 import { RoomsSection } from "./rooms-section";
 import { ShareButton } from "./share-button";
+import { TrackedLink } from "@/components/site/tracked-link";
 import { BuyPanel } from "@/components/site/shop/buy-panel";
 import { OffersSection } from "./offers-section";
 import { formatMiles, type DetailExtras, type NearbyPlace } from "@/lib/data/detail-extras";
@@ -260,7 +261,7 @@ export function ListingDetail({
             </section>
           )}
 
-          <RoomsSection rooms={page.rooms} fallbackBookingUrl={info.bookingUrl} hasEnquiryForm={!isEvent} />
+          <RoomsSection rooms={page.rooms} fallbackBookingUrl={info.bookingUrl} hasEnquiryForm={!isEvent} trackPageId={isPublic ? page.id : null} />
 
           <OffersSection offers={extras.offers} />
 
@@ -419,13 +420,13 @@ export function ListingDetail({
               <p className="mt-2 text-sm text-stone-700">{info.admission || "See the organiser's website for ticket and entry details."}</p>
               <div className="mt-4 flex flex-col gap-2">
                 {info.bookingUrl ? (
-                  <a href={info.bookingUrl} target="_blank" rel="noreferrer" className="rounded-full bg-damson px-5 py-3 text-center text-sm font-bold text-white hover:opacity-90">
+                  <TrackedLink pageId={isPublic ? page.id : null} kind="booking" href={info.bookingUrl} target="_blank" rel="noreferrer" className="rounded-full bg-damson px-5 py-3 text-center text-sm font-bold text-white hover:opacity-90">
                     {info.bookingLabel || "Book tickets"}
-                  </a>
+                  </TrackedLink>
                 ) : website ? (
-                  <a href={website} target="_blank" rel="noreferrer" className="rounded-full bg-somerset-green px-5 py-3 text-center text-sm font-bold text-white hover:opacity-90">
+                  <TrackedLink pageId={isPublic ? page.id : null} kind="web" href={website} target="_blank" rel="noreferrer" className="rounded-full bg-somerset-green px-5 py-3 text-center text-sm font-bold text-white hover:opacity-90">
                     Visit the event website
-                  </a>
+                  </TrackedLink>
                 ) : null}
                 {isPublic && <AddToTripPill {...tripPayload} variant="trip" dateKey={info.startDate} fullWidth />}
               </div>
@@ -442,15 +443,14 @@ export function ListingDetail({
           )}
 
           {!isEvent && info.bookingUrl && (
-            <a
-              href={info.bookingUrl}
+            <TrackedLink pageId={isPublic ? page.id : null} kind="booking" href={info.bookingUrl}
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center gap-2 rounded-full border border-damson px-5 py-3 text-sm font-bold text-damson hover:bg-damson/5"
             >
               <Ticket className="size-4" />
               {info.bookingLabel || "Book online"}
-            </a>
+            </TrackedLink>
           )}
 
           {isEvent && (
@@ -512,25 +512,25 @@ export function ListingDetail({
               {info.phone && (
                 <li className="flex items-center gap-3">
                   <Phone className="size-4 shrink-0 text-somerset-green" />
-                  <a href={`tel:${info.phone.replace(/\s+/g, "")}`} className="hover:text-somerset-green hover:underline">
+                  <TrackedLink pageId={isPublic ? page.id : null} kind="phone" href={`tel:${info.phone.replace(/\s+/g, "")}`} className="hover:text-somerset-green hover:underline">
                     {info.phone}
-                  </a>
+                  </TrackedLink>
                 </li>
               )}
               {info.email && (
                 <li className="flex items-center gap-3">
                   <Mail className="size-4 shrink-0 text-somerset-green" />
-                  <a href={`mailto:${info.email}`} className="break-all hover:text-somerset-green hover:underline">
+                  <TrackedLink pageId={isPublic ? page.id : null} kind="email" href={`mailto:${info.email}`} className="break-all hover:text-somerset-green hover:underline">
                     {info.email}
-                  </a>
+                  </TrackedLink>
                 </li>
               )}
               {website && (
                 <li className="flex items-center gap-3">
                   <ExternalLink className="size-4 shrink-0 text-somerset-green" />
-                  <a href={website} target="_blank" rel="noreferrer" className="break-all font-semibold text-somerset-green hover:underline">
+                  <TrackedLink pageId={isPublic ? page.id : null} kind="web" href={website} target="_blank" rel="noreferrer" className="break-all font-semibold text-somerset-green hover:underline">
                     Visit website
-                  </a>
+                  </TrackedLink>
                 </li>
               )}
               {info.videoLink && (
@@ -573,9 +573,9 @@ export function ListingDetail({
                   Open in map
                 </Link>
                 {mapsHref && (
-                  <a href={mapsHref} target="_blank" rel="noreferrer" className="font-medium text-stone-600 hover:underline">
+                  <TrackedLink pageId={isPublic ? page.id : null} kind="directions" href={mapsHref} target="_blank" rel="noreferrer" className="font-medium text-stone-600 hover:underline">
                     Get directions
-                  </a>
+                  </TrackedLink>
                 )}
               </div>
             </div>

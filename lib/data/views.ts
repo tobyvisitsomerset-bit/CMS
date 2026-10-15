@@ -43,3 +43,21 @@ export async function viewsByDay(pageIds: string[], days = 30): Promise<Record<s
 export function daysAgo(n: number): Date {
   return new Date(Date.now() - n * 86400000);
 }
+
+export type ClickTotals = { web: number; booking: number; phone: number; email: number; directions: number; total: number };
+
+/** Clicks per listing over the last `days`, split by what was clicked. */
+export async function clicksByPage(pageIds: string[], days = 30): Promise<Record<string, ClickTotals>> {
+  const out: Record<string, ClickTotals> = {};
+  for (const id of pageIds) out[id] = { web: 0, booking: 0, phone: 0, email: 0, directions: 0, total: 0 };
+  if (pageIds.length === 0) return out;
+  const since = new Date(Date.now() - (days - 1) * 86400000).toISOString().slice(0, 10);
+  const rows = await prisma.clickCount.findMany({ where: { pageId: { in: pageIds }, day: { gte: since } } });
+  for (const r of rows) {
+    const t = out[r.pageId];
+    if (!t) continue;
+    if (r.kind in t) (t as Record<string, number>)[r.kind] += r.clicks;
+    t.total += r.clicks;
+  }
+  return out;
+}

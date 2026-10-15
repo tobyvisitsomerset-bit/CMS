@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getMemberEnquiries, getMemberListings } from "@/lib/data/member";
 import { MarkReadButton } from "@/components/portal/mark-read-button";
 import { WithdrawButton } from "@/components/portal/withdraw-button";
-import { viewsByDay } from "@/lib/data/views";
+import { clicksByPage, viewsByDay } from "@/lib/data/views";
 
 export const dynamic = "force-dynamic";
 
@@ -39,9 +39,10 @@ export default async function PortalDashboard() {
   ]);
 
   const daily = await viewsByDay(listings.map((l) => l.id), 30);
+  const clickTotals = await clicksByPage(listings.map((l) => l.id), 30);
+  const clicks30 = Object.values(clickTotals).reduce((s, c) => s + c.total, 0);
   const views30 = Object.values(daily).reduce((s, d) => s + d.reduce((x, y) => x + y.views, 0), 0);
   const first = (session!.user.name ?? "there").split(" ")[0];
-  const live = listings.filter((l) => l.status === "PUBLISHED").length;
   const waiting = listings.filter((l) => l.change === "SUBMITTED").length;
   const newEnquiries = listings.reduce((n, l) => n + l.newEnquiryCount, 0);
   const tier = listings.find((l) => l.tierLabel)?.tierLabel;
@@ -77,7 +78,7 @@ export default async function PortalDashboard() {
 
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat value={views30.toLocaleString("en-GB")} label="Listing views, last 30 days" />
-        <Stat value={String(live)} label={`Live of ${listings.length} listing${listings.length === 1 ? "" : "s"}`} />
+        <Stat value={String(clicks30)} label="Clicks to your website, booking and phone, last 30 days" />
         <Stat value={String(newEnquiries)} label="New enquiries" />
         <Stat value={String(waiting)} label="Change awaiting approval" tone="pink" />
       </div>
