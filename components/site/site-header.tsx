@@ -65,6 +65,9 @@ export function SiteHeader({
                 {l.label}
               </Link>
             ))}
+            <Link href="/plan" className="font-semibold hover:underline">
+              Plan my trip
+            </Link>
             <Link href="/my-trip" className="flex items-center gap-1.5 hover:underline">
               <Heart className="size-3.5" />
               My Trip

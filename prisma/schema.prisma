@@ -467,3 +467,18 @@ model AdSlotBooking {
   @@index([memberId])
   @@index([ref])
 }
+
+// A saved "Build My Somerset Itinerary". Anyone with the token can open it
+// (that is the share link); userId is set when a signed-in visitor saved it.
+model Itinerary {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String?
+  title     String
+  prefs     String // JSON
+  data      String // JSON (lib/itinerary.ts Itinerary)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
