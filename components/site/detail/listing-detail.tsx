@@ -7,6 +7,7 @@ import { Img } from "@/components/cms/page-builder/listing-ui";
 import { EnquiryForm } from "./enquiry-form";
 import { RoomsSection } from "./rooms-section";
 import { ShareButton } from "./share-button";
+import { BuyPanel } from "@/components/site/shop/buy-panel";
 import { formatMiles, type DetailExtras, type NearbyPlace } from "@/lib/data/detail-extras";
 import { parsePrice } from "@/lib/data/listing-explorer";
 import { decodeKenticoText, getAllFieldValues, parseCustomFields, type BusinessInfo } from "@/lib/kentico-item-fields";
@@ -257,6 +258,12 @@ export function ListingDetail({
           )}
 
           <RoomsSection rooms={page.rooms} fallbackBookingUrl={info.bookingUrl} hasEnquiryForm={!isEvent} />
+
+          {extras.shop && (
+            <div className="-mx-6">
+              <BuyPanel heading="Buy online" limit={8} producer={extras.shop} />
+            </div>
+          )}
 
           {(info.openingTimes || generalOpening || (info.admission && !isEvent)) && (
             <section className="space-y-3">

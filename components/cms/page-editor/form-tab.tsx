@@ -396,6 +396,44 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
           </Field>
         </Section>
 
+        <Section title="Online shop" defaultOpen={false}>
+          <Field label="Shop platform">
+            <Select
+              value={getCF(cf, "Platform").toLowerCase() || "none"}
+              onValueChange={(v) => v && set("Platform", v === "none" ? "" : v)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">No online shop</SelectItem>
+                <SelectItem value="shopify">Shopify</SelectItem>
+                <SelectItem value="woocommerce">WooCommerce</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+          {getCF(cf, "Platform").toLowerCase() === "shopify" && (
+            <Field label="Shopify shop name">
+              <Input
+                placeholder="the part before .myshopify.com"
+                value={getCF(cf, "ShopifyShopName")}
+                onChange={(e) => set("ShopifyShopName", e.target.value)}
+              />
+              <p className="text-xs text-neutral-400">Their shop address without .myshopify.com, for example somerset-cider.</p>
+            </Field>
+          )}
+          {getCF(cf, "Platform").toLowerCase() === "woocommerce" && (
+            <Field label="WooCommerce shop address">
+              <Input placeholder="https://their-shop.co.uk" value={getCF(cf, "FeedURL")} onChange={(e) => set("FeedURL", e.target.value)} />
+              <p className="text-xs text-neutral-400">The web address of their WordPress shop. Their products are read from it automatically.</p>
+            </Field>
+          )}
+          <p className="text-xs text-neutral-400">
+            Once a shop is set here, their products and prices appear on their page and on Buy Somerset, with Buy links to their own shop.
+            Nothing is stored or sold on this site.
+          </p>
+        </Section>
+
         <Section title="Call To Action" defaultOpen={false}>
           <Field label="Button label">
             <Input placeholder="e.g. Book now" {...register("callToActionLabel")} />

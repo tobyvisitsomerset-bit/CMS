@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getPagesWithCoordinates, type PageMapPin } from "@/lib/data/pages";
 import { getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
+import { getPageShop, type ShopProducer } from "@/lib/data/shop";
 
 export type NearbyPlace = {
   id: string;
@@ -28,9 +29,11 @@ export type DetailExtras = {
   nearbyStays: NearbyPlace[];
   // Events only: other upcoming events in the same section/folder.
   season: { label: string; events: SeasonEvent[] } | null;
+  // The member's own online shop (Form tab > Online shop), with live products.
+  shop: ShopProducer | null;
 };
 
-export const EMPTY_EXTRAS: DetailExtras = { nearbyPlaces: [], nearbyStays: [], season: null };
+export const EMPTY_EXTRAS: DetailExtras = { nearbyPlaces: [], nearbyStays: [], season: null, shop: null };
 
 function haversineMiles(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
   const R = 3958.8;
@@ -65,12 +68,25 @@ export async function getDetailExtras(page: {
   slug: string;
   parentId: string | null;
   customFields: string | null;
+  title?: string;
+  subtitle?: string | null;
+  bodyContent?: string | null;
+  heroImageUrl?: string | null;
 }): Promise<DetailExtras> {
+  const shop = await getPageShop({
+    id: page.id,
+    slug: page.slug,
+    title: page.title ?? "",
+    subtitle: page.subtitle ?? null,
+    bodyContent: page.bodyContent ?? null,
+    heroImageUrl: page.heroImageUrl ?? null,
+    customFields: page.customFields,
+  });
   const info = getBusinessInfo(parseCustomFields(page.customFields));
-  if (!info) return EMPTY_EXTRAS;
+  if (!info) return { ...EMPTY_EXTRAS, shop };
 
   const isEvent = !!info.startDate;
-  const extras: DetailExtras = { nearbyPlaces: [], nearbyStays: [], season: null };
+  const extras: DetailExtras = { nearbyPlaces: [], nearbyStays: [], season: null, shop };
 
   if (info.mapLat != null && info.mapLng != null) {
     const here = { lat: info.mapLat, lng: info.mapLng };

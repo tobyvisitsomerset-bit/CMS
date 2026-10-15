@@ -53,6 +53,17 @@ function httpsOrigin(raw: string | undefined): string | null {
   if (!raw) return null;
   try {
     const u = new URL(raw.startsWith("http") ? raw : `https://${raw}`);
+    // The server fetches this address, so never let a typo or a hostile value
+    // point it at the machine itself or the internal network.
+    const h = u.hostname.toLowerCase();
+    const internal =
+      h === "localhost" ||
+      h.endsWith(".internal") ||
+      h.endsWith(".local") ||
+      /^\d+\.\d+\.\d+\.\d+$/.test(h) ||
+      h.includes(":") ||
+      !h.includes(".");
+    if (u.protocol !== "https:" || internal) return null;
     return u.origin;
   } catch {
     return null;
@@ -133,6 +144,23 @@ async function toProducer(r: ProducerRow): Promise<ShopProducer> {
       };
 }
 
+// True when the Form tab's "Online shop" section is filled in with a platform
+// and the matching shop code or address.
+export function hasShop(customFields: string | null): boolean {
+  const f = parseCustomFields(customFields);
+  const platform = (f.Platform || "").toLowerCase();
+  if (platform === "shopify") return !!f.ShopifyShopName;
+  if (platform === "woocommerce") return !!(f.FeedURL || f.WebsiteURL || f.ItemWeb);
+  return false;
+}
+
+// The shop attached to any page (a member's own page), or null.
+export async function getPageShop(page: ProducerRow): Promise<ShopProducer | null> {
+  if (!hasShop(page.customFields)) return null;
+  const producer = await toProducer(page);
+  return producer.products.length > 0 ? producer : null;
+}
+
 // One producer by page slug (the Buy Panel widget), with live products.
 export async function getShopProducer(slug: string): Promise<ShopProducer | null> {
   const row = await prisma.page.findFirst({
@@ -143,16 +171,20 @@ export async function getShopProducer(slug: string): Promise<ShopProducer | null
 }
 
 export async function getShopProducers(rootSlug: string): Promise<ShopProducer[]> {
-  const rows = await prisma.page.findMany({
+  const all = await prisma.page.findMany({
     where: {
       status: "PUBLISHED",
       linkedPageId: null,
-      slug: { startsWith: `${rootSlug}/` },
-      customFields: { contains: "sz.touristitem" },
+      OR: [
+        { slug: { startsWith: `${rootSlug}/` }, customFields: { contains: "sz.touristitem" } },
+        // Any member whose Form tab has an online shop switched on also appears.
+        { customFields: { contains: "\"key\":\"Platform\"" } },
+      ],
     },
     select: { id: true, slug: true, title: true, subtitle: true, bodyContent: true, heroImageUrl: true, customFields: true },
     orderBy: { sortOrder: "asc" },
   });
+  const rows = all.filter((r) => r.slug.startsWith(`${rootSlug}/`) || hasShop(r.customFields));
 
   // Kentico left a duplicate "-1" copy of most producers — keep one per name.
   const byName = new Map<string, (typeof rows)[number]>();
