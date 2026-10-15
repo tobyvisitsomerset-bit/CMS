@@ -46,6 +46,41 @@ export async function createPageAction(input: {
 
 // ---------- Page templates ----------
 
+// Re-templates a page (and optionally its sub-sections) so a family of pages,
+// e.g. Hotels, B&Bs, Camping, can all use the same landing layout.
+export async function changePageTemplateAction(input: { pageId: string; templateId: string; includeSubsections?: boolean }) {
+  const session = await requireSession();
+  if (!canEditLive(session.user.roleKey) || !hasCapability(session.user.roleKey, "pages.edit")) throw new Error("Not permitted");
+  const page = await pagesData.getPageById(input.pageId);
+  if (!page) throw new Error("Page not found");
+
+  const targets: { id: string; title: string }[] = [{ id: page.id, title: page.title }];
+  if (input.includeSubsections) {
+    // Direct children that are themselves sections (they have pages under
+    // them) and are still plain, so nothing an editor built is overwritten.
+    const kids = await prisma.page.findMany({
+      where: { parentId: page.id, status: { not: "ARCHIVED" }, linkedPageId: null },
+      select: { id: true, title: true, _count: { select: { children: true, contentBlocks: true } } },
+    });
+    for (const k of kids) if (k._count.children > 0 && k._count.contentBlocks === 0) targets.push({ id: k.id, title: k.title });
+  }
+
+  for (const t of targets) {
+    await versionsData.createVersionSnapshot(t.id, session.user.id, "Before template change");
+    await templatesData.applyTemplateToPage(t.id, input.templateId);
+    await versionsData.createVersionSnapshot(t.id, session.user.id, "Template changed");
+    await logAudit({ userId: session.user.id, pageId: t.id, action: "updated", details: "Page template changed" });
+  }
+  updateTag("listings");
+  revalidatePath("/cms");
+  for (const t of targets) {
+    const p = await prisma.page.findUnique({ where: { id: t.id }, select: { slug: true } });
+    if (p) revalidatePath(`/${p.slug}`);
+  }
+  return { changed: targets.map((t) => t.title) };
+}
+
+
 export async function listTemplatesAction() {
   await requireSession();
   return templatesData.listTemplates();

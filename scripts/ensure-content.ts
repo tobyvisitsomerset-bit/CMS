@@ -295,7 +295,73 @@ async function ensureListingMarkers() {
   if (n > 0) console.log(`[ensure-content] marked ${n} CMS-created listing page(s) so they appear in listings`);
 }
 
+// The page templates editors choose from (new page, or "Change template").
+// Created once by name, never overwritten, so an editor's edits are kept.
+// {{slug}} / {{title}} / {{parentTitle}} / {{parentSlug}} are filled in from
+// the page the template is applied to.
+const SYSTEM_TEMPLATES: { name: string; description: string; blocks: { type: string; config: Cfg }[] }[] = [
+  {
+    name: "Business page (filled from the Form tab)",
+    description: "No widgets. The listing template is filled in from the page's Form tab: details, photos, rooms, offers and shop.",
+    blocks: [],
+  },
+  {
+    name: "Section landing: Places to stay",
+    description: "The Places to Stay landing layout: search, filters, map and the listings under this page.",
+    blocks: [
+      {
+        type: "listing_explorer",
+        config: { kind: "accommodation", rootSlug: "{{slug}}", title: "{{title}} in Somerset", intro: "", noun: "places to stay", parentLabel: "{{parentTitle}}", parentHref: "/{{parentSlug}}" },
+      },
+    ],
+  },
+  {
+    name: "Section landing: Things to do",
+    description: "The Things to Do landing layout for the attractions and activities under this page.",
+    blocks: [
+      {
+        type: "listing_explorer",
+        config: { kind: "things", rootSlug: "{{slug}}", title: "{{title}}", intro: "", noun: "things to do", parentLabel: "{{parentTitle}}", parentHref: "/{{parentSlug}}" },
+      },
+    ],
+  },
+  {
+    name: "Section landing: Food & drink",
+    description: "The Food & Drink landing layout for the places to eat and drink under this page.",
+    blocks: [
+      {
+        type: "listing_explorer",
+        config: { kind: "food", rootSlug: "{{slug}}", title: "{{title}}", intro: "", noun: "places to eat and drink", parentLabel: "{{parentTitle}}", parentHref: "/{{parentSlug}}" },
+      },
+    ],
+  },
+  {
+    name: "Section landing: Festivals & events",
+    description: "The Festivals & Events landing layout: calendar, filters and the events under this page.",
+    blocks: [
+      {
+        type: "listing_explorer",
+        config: { kind: "events", rootSlug: "{{slug}}", title: "{{title}}", intro: "", noun: "events", parentLabel: "{{parentTitle}}", parentHref: "/{{parentSlug}}" },
+      },
+    ],
+  },
+];
+
+async function ensureSystemTemplates() {
+  const admin = await prisma.user.findFirst({ where: { role: { key: "SUPER_ADMIN" } }, select: { id: true } });
+  if (!admin) return;
+  for (const t of SYSTEM_TEMPLATES) {
+    const exists = await prisma.pageTemplate.findFirst({ where: { name: t.name }, select: { id: true } });
+    if (exists) continue;
+    await prisma.pageTemplate.create({
+      data: { name: t.name, description: t.description, blocks: JSON.stringify(t.blocks), createdById: admin.id },
+    });
+    console.log(`[ensure-content] added template "${t.name}"`);
+  }
+}
+
 async function main() {
+  await ensureSystemTemplates();
   await ensureBusinessTemplate();
   await ensureListingMarkers();
   await ensureExplorers();

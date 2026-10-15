@@ -2,6 +2,7 @@
 
 import { Pencil } from "lucide-react";
 import { PagePreview } from "./page-preview";
+import { ChangeTemplateButton } from "./change-template-dialog";
 import { blockLabel } from "@/components/cms/page-builder/block-types";
 import type { ListingsByCategory, RealBlockData } from "@/components/cms/page-builder/block-renderer";
 import type { getPageById, ChildPageTile } from "@/lib/data/pages";
@@ -40,14 +41,19 @@ export function PageTab({
             ? "Hover a widget and click Edit to change its properties."
             : "This page is built from fields — edit its text, address and prices in the Form tab."}
         </p>
-        {!hasWidgets && !readOnly && (
-          <button
-            type="button"
-            onClick={onEditForm}
-            className="inline-flex items-center gap-1.5 rounded-md bg-somerset-green px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90"
-          >
-            <Pencil className="h-3.5 w-3.5" /> Edit page fields
-          </button>
+        {!readOnly && (
+          <div className="flex items-center gap-2">
+            <ChangeTemplateButton pageId={page.id} pageTitle={page.title} />
+            {!hasWidgets && (
+              <button
+                type="button"
+                onClick={onEditForm}
+                className="inline-flex items-center gap-1.5 rounded-md bg-somerset-green px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90"
+              >
+                <Pencil className="h-3.5 w-3.5" /> Edit page fields
+              </button>
+            )}
+          </div>
         )}
       </div>
       <div
