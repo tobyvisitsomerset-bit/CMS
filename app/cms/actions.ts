@@ -497,6 +497,16 @@ export async function listPendingApprovalsAction() {
   });
 }
 
+export async function linkExistingPageAction(parentId: string, targetId: string) {
+  const session = await requireSession();
+  if (!canEditLive(session.user.roleKey) || !hasCapability(session.user.roleKey, "pages.create")) throw new Error("Not permitted");
+  const link = await pagesData.createLinkedPage({ targetId, parentId, authorId: session.user.id });
+  await logAudit({ userId: session.user.id, pageId: link.id, action: "created", details: `Linked page: ${link.title}` });
+  updateTag("listings");
+  revalidatePath("/cms");
+  return { id: link.id, title: link.title };
+}
+
 export async function searchPagesAction(query: string) {
   await requireSession();
   if (!query.trim()) return [];

@@ -18,6 +18,7 @@ import {
   Archive,
   ArchiveRestore,
   Trash2,
+  Link2,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -46,6 +47,7 @@ import {
 import { cn } from "@/lib/utils";
 import { StatusDot } from "@/components/cms/status-dot";
 import { CreatePageDialog } from "./create-page-dialog";
+import { LinkPageDialog } from "./link-page-dialog";
 import type { PageTreeNode, TreeCapabilities } from "./types";
 import {
   archivePageAction,
@@ -75,6 +77,7 @@ export function TreeRow({
   const [, startTransition] = useTransition();
   const [createOpen, setCreateOpen] = useState(false);
   const [createSection, setCreateSection] = useState(false);
+  const [linkOpen, setLinkOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -237,6 +240,9 @@ export function TreeRow({
               >
                 <Folder className="h-3.5 w-3.5" /> New section
               </ContextMenuItem>
+              <ContextMenuItem onClick={() => setLinkOpen(true)}>
+                <Link2 className="h-3.5 w-3.5" /> Link existing page
+              </ContextMenuItem>
               <ContextMenuSeparator />
             </>
           )}
@@ -273,6 +279,7 @@ export function TreeRow({
         </ContextMenuContent>
       </ContextMenu>
 
+      <LinkPageDialog open={linkOpen} onOpenChange={setLinkOpen} parentId={node.id} parentTitle={node.title} />
       <CreatePageDialog
         open={createOpen}
         onOpenChange={setCreateOpen}

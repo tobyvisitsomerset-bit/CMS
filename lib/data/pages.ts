@@ -134,7 +134,27 @@ export type ChildPageTile = { id: string; title: string; subtitle: string | null
 // which collided on slug at import time and got suffixed (e.g. "hotels-296").
 // A tile that leads to a genuinely empty page is worse than no tile.
 export async function getChildPages(parentId: string): Promise<ChildPageTile[]> {
-  const rows = await prisma.page.findMany({
+  // Linked pages show as the page they point to.
+  const links = await prisma.page.findMany({
+    where: { parentId, status: "PUBLISHED", linkedPageId: { not: null } },
+    select: { linkedPageId: true, sortOrder: true },
+  });
+  const linkedTargets = links.length
+    ? await prisma.page.findMany({
+        where: { id: { in: links.map((l) => l.linkedPageId!) }, status: "PUBLISHED", linkedPageId: null },
+        select: {
+          id: true,
+          title: true,
+          subtitle: true,
+          slug: true,
+          heroImageUrl: true,
+          bodyContent: true,
+          customFields: true,
+          _count: { select: { children: true, contentBlocks: true } },
+        },
+      })
+    : [];
+  const own = await prisma.page.findMany({
     where: { parentId, status: "PUBLISHED", linkedPageId: null },
     select: {
       id: true,
@@ -149,6 +169,8 @@ export async function getChildPages(parentId: string): Promise<ChildPageTile[]> 
     orderBy: { sortOrder: "asc" },
     take: 100,
   });
+  const seen = new Set(own.map((r) => r.id));
+  const rows = [...own, ...linkedTargets.filter((t) => !seen.has(t.id))];
   return rows
     .filter((r) => {
       const isDeadEnd =
@@ -676,4 +698,62 @@ export async function deletePage(id: string) {
 
 export async function reorderPage(id: string, parentId: string | null, sortOrder: number) {
   return prisma.page.update({ where: { id }, data: { parentId, sortOrder } });
+}
+
+function slugifyTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+/**
+ * Kentico's "Link existing page": a second place in the tree that shows an
+ * existing page (e.g. a hotel listed under both Hotels and Dog friendly).
+ * The link is its own tree entry that points at the original, which stays
+ * the one real page: edits happen there and the link follows.
+ */
+export async function createLinkedPage(input: { targetId: string; parentId: string; authorId: string }) {
+  let target = await prisma.page.findUnique({ where: { id: input.targetId } });
+  if (!target) throw new Error("Page not found");
+  // Linking a link means linking what it points to.
+  if (target.linkedPageId) {
+    const canonical = await prisma.page.findUnique({ where: { id: target.linkedPageId } });
+    if (canonical) target = canonical;
+  }
+  if (target.id === input.parentId) throw new Error("A page cannot be linked under itself");
+
+  const parent = await prisma.page.findUnique({ where: { id: input.parentId }, select: { id: true, slug: true } });
+  if (!parent) throw new Error("Parent not found");
+
+  // Not under itself or its own descendants, and not twice in the same place.
+  const already = await prisma.page.findFirst({
+    where: { parentId: parent.id, OR: [{ id: target.id }, { linkedPageId: target.id }] },
+    select: { id: true },
+  });
+  if (already) throw new Error("That page is already under this section");
+  for (let cur: string | null = parent.id, depth = 0; cur && depth < 20; depth++) {
+    if (cur === target.id) throw new Error("A page cannot be linked under its own sub-pages");
+    cur = (await prisma.page.findUnique({ where: { id: cur }, select: { parentId: true } }))?.parentId ?? null;
+  }
+
+  const base = `${parent.slug}/${slugifyTitle(target.title) || "page"}`;
+  let slug = base;
+  for (let i = 2; await prisma.page.findUnique({ where: { slug }, select: { id: true } }); i++) slug = `${base}-${i}`;
+  const siblings = await prisma.page.count({ where: { parentId: parent.id } });
+
+  return prisma.page.create({
+    data: {
+      title: target.title,
+      slug,
+      parentId: parent.id,
+      isSection: target.isSection,
+      sortOrder: siblings,
+      status: "PUBLISHED",
+      linkedPageId: target.id,
+      authorId: input.authorId,
+      ownerId: input.authorId,
+    },
+  });
 }

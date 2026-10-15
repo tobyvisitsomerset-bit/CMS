@@ -12,7 +12,7 @@ import {
 import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Search, Plus, Trash2, Copy, ChevronUp, ChevronDown, LayoutTemplate, X } from "lucide-react";
+import { Search, Plus, Trash2, Copy, ChevronUp, ChevronDown, LayoutTemplate, X, Link2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { StatusDot } from "@/components/cms/status-dot";
 import {
@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { TreeRow } from "./tree-row";
 import { CreatePageDialog } from "./create-page-dialog";
+import { LinkPageDialog } from "./link-page-dialog";
 import { clonePageAction, deletePageAction, reorderPageAction } from "@/app/cms/actions";
 import type { PageTreeNode, TreeCapabilities } from "./types";
 import Link from "next/link";
@@ -105,6 +106,7 @@ export function ContentTree({
   const [search, setSearch] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const [createSection, setCreateSection] = useState(false);
+  const [linkOpen, setLinkOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [, startTransition] = useTransition();
@@ -233,6 +235,15 @@ export function ContentTree({
         >
           <Plus className="h-[18px] w-[18px]" strokeWidth={2.5} />
         </button>
+        <button
+          type="button"
+          className={iconBtn}
+          title="Link existing page"
+          disabled={!caps.canCreate || !activeNode}
+          onClick={() => setLinkOpen(true)}
+        >
+          <Link2 className="h-[17px] w-[17px]" strokeWidth={2.5} />
+        </button>
         <button type="button" className={iconBtn} title="Delete" disabled={!caps.canDelete || !activeNode} onClick={() => setConfirmDelete(true)}>
           <Trash2 className="h-[17px] w-[17px] fill-[#3a3a3a]" />
         </button>
@@ -299,6 +310,13 @@ export function ContentTree({
           <p className="px-4 py-6 text-center text-sm text-neutral-400">No pages match &ldquo;{search}&rdquo;.</p>
         )}
       </div>
+
+      <LinkPageDialog
+        open={linkOpen}
+        onOpenChange={setLinkOpen}
+        parentId={activeNode ? activeNode.id : null}
+        parentTitle={activeNode?.title ?? ""}
+      />
 
       <CreatePageDialog
         open={createOpen}

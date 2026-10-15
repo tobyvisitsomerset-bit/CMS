@@ -102,6 +102,40 @@ async function loadExplorerItems(rootSlug: string): Promise<ExplorerItem[]> {
   ]);
   const sectionLabel = new Map(sections.map((s) => [s.slug, s.title]));
 
+  // Linked pages (Kentico "link existing page"): a link under this landing
+  // page is listed as the page it points to, in the place where it was
+  // linked, and never twice.
+  const linkRows = await prisma.page.findMany({
+    where: {
+      status: "PUBLISHED",
+      linkedPageId: { not: null },
+      OR: [{ slug: { startsWith: `${rootSlug}/` } }, { id: { in: underRootIds } }],
+    },
+    select: { slug: true, linkedPageId: true },
+  });
+  const have = new Set(rows.map((r) => r.id));
+  const linkPlace = new Map<string, string>();
+  for (const l of linkRows) if (l.linkedPageId && !linkPlace.has(l.linkedPageId)) linkPlace.set(l.linkedPageId, l.slug);
+  const missing = [...linkPlace.keys()].filter((id) => !have.has(id));
+  const targets = missing.length
+    ? await prisma.page.findMany({
+        where: { id: { in: missing }, status: "PUBLISHED", linkedPageId: null, customFields: { contains: "sz.touristitem" } },
+        select: {
+          id: true,
+          title: true,
+          subtitle: true,
+          slug: true,
+          heroImageUrl: true,
+          bodyContent: true,
+          customFields: true,
+          membershipTier: true,
+          sortOrder: true,
+        },
+      })
+    : [];
+  rows.push(...targets);
+
+
   const seenEvents = new Set<string>();
   const unique = rows.filter((r) => {
     const f = parseCustomFields(r.customFields);
@@ -115,7 +149,9 @@ async function loadExplorerItems(rootSlug: string): Promise<ExplorerItem[]> {
   return unique.map((r): ExplorerItem => {
     const fields = parseCustomFields(r.customFields);
     const info = getBusinessInfo(fields);
-    const rest = r.slug.startsWith(`${rootSlug}/`) ? r.slug.slice(rootSlug.length + 1).split("/") : [r.slug];
+    // Where it sits in this section: its own place, or the place it was linked.
+    const place = r.slug.startsWith(`${rootSlug}/`) ? r.slug : (linkPlace.get(r.id) ?? r.slug);
+    const rest = place.startsWith(`${rootSlug}/`) ? place.slice(rootSlug.length + 1).split("/") : [place];
     const typeSlug = rest.length > 1 ? rest[0] : "";
     const price = parsePrice(info?.admission ?? null);
     const lat = info?.mapLat ?? null;
