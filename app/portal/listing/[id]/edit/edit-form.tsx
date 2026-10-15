@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { ACCESS_FEATURES } from "@/lib/accessibility";
 
 const EMPTY_ROOM: ProposalRoom = { name: "", description: "", imageUrl: "", priceLabel: "", features: "", bookingUrl: "" };
 
@@ -35,6 +36,7 @@ export function EditForm({
   section,
   tierLabel,
   tagOptions,
+  detectedAccess,
   published,
   live,
   initial,
@@ -47,6 +49,7 @@ export function EditForm({
   section: string;
   tierLabel: string | null;
   tagOptions: string[];
+  detectedAccess: string[];
   published: boolean;
   live: Proposal;
   initial: Proposal;
@@ -205,6 +208,39 @@ export function EditForm({
 
           {tab === "access" && (
             <>
+              <div>
+                <p className="text-sm font-semibold text-stone-700">Which of these do you offer?</p>
+                <p className="text-xs text-stone-500">Tick only what is true. Visitors filter on these, and they count towards your health score.</p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {ACCESS_FEATURES.map((f) => {
+                    const on = p.accessibility.includes(f.key);
+                    const known = detectedAccess.includes(f.key) && !on;
+                    return (
+                      <label
+                        key={f.key}
+                        className={cn(
+                          "flex cursor-pointer items-start gap-3 rounded-2xl border p-3 text-sm",
+                          on ? "border-somerset-green bg-somerset-green/5" : "border-stone-200",
+                        )}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={on}
+                          onChange={() =>
+                            set("accessibility", on ? p.accessibility.filter((k) => k !== f.key) : [...p.accessibility, f.key])
+                          }
+                          className="mt-0.5 size-4 accent-[#3d685b]"
+                        />
+                        <span>
+                          <strong className="text-stone-900">{f.label}</strong>
+                          <span className="block text-xs text-stone-500">{f.help}</span>
+                          {known && <span className="block text-xs font-semibold text-somerset-green">Already on your listing</span>}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
               <Field label="Access and general information" hint="Step-free access, parking, dogs, anything a visitor should know before they come.">
                 <Textarea rows={5} maxLength={2000} {...text("accessNotes")} />
               </Field>

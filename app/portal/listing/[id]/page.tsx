@@ -100,8 +100,8 @@ export default async function PortalListingPage({ params }: { params: Promise<{ 
 
       <div className="mt-6 rounded-2xl border bg-white p-6">
         <div className="flex items-end justify-between">
-          <h2 className="font-serif text-xl font-semibold text-deep-green">Listing strength</h2>
-          <p className="font-serif text-3xl font-bold text-somerset-green">{listing.strength.score}%</p>
+          <h2 className="font-serif text-xl font-semibold text-deep-green">Health score</h2>
+          <p className="font-serif text-3xl font-bold text-somerset-green">{listing.strength.score}<span className="text-base text-neutral-500"> / 100 · {listing.strength.band}</span></p>
         </div>
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-cool-grey">
           <div className="h-full rounded-full bg-somerset-green" style={{ width: `${listing.strength.score}%` }} />

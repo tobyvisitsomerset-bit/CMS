@@ -483,12 +483,19 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
           </Field>
           <div className="space-y-3">
             {moods.map((m, i) => (
-              <div key={i} className="flex gap-2">
-                <Input placeholder="Label, e.g. Coast & piers" value={m.label ?? ""} onChange={(e) => update(i, { label: e.target.value })} />
-                <Input placeholder="Search word" value={m.query ?? ""} onChange={(e) => update(i, { query: e.target.value })} />
-                <Button type="button" size="icon" variant="ghost" onClick={() => set({ moods: moods.filter((_, idx) => idx !== i) })}>
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+              <div key={i} className="space-y-2 rounded-lg border p-3">
+                <div className="flex gap-2">
+                  <Input placeholder="Label, e.g. Coastal Somerset" value={m.label ?? ""} onChange={(e) => update(i, { label: e.target.value })} />
+                  <Input placeholder="Search word" value={m.query ?? ""} onChange={(e) => update(i, { query: e.target.value })} />
+                  <Button type="button" size="icon" variant="ghost" onClick={() => set({ moods: moods.filter((_, idx) => idx !== i) })}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+                <Input placeholder="One line under the label (optional)" value={m.blurb ?? ""} onChange={(e) => update(i, { blurb: e.target.value })} />
+                <div className="space-y-1">
+                  <p className="text-xs text-neutral-500">Photo (leave empty to use a real member photo that matches the search word)</p>
+                  <MediaPickerField value={m.imageUrl ?? ""} onChange={(u) => update(i, { imageUrl: u })} />
+                </div>
               </div>
             ))}
           </div>

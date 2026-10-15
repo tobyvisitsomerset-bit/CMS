@@ -414,6 +414,22 @@ export function placeKeywordWhere(query: string) {
   };
 }
 
+// A real photo for an inspiration card: a member listing that matches the
+// keyword and has a picture (higher membership levels first). Null when none
+// does, and the card shows the placeholder tile instead.
+export async function imageForPlacesMatching(query: string): Promise<string | null> {
+  const rows = await prisma.page.findMany({
+    where: { ...placeKeywordWhere(query), heroImageUrl: { not: null } },
+    select: { heroImageUrl: true, membershipTier: true },
+    take: 24,
+    orderBy: { sortOrder: "asc" },
+  });
+  if (rows.length === 0) return null;
+  const rank = (t: string | null) => (t === "PREMIUM" || t === "PLATINUM" || t === "GOLD" ? 3 : t === "PARTNER" || t === "SILVER" ? 2 : t ? 1 : 0);
+  rows.sort((a, b) => rank(b.membershipTier) - rank(a.membershipTier));
+  return rows[0].heroImageUrl;
+}
+
 export async function countPlacesMatching(query: string): Promise<number> {
   return prisma.page.count({ where: placeKeywordWhere(query) });
 }

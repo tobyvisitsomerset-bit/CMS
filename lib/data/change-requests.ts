@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { withListingMarker } from "@/lib/listing-marker";
+import { ACCESS_FEATURES, accessLabel, ownAccessKeys } from "@/lib/accessibility";
 import { setPageTagsAndCategories } from "@/lib/data/pages";
 import { parseCustomFieldsArray, serializeCustomFields, setCF, type CustomField } from "@/lib/custom-fields";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
@@ -42,6 +43,7 @@ export type Proposal = {
   roadDirections: string;
   publicTransport: string;
   accessNotes: string;
+  accessibility: string[];
   tags: string[];
   rooms: ProposalRoom[];
 };
@@ -94,6 +96,7 @@ export const FIELD_LABELS: Record<keyof Proposal, string> = {
   roadDirections: "Road directions",
   publicTransport: "Public transport",
   accessNotes: "Access and general information",
+  accessibility: "Accessibility features",
   tags: "Tags on your card",
   rooms: "Rooms",
 };
@@ -150,6 +153,7 @@ export function proposalFromPage(page: PageForProposal): Proposal {
     roadDirections: plain(fields.ItemRoadDirections),
     publicTransport: plain(fields.ItemPublicTransportDirections),
     accessNotes: plain(fields.ItemGeneralOpeningInformation),
+    accessibility: ownAccessKeys(page.customFields),
     tags: (page.tags ?? []).map((t) => t.name),
     rooms: page.rooms.map((r) => {
       let features = "";
@@ -209,6 +213,9 @@ export function sanitiseProposal(raw: unknown): Proposal {
     roadDirections: clip(r.roadDirections, 2000),
     publicTransport: clip(r.publicTransport, 2000),
     accessNotes: clip(r.accessNotes, 2000),
+    accessibility: Array.isArray(r.accessibility)
+      ? ACCESS_FEATURES.map((f) => f.key as string).filter((k) => (r.accessibility as unknown[]).includes(k))
+      : [],
     tags: Array.isArray(r.tags)
       ? Array.from(new Set((r.tags as unknown[]).map((t) => clip(t, 40)).filter(Boolean))).slice(0, 12)
       : [],
@@ -249,6 +256,7 @@ export type FieldChange = { key: keyof Proposal; label: string; before: string; 
 function show(key: keyof Proposal, p: Proposal): string {
   if (key === "gallery") return p.gallery.length ? `${p.gallery.length} photo${p.gallery.length === 1 ? "" : "s"}` : "none";
   if (key === "tags") return p.tags.length ? p.tags.join(", ") : "none";
+  if (key === "accessibility") return p.accessibility.length ? p.accessibility.map(accessLabel).join(", ") : "none";
   if (key === "rooms") return p.rooms.length ? p.rooms.map((r) => `${r.name}${r.priceLabel ? ` (${r.priceLabel})` : ""}`).join("; ") : "none";
   const v = p[key] as string;
   return v || "—";
@@ -311,6 +319,8 @@ export async function applyProposal(pageId: string, proposal: Proposal) {
     else cf = setCF(cf, cfKey, value);
   }
 
+  if (changed("accessibility")) cf = setCFValue(cf, "ItemAccessibility", proposal.accessibility.join(","));
+
   const data: Record<string, unknown> = {
     customFields: withListingMarker(serializeCustomFields(cf), { slug: page.slug, isSection: page.isSection }),
   };
@@ -351,4 +361,9 @@ export async function applyProposal(pageId: string, proposal: Proposal) {
     const cats = await prisma.page.findUnique({ where: { id: pageId }, select: { categories: { select: { name: true } } } });
     await setPageTagsAndCategories(pageId, proposal.tags, (cats?.categories ?? []).map((c) => c.name));
   }
+}
+
+// Sets a custom field even when the new value is empty (clearing it).
+function setCFValue(cf: CustomField[], key: string, value: string): CustomField[] {
+  return cf.some((f) => f.key === key) ? cf.map((f) => (f.key === key ? { ...f, value } : f)) : setCF(cf, key, value);
 }

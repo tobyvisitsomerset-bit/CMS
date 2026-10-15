@@ -3,6 +3,7 @@ import type { ExploreAreaTile, TownTile } from "@/lib/data/pages";
 import {
   getPagesWithCoordinates,
   countPlacesMatching,
+  imageForPlacesMatching,
   countRealBusinesses,
   getFeaturedRealBusinesses,
   getUpcomingRealEvents,
@@ -101,9 +102,15 @@ export async function resolveBlockData(
         case "towns_row":
           return [block.id, { type: "towns_row", towns: await resolveTownsRow(config.towns ?? []) }];
         case "mood_tiles": {
-          const moods: { label: string; query: string }[] = config.moods ?? [];
+          const moods: { label: string; query: string; imageUrl?: string; blurb?: string }[] = config.moods ?? [];
           const resolved = await Promise.all(
-            moods.map(async (m) => ({ label: m.label, query: m.query, count: await countPlacesMatching(m.query) })),
+            moods.map(async (m) => ({
+              label: m.label,
+              query: m.query,
+              blurb: m.blurb ?? "",
+              count: await countPlacesMatching(m.query),
+              imageUrl: m.imageUrl || (await imageForPlacesMatching(m.query)),
+            })),
           );
           return [block.id, { type: "mood_tiles", moods: resolved }];
         }
@@ -122,6 +129,7 @@ export async function resolveBlockData(
             graded: !!sp.graded,
             bookable: !!sp.bookable,
             featured: !!sp.featured,
+            access: sp.access ? sp.access.split(",").filter(Boolean) : [],
           };
           const [result, submit, carnival] = await Promise.all([
             queryExplorer(kind, rootSlug, params),

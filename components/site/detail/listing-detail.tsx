@@ -13,6 +13,7 @@ import { formatMiles, type DetailExtras, type NearbyPlace } from "@/lib/data/det
 import { parsePrice } from "@/lib/data/listing-explorer";
 import { decodeKenticoText, getAllFieldValues, parseCustomFields, type BusinessInfo } from "@/lib/kentico-item-fields";
 import { labelForSlugSegment } from "@/lib/site-nav";
+import { accessLabel, getListingAccess } from "@/lib/accessibility";
 import type { getPageById } from "@/lib/data/pages";
 
 type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
@@ -96,6 +97,7 @@ export function ListingDetail({
   const sectionSlug = page.slug.split("/")[0];
   const sectionLabel = labelForSlugSegment(sectionSlug);
   const fullAddress = [info.address, info.town, info.postcode].filter(Boolean).join(", ");
+  const access = getListingAccess(page.customFields);
   const roadDirections = decodeKenticoText(fields.ItemRoadDirections);
   const transport = decodeKenticoText(fields.ItemPublicTransportDirections);
   const generalOpening = decodeKenticoText(fields.ItemGeneralOpeningInformation);
@@ -291,6 +293,30 @@ export function ListingDetail({
                   </div>
                 )}
               </dl>
+            </section>
+          )}
+
+          {(access.features.length > 0 || access.facilities.length > 0) && (
+            <section className="space-y-3">
+              <H2>Accessibility</H2>
+              {access.features.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {access.features.map((k) => (
+                    <span key={k} className="rounded-full bg-somerset-green/10 px-3 py-1.5 text-sm font-semibold text-somerset-green">
+                      {accessLabel(k)}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {access.facilities.length > 0 && (
+                <ul className="grid gap-1.5 text-sm text-stone-700 sm:grid-cols-2">
+                  {access.facilities.map((f) => (
+                    <li key={f} className="rounded-xl bg-cool-grey px-3 py-2">
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
           )}
 

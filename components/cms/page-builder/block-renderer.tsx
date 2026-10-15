@@ -54,7 +54,7 @@ export type RealBlockData =
   | { type: "explore_area_tiles"; tiles: ExploreAreaTile[] }
   | { type: "real_teaser"; items: FeaturedPageTile[]; total: number }
   | { type: "towns_row"; towns: TownTile[] }
-  | { type: "mood_tiles"; moods: { label: string; query: string; count: number }[] }
+  | { type: "mood_tiles"; moods: { label: string; query: string; count: number; blurb: string; imageUrl: string | null }[] }
   | { type: "map_band"; pins: { id: string; lat: number; lng: number; title: string; href: string }[] }
   | { type: "partners_row"; items: FeaturedPageTile[] }
   | {

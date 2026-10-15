@@ -342,7 +342,47 @@ async function ensureSystemTemplates() {
   }
 }
 
+const EDITORIAL_MOODS = [
+  { label: "Coastal Somerset", query: "coast", blurb: "Beaches, piers and clifftop walks." },
+  { label: "Food and Drink", query: "food", blurb: "Cider, cheese and farm shop finds." },
+  { label: "Family Adventures", query: "family", blurb: "Days out that keep everyone happy." },
+  { label: "Hidden Somerset", query: "hidden", blurb: "Quiet corners and local secrets." },
+  { label: "Heritage and History", query: "heritage", blurb: "Castles, abbeys and legends." },
+  { label: "Walking and Outdoors", query: "walking", blurb: "Hills, moors and long skies." },
+];
+
+// One time: the homepage mood tiles become the six editorial inspiration
+// cards. Marked with `editorial`, so later editor changes are left alone.
+async function ensureEditorialMoods() {
+  const home = await pageBySlug("home");
+  if (!home) return;
+  const blocks = await prisma.contentBlock.findMany({ where: { pageId: home.id, type: "mood_tiles" } });
+  for (const b of blocks) {
+    let cfg: Cfg = {};
+    try {
+      cfg = JSON.parse(b.config || "{}");
+    } catch {
+      continue;
+    }
+    if (cfg.editorial) continue;
+    await prisma.contentBlock.update({
+      where: { id: b.id },
+      data: {
+        config: JSON.stringify({
+          ...cfg,
+          editorial: true,
+          title: "Find your Somerset",
+          subtitle: "Six ways in, each one a search of real places.",
+          moods: EDITORIAL_MOODS,
+        }),
+      },
+    });
+    console.log("[ensure-content] homepage mood tiles switched to editorial inspiration cards");
+  }
+}
+
 async function main() {
+  await ensureEditorialMoods();
   await ensureSystemTemplates();
   await ensureBusinessTemplate();
   await ensureListingMarkers();

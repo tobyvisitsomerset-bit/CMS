@@ -88,7 +88,7 @@ export const BLOCK_DEFS: { type: BlockType; label: string; description: string; 
   { type: "real_teaser", label: "Real Content Teaser", description: "A few real businesses or events, with a \"See all\" link", icon: Rows3 },
   { type: "towns_row", label: "Towns Row", description: "Tile row linking to real town pages", icon: Building2 },
   { type: "book_strip", label: "Book Strip", description: "Ready to book? strip of call-to-action buttons", icon: Ticket },
-  { type: "mood_tiles", label: "Mood Tiles", description: "Circular tiles, each a real keyword search with a live place count", icon: Smile },
+  { type: "mood_tiles", label: "Mood Tiles", description: "Large editorial image cards, each a real keyword search with a live place count", icon: Smile },
   { type: "listing_explorer", label: "Listing Explorer", description: "Searchable, filterable list of real businesses or events with a map", icon: ListFilter },
   { type: "producer_shop", label: "Producer Shop", description: "One block per real producer with their live products and Buy Now links", icon: ShoppingBag },
   { type: "experiences_hub", label: "Experiences Hub", description: "Book-direct experiences landing section with search and live listings", icon: Compass },
@@ -168,15 +168,16 @@ export function defaultConfigFor(type: BlockType): Record<string, unknown> {
     case "mood_tiles":
       return {
         eyebrow: "Where to start",
-        title: "Somerset by mood",
+        title: "Find your Somerset",
         subtitle: "Six ways in, each one a search of real places.",
+        editorial: true,
         moods: [
-          { label: "Coast & piers", query: "coast" },
-          { label: "Caves & gorges", query: "cave" },
-          { label: "Cider & cheese", query: "cider" },
-          { label: "Legends & heritage", query: "legend" },
-          { label: "Exmoor & the hills", query: "exmoor" },
-          { label: "Family days out", query: "family" },
+          { label: "Coastal Somerset", query: "coast", blurb: "Beaches, piers and clifftop walks." },
+          { label: "Food and Drink", query: "food", blurb: "Cider, cheese and farm shop finds." },
+          { label: "Family Adventures", query: "family", blurb: "Days out that keep everyone happy." },
+          { label: "Hidden Somerset", query: "hidden", blurb: "Quiet corners and local secrets." },
+          { label: "Heritage and History", query: "heritage", blurb: "Castles, abbeys and legends." },
+          { label: "Walking and Outdoors", query: "walking", blurb: "Hills, moors and long skies." },
         ],
       };
     case "listing_explorer":

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2, Circle, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getMemberEnquiries, getMemberListings } from "@/lib/data/member";
@@ -136,7 +136,7 @@ export default async function PortalDashboard() {
                         l.section,
                         l.town,
                         `updated ${l.updatedAt.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`,
-                        `${l.strength.score}% complete`,
+                        `Health score ${l.strength.score}`,
                       ]
                         .filter(Boolean)
                         .join(" · ")}
@@ -176,17 +176,23 @@ export default async function PortalDashboard() {
         <aside className="space-y-5">
           {focus && (
             <div className="rounded-3xl border border-stone-200 bg-white p-5">
-              <h3 className="font-serif text-lg font-black">Listing strength</h3>
+              <h3 className="font-serif text-lg font-black">Health score</h3>
               <p className="mt-1 text-xs text-stone-500">{focus.title}</p>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-stone-100">
                 <div className="h-full rounded-full bg-somerset-green" style={{ width: `${focus.strength.score}%` }} />
               </div>
-              <p className="mt-1.5 text-sm font-semibold text-stone-800">{focus.strength.score}% complete</p>
-              <ul className="mt-3 space-y-2">
-                {focus.strength.items.map((i) => (
-                  <li key={i.label} className="flex items-start gap-2 text-sm">
-                    {i.done ? <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-somerset-green" /> : <Circle className="mt-0.5 size-4 shrink-0 text-stone-300" />}
-                    <span className={i.done ? "text-stone-500" : "text-stone-900"}>{i.label}</span>
+              <p className="mt-1.5 text-sm font-semibold text-stone-800">
+                {focus.strength.score} out of 100 · {focus.strength.band}
+              </p>
+              <p className="mt-3 text-xs font-semibold tracking-wider text-stone-500 uppercase">Quickest ways to improve it</p>
+              <ul className="mt-2 space-y-2">
+                {focus.strength.recommendations.length === 0 && <li className="text-sm text-stone-600">Nothing to add. Great work.</li>}
+                {focus.strength.recommendations.map((r) => (
+                  <li key={r.key} className="flex items-start gap-2 text-sm">
+                    <span className="mt-0.5 shrink-0 rounded-full bg-somerset-green/10 px-1.5 py-0.5 text-[11px] font-bold text-somerset-green">
+                      +{r.max - r.earned}
+                    </span>
+                    <span className="text-stone-800">{r.hint}</span>
                   </li>
                 ))}
               </ul>

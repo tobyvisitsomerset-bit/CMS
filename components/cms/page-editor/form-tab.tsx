@@ -19,6 +19,7 @@ import { type CustomField, getCF, parseCustomFieldsArray, serializeCustomFields,
 import type { getPageById } from "@/lib/data/pages";
 import type { MembershipTier } from "@prisma/client";
 import { toLevel } from "@/lib/membership";
+import { ACCESS_FEATURES } from "@/lib/accessibility";
 
 const MEMBERSHIP_TIERS: { value: MembershipTier; label: string }[] = [
   { value: "PREMIUM", label: "Premium (priority 3, featured member)" },
@@ -237,6 +238,33 @@ export function FormTab({ page, readOnly, offers = [] }: { page: PageDetail; rea
               disabled={readOnly}
             />
           </Field>
+        </Section>
+
+        <Section title="Accessibility" defaultOpen={false}>
+          <p className="text-xs text-neutral-500">
+            Tick what this business offers. Features already known from the imported facilities show on the page too.
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {ACCESS_FEATURES.map((f) => {
+              const own = (getCF(cf, "ItemAccessibility") || "").split(",").map((k) => k.trim()).filter(Boolean);
+              const on = own.includes(f.key);
+              return (
+                <label key={f.key} className="flex items-start gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={on}
+                    disabled={readOnly}
+                    onChange={() => set("ItemAccessibility", (on ? own.filter((k) => k !== f.key) : [...own, f.key]).join(","))}
+                    className="mt-1"
+                  />
+                  <span>
+                    {f.label}
+                    <span className="block text-xs text-neutral-400">{f.help}</span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
         </Section>
 
         <Section title="Address" defaultOpen={false}>

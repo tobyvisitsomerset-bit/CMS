@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
 import { levelLabel } from "@/lib/membership";
+import { computeHealthScore, type HealthItem, type HealthScore } from "@/lib/health-score";
 import { labelForSlugSegment } from "@/lib/site-nav";
 
 // Everything the Member Portal shows is read from the same database as the
@@ -16,7 +17,7 @@ const STATUS_LABEL: Record<string, string> = {
   ARCHIVED: "Archived",
 };
 
-export type StrengthItem = { label: string; done: boolean; hint: string };
+export type StrengthItem = { label: string; done: boolean; hint: string; earned?: number; max?: number };
 
 export type MemberListing = {
   id: string;
@@ -31,7 +32,7 @@ export type MemberListing = {
   updatedAt: Date;
   photoCount: number;
   summary: string | null;
-  strength: { score: number; items: StrengthItem[] };
+  strength: { score: number; items: StrengthItem[]; recommendations: HealthItem[]; band: HealthScore["band"] };
   enquiryCount: number;
   newEnquiryCount: number;
   /** State of this member's own pending edit, if any. */
@@ -61,36 +62,22 @@ export function computeStrength(page: {
   heroImageUrl: string | null;
   galleryUrls: string | null;
   customFields: string | null;
-}): { score: number; items: StrengthItem[] } {
-  const fields = parseCustomFields(page.customFields);
-  const info = getBusinessInfo(fields);
-  let gallery: string[] = [];
-  try {
-    const g = page.galleryUrls ? JSON.parse(page.galleryUrls) : [];
-    gallery = Array.isArray(g) ? g : [];
-  } catch {
-    gallery = [];
-  }
-  const body = decodeKenticoText(page.bodyContent) ?? "";
-
-  const items: StrengthItem[] = [
-    { label: "A description of at least a couple of sentences", done: body.length >= 120, hint: "Add or expand the description." },
-    { label: "A headline summary", done: !!(page.subtitle || page.tagline), hint: "Add a one-line summary." },
-    { label: "A main photo", done: !!page.heroImageUrl, hint: "Choose a main photo." },
-    { label: "At least three more photos", done: gallery.length >= 3, hint: "Add photos to the gallery." },
-    { label: "A phone number", done: !!info?.phone, hint: "Add a contact phone number." },
-    { label: "An email address", done: !!info?.email, hint: "Add a contact email." },
-    { label: "A full address and postcode", done: !!(info?.address && info?.postcode), hint: "Complete the address fields." },
-    { label: "A website or booking link", done: !!(info?.website || info?.bookingUrl), hint: "Add your website or booking link." },
-    { label: "Opening times or prices", done: !!(info?.openingTimes || info?.admission), hint: "Add opening times or prices." },
-    { label: "A map location", done: info?.mapLat != null && info?.mapLng != null, hint: "Ask the team to add your map location." },
-  ];
-  return { score: Math.round((items.filter((i) => i.done).length / items.length) * 100), items };
+  updatedAt?: Date | null;
+  tagCount?: number;
+}): { score: number; items: StrengthItem[]; recommendations: HealthItem[]; band: HealthScore["band"] } {
+  const h = computeHealthScore(page);
+  return {
+    score: h.score,
+    items: h.items.map((i) => ({ label: i.label, done: i.done, hint: i.hint, earned: i.earned, max: i.max })),
+    recommendations: h.recommendations,
+    band: h.band,
+  };
 }
 
 export async function getMemberListings(userId: string): Promise<MemberListing[]> {
   const pages = await prisma.page.findMany({
     where: { assignedMemberId: userId, status: { not: "ARCHIVED" } },
+    include: { tags: { select: { id: true } } },
     orderBy: { title: "asc" },
   });
   if (pages.length === 0) return [];
@@ -135,7 +122,7 @@ export async function getMemberListings(userId: string): Promise<MemberListing[]
         }
       })(),
       summary: decodeKenticoText(p.subtitle) ?? p.tagline,
-      strength: computeStrength(p),
+      strength: computeStrength({ ...p, tagCount: p.tags.length }),
       enquiryCount: c.total,
       newEnquiryCount: c.fresh,
       change: change.get(p.id) ?? null,

@@ -21,6 +21,10 @@ function dateLabel(start: string | null | undefined, end: string | null | undefi
 
 // "Somerset by mood" — circular photo tiles. Each tile is a real keyword
 // search over real business pages and shows its real result count.
+// Inspiration cards: large editorial image cards (Airbnb / Tourism New
+// Zealand style) rather than small circles. Each is still a real search; the
+// count is the real number of matching places and the picture is a real
+// member photo (or the placeholder tile when none exists yet).
 export function MoodTiles({
   eyebrow,
   title,
@@ -30,27 +34,36 @@ export function MoodTiles({
   eyebrow?: string;
   title?: string;
   subtitle?: string;
-  moods: { label: string; query: string; count: number }[];
+  moods: { label: string; query: string; count: number; blurb?: string; imageUrl?: string | null }[];
 }) {
   return (
     <section className="px-6 py-14">
       <div className="mx-auto max-w-7xl">
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        <h2 className="mt-1 font-serif text-3xl font-black text-stone-900 sm:text-4xl">{title || "Somerset by mood"}</h2>
-        {subtitle && <p className="mt-1 text-stone-600">{subtitle}</p>}
-        <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
-          {moods.map((m) => (
-            <Link key={m.label} href={`/search?q=${encodeURIComponent(m.query)}&places=1`} className="group flex flex-col items-center text-center">
+        <h2 className="mt-1 font-serif text-3xl font-black text-stone-900 sm:text-4xl">{title || "Find your Somerset"}</h2>
+        {subtitle && <p className="mt-1 max-w-2xl text-stone-600">{subtitle}</p>}
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {moods.map((m, i) => (
+            <Link
+              key={m.label}
+              href={`/search?q=${encodeURIComponent(m.query)}&places=1`}
+              className={`group relative isolate flex overflow-hidden rounded-3xl ${i === 0 ? "sm:col-span-2 lg:col-span-1 lg:row-span-1" : ""}`}
+            >
               <Img
-                src={null}
+                src={m.imageUrl ?? null}
                 alt=""
                 label={m.label}
-                className="aspect-square w-full max-w-44 rounded-full transition-transform duration-300 group-hover:scale-[1.03]"
+                className="aspect-[4/3] w-full transition-transform duration-500 group-hover:scale-105 sm:aspect-[5/4]"
               />
-              <p className="mt-3 font-serif text-lg leading-tight font-black text-stone-900 group-hover:text-somerset-green">{m.label}</p>
-              <p className="text-xs text-stone-500">
-                {m.count.toLocaleString("en-GB")} {m.count === 1 ? "place" : "places"}
-              </p>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                <p className="font-serif text-2xl leading-tight font-black sm:text-[1.7rem]">{m.label}</p>
+                {m.blurb && <p className="mt-1 line-clamp-2 text-sm text-white/90">{m.blurb}</p>}
+                <p className="mt-2 flex items-center gap-2 text-xs font-semibold tracking-wide uppercase">
+                  {m.count.toLocaleString("en-GB")} {m.count === 1 ? "place" : "places"}
+                  <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
+                </p>
+              </div>
             </Link>
           ))}
         </div>

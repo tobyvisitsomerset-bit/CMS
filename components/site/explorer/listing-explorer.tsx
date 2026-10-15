@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import type { ExplorerItem, ExplorerResult } from "@/lib/data/listing-explorer";
 import { ExplorerMap } from "./explorer-map";
 import { LEVEL_LABEL } from "@/lib/membership";
+import { ACCESS_FEATURES } from "@/lib/accessibility";
 
 export type ExplorerConfig = {
   kind: "accommodation" | "things" | "food";
@@ -118,6 +119,11 @@ function ListCard({ item, sp, featured, kind }: { item: ExplorerItem; sp: SP; fe
           {item.grading && <span className="rounded-full bg-cool-grey px-2.5 py-1 text-xs text-stone-700">{item.grading}</span>}
           {item.hasBooking && <span className="rounded-full bg-damson/10 px-2.5 py-1 text-xs font-medium text-damson">Book online</span>}
           {item.tier && <span className="rounded-full bg-cool-grey px-2.5 py-1 text-xs text-stone-700">{LEVEL_LABEL[item.tier]} member</span>}
+          {item.access.slice(0, 3).map((k) => (
+            <span key={k} className="rounded-full bg-somerset-green/10 px-2.5 py-1 text-xs font-medium text-somerset-green">
+              {ACCESS_FEATURES.find((f) => f.key === k)?.short ?? k}
+            </span>
+          ))}
         </div>
         <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-1">
           <div>
@@ -247,7 +253,7 @@ export function ListingExplorer({
   const view = sp.view === "map" ? "map" : sp.view === "list" ? "list" : kind === "accommodation" ? "list" : "grid";
   const sort = sp.sort ?? "recommended";
   const hasDates = !!(sp.checkin || sp.checkout || sp.guests);
-  const filtersActive = !!(sp.q || sp.type || sp.town || sp.graded || sp.bookable || sp.featured);
+  const filtersActive = !!(sp.q || sp.type || sp.town || sp.graded || sp.bookable || sp.featured || sp.access);
 
   const sortOptions = [
     { key: "recommended", label: "Recommended" },
@@ -358,6 +364,22 @@ export function ListingExplorer({
           </Chip>
         )}
       </div>
+      {ACCESS_FEATURES.some((f) => (result.accessCounts?.[f.key] ?? 0) > 0) && (
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <span className="text-xs font-semibold tracking-wide text-stone-400 uppercase">Accessible</span>
+          {ACCESS_FEATURES.filter((f) => (result.accessCounts?.[f.key] ?? 0) > 0).map((f) => {
+            const active = (sp.access ?? "").split(",").includes(f.key);
+            const next = active
+              ? (sp.access ?? "").split(",").filter((k) => k && k !== f.key)
+              : [...(sp.access ?? "").split(",").filter(Boolean), f.key];
+            return (
+              <Chip key={f.key} href={buildHref(basePath, sp, { access: next.join(",") || undefined })} active={active}>
+                {f.short} <span className="opacity-60">· {result.accessCounts[f.key]}</span>
+              </Chip>
+            );
+          })}
+        </div>
+      )}
       {result.towns.length > 0 && (
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <span className="text-xs font-semibold tracking-wide text-stone-400 uppercase">Near</span>

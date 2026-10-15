@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { Prisma } from "@prisma/client";
+import { ACCESS_FEATURES, accessKeys } from "@/lib/accessibility";
 import { prisma } from "@/lib/prisma";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
 import { priorityOf, toLevel } from "@/lib/membership";
@@ -32,6 +33,8 @@ export type ExplorerItem = {
   endDate: string | null;
   lat: number | null;
   lng: number | null;
+  /** Accessibility and dog-friendly feature keys (lib/accessibility.ts). */
+  access: string[];
   hasBooking: boolean;
   bookingUrl: string | null;
   bookingLabel: string | null;
@@ -176,6 +179,7 @@ async function loadExplorerItems(rootSlug: string): Promise<ExplorerItem[]> {
       endDate: info?.endDate ?? null,
       lat: plausible ? lat : null,
       lng: plausible ? lng : null,
+      access: accessKeys(r.customFields),
       hasBooking: !!info?.bookingUrl,
       bookingUrl: info?.bookingUrl ?? null,
       bookingLabel: info?.bookingUrl ? info.bookingLabel : null,
@@ -198,6 +202,7 @@ export type ExplorerParams = {
   graded?: boolean;
   bookable?: boolean;
   featured?: boolean;
+  access?: string[];
 };
 
 export type ExplorerResult = {
@@ -216,6 +221,7 @@ export type ExplorerResult = {
   eventDays: string[]; // YYYY-MM-DD with at least one matching event (ignoring the day filter)
   next30: number;
   counts: { graded: number; bookable: number; featured: number; free: number };
+  accessCounts: Record<string, number>;
 };
 
 const PAGE_SIZE = 12;
@@ -301,6 +307,7 @@ export async function queryExplorer(kind: ExplorerKind, rootSlug: string, params
     if (params.graded && !i.grading) return false;
     if (params.bookable && !i.hasBooking) return false;
     if (params.featured && i.tier !== "PREMIUM") return false;
+    if (params.access?.length && !params.access.every((k) => i.access.includes(k))) return false;
     if (params.free && !isFree(i)) return false;
     if (params.when && params.when !== "all" && !eventMatchesWhen(i, params.when, now)) return false;
     if (!ignoreDay && params.day && !eventOnDay(i, params.day)) return false;
@@ -399,5 +406,8 @@ export async function queryExplorer(kind: ExplorerKind, rootSlug: string, params
       featured: base.filter((i) => i.tier === "PREMIUM").length,
       free: base.filter(isFree).length,
     },
+    accessCounts: Object.fromEntries(
+      ACCESS_FEATURES.map((f) => [f.key, base.filter((i) => i.access.includes(f.key)).length]),
+    ),
   };
 }

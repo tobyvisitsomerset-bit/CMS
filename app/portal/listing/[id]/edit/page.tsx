@@ -7,6 +7,7 @@ import { getActiveRequest, parseProposal, proposalFromPage } from "@/lib/data/ch
 import { levelLabel } from "@/lib/membership";
 import { labelForSlugSegment } from "@/lib/site-nav";
 import { EditForm } from "./edit-form";
+import { getListingAccess } from "@/lib/accessibility";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
         section={labelForSlugSegment(page.slug.split("/")[0])}
         tierLabel={levelLabel(page.membershipTier)}
         tagOptions={tagRows.map((t) => t.name)}
+        detectedAccess={getListingAccess(page.customFields).features}
         published={page.status === "PUBLISHED"}
         live={live}
         initial={saved ?? live}
