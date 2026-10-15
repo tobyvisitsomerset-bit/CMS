@@ -262,11 +262,16 @@ function pick(
   return null;
 }
 
-export function generateItinerary(prefs: Prefs, pool: PoolItem[]): Itinerary {
+export function generateItinerary(
+  prefs: Prefs,
+  pool: PoolItem[],
+  // Used to add a day to an existing plan: keep the same stay and never repeat what is already in it.
+  extend?: { anchor: { lat: number; lng: number } | null; exclude: Set<string> },
+): Itinerary {
   const days = daysBetween(prefs.startDate, prefs.endDate);
   const nights = Math.max(1, days.length - 1);
   const notes = new Set<string>();
-  const used = new Set<string>();
+  const used = new Set<string>(extend?.exclude ?? []);
 
   // Budget split: half for where you sleep, half for days out and food.
   const stayBudget = prefs.budget != null ? (prefs.budget * 0.5) / nights : null;
@@ -277,14 +282,16 @@ export function generateItinerary(prefs: Prefs, pool: PoolItem[]): Itinerary {
     stayBudget != null
       ? pool.filter((i) => i.kind !== "stay" || (i.priceFrom != null && i.priceFrom <= stayBudget) || false)
       : pool;
-  let stayItem = pick(stayPool, "stay", prefs, used, null, 1000, notes);
-  if (!stayItem && stayBudget != null) {
+  let stayItem = extend ? null : pick(stayPool, "stay", prefs, used, null, 1000, notes);
+  if (!extend && !stayItem && stayBudget != null) {
     stayItem = pick(pool, "stay", prefs, used, null, 1000, notes);
     if (stayItem) notes.add("Nothing we have priced fits that nightly budget, so this is the closest stay we could find.");
   }
   if (stayItem) used.add(stayItem.id);
-  const anchor = stayItem ? { lat: stayItem.lat, lng: stayItem.lng } : null;
-  if (!stayItem) notes.add("We couldn't match a place to stay to your needs, so this plan has days out only.");
+  const anchor = extend ? extend.anchor : stayItem ? { lat: stayItem.lat, lng: stayItem.lng } : null;
+  if (extend) {
+    /* the stay is already chosen */
+  } else if (!stayItem) notes.add("We couldn't match a place to stay to your needs, so this plan has days out only.");
   else if (prefs.dog && !stayItem.access.includes("dogFriendly")) notes.add("Confirm dogs are welcome before booking the stay.");
 
   // 2. Each day.
@@ -402,4 +409,55 @@ export function defaultPrefs(): Prefs {
     pace: "balanced",
     area: null,
   };
+}
+
+/** Adds one more day after the last, with the same stay and no repeats. */
+export function addDay(it: Itinerary, pool: PoolItem[]): Itinerary {
+  if (it.days.length >= MAX_DAYS) return it;
+  const last = it.days[it.days.length - 1]?.date ?? it.prefs.endDate;
+  const next = new Date(new Date(`${last}T12:00:00Z`).getTime() + 86400000).toISOString().slice(0, 10);
+  const exclude = new Set<string>([...(it.stay ? [it.stay.id] : []), ...it.days.flatMap((d) => d.items.map((i) => i.id)), ...it.skipped]);
+  const anchor = it.stay ? { lat: it.stay.lat, lng: it.stay.lng } : null;
+  // The budget is split across all days, so an extra day gets the same share.
+  const budget = it.prefs.budget != null ? ((it.prefs.budget * 0.5) / (it.days.length + 1)) * 2 : null;
+  const extra = generateItinerary({ ...it.prefs, budget, startDate: next, endDate: next }, pool, { anchor, exclude });
+  return {
+    ...it,
+    prefs: { ...it.prefs, endDate: next },
+    days: [...it.days, ...extra.days.slice(0, 1)],
+    notes: Array.from(new Set([...it.notes, ...extra.notes])),
+  };
+}
+
+/** The best few real alternatives for one item, so the visitor can choose. */
+export function alternativesFor(it: Itinerary, pool: PoolItem[], itemUid: string, limit = 5): PlanItem[] {
+  const prefs = it.prefs;
+  const used = new Set<string>([...(it.stay ? [it.stay.id] : []), ...it.days.flatMap((d) => d.items.map((i) => i.id))]);
+
+  let kind: PlaceKind | null = null;
+  let slot: Slot = "afternoon";
+  let from: { lat: number; lng: number } | null = null;
+  if (it.stay && it.stay.uid === itemUid) {
+    kind = "stay";
+    slot = "stay";
+  } else {
+    for (const d of it.days) {
+      const idx = d.items.findIndex((i) => i.uid === itemUid);
+      if (idx === -1) continue;
+      const cur = d.items[idx];
+      kind = cur.kind === "event" ? "do" : cur.kind;
+      slot = cur.slot;
+      const near = idx > 0 ? d.items[idx - 1] : it.stay;
+      from = near ? { lat: near.lat, lng: near.lng } : { lat: cur.lat, lng: cur.lng };
+    }
+  }
+  if (!kind) return [];
+
+  const radius = kind === "stay" ? 1000 : kind === "food" ? 8 : 18;
+  return pool
+    .filter((i) => i.kind === kind && !used.has(i.id) && allowed(i, prefs, { access: false, price: false }) && (!from || miles(from, i) <= radius))
+    .map((i) => ({ i, s: score(i, prefs, from) }))
+    .sort((a, b) => b.s - a.s)
+    .slice(0, limit)
+    .map(({ i }) => toPlan(i, slot, prefs));
 }

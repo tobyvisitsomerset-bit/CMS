@@ -7,6 +7,8 @@ import { getItineraryPool } from "@/lib/data/itinerary-pool";
 import {
   MAX_DAYS,
   INTERESTS,
+  addDay,
+  alternativesFor,
   generateItinerary,
   itineraryTitle,
   swapItem,
@@ -65,6 +67,18 @@ export async function swapItemAction(raw: unknown, itemUid: string): Promise<Iti
   const it = await sanitiseItinerary(raw);
   const pool = await getItineraryPool();
   return swapItem(it, pool, itemUid);
+}
+
+export async function alternativesAction(raw: unknown, itemUid: string): Promise<PlanItem[]> {
+  const it = await sanitiseItinerary(raw);
+  const pool = await getItineraryPool();
+  return alternativesFor(it, pool, itemUid, 5);
+}
+
+export async function addDayAction(raw: unknown): Promise<Itinerary> {
+  const it = await sanitiseItinerary(raw);
+  const pool = await getItineraryPool();
+  return addDay(it, pool);
 }
 
 function cleanUrl(v: unknown): string | null {

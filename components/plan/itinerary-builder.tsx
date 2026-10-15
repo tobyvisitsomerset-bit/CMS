@@ -3,8 +3,9 @@
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, BedDouble, CalendarPlus, Check, Copy, Heart, Printer, RefreshCw, Share2, Trash2, Utensils, Landmark, PartyPopper } from "lucide-react";
-import { generateItineraryAction, saveItineraryAction, swapItemAction } from "@/app/(site)/plan/actions";
+import { ArrowDown, ArrowUp, BedDouble, ListChecks, Minus, PlusCircle, CalendarPlus, Check, Copy, Heart, Printer, RefreshCw, Share2, Trash2, Utensils, Landmark, PartyPopper } from "lucide-react";
+import { addDayAction, alternativesAction, generateItineraryAction, saveItineraryAction, swapItemAction } from "@/app/(site)/plan/actions";
+import { DayMap } from "@/components/plan/day-map";
 import { useTrip } from "@/lib/trip-context";
 import { buildIcsCalendar, type CalendarEventInput } from "@/lib/calendar-export";
 import { INTERESTS, defaultPrefs, itineraryTitle, type Itinerary, type PlanItem, type Prefs, type Slot } from "@/lib/itinerary";
@@ -59,6 +60,7 @@ export function ItineraryBuilder({ initial = null, token: initialToken = null }:
   const [token, setToken] = useState<string | null>(initialToken);
   const [pending, start] = useTransition();
   const [swapping, setSwapping] = useState<string | null>(null);
+  const [alts, setAlts] = useState<{ uid: string; items: PlanItem[] | null } | null>(null);
 
   const set = <K extends keyof Prefs>(k: K, v: Prefs[K]) => setPrefs((p) => ({ ...p, [k]: v }));
   const toggle = (list: string[], v: string) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
@@ -92,6 +94,61 @@ export function ItineraryBuilder({ initial = null, token: initialToken = null }:
     } finally {
       setSwapping(null);
     }
+  }
+
+  async function showAlternatives(uid: string) {
+    if (!it) return;
+    if (alts?.uid === uid) {
+      setAlts(null);
+      return;
+    }
+    setAlts({ uid, items: null });
+    try {
+      setAlts({ uid, items: await alternativesAction(it, uid) });
+    } catch {
+      setAlts(null);
+      toast.error("Couldn't load alternatives.");
+    }
+  }
+
+  function chooseAlternative(uid: string, next: PlanItem) {
+    if (!it) return;
+    const swapIn = (old: PlanItem): PlanItem => ({ ...next, uid: old.uid, slot: old.slot });
+    if (it.stay && it.stay.uid === uid) {
+      update({ ...it, stay: swapIn(it.stay), skipped: [...it.skipped, it.stay.id] });
+    } else {
+      const skipped = [...it.skipped];
+      update({
+        ...it,
+        days: it.days.map((d) => ({
+          ...d,
+          items: d.items.map((x) => {
+            if (x.uid !== uid) return x;
+            skipped.push(x.id);
+            return swapIn(x);
+          }),
+        })),
+        skipped,
+      });
+    }
+    setAlts(null);
+  }
+
+  function addDay() {
+    if (!it) return;
+    start(async () => {
+      try {
+        setIt(await addDayAction(it));
+      } catch {
+        toast.error("Couldn't add a day.");
+      }
+    });
+  }
+
+  function removeLastDay() {
+    if (!it || it.days.length <= 1) return;
+    const days = it.days.slice(0, -1);
+    setIt({ ...it, days, prefs: { ...it.prefs, endDate: days[days.length - 1].date } });
   }
 
   function remove(dayIdx: number, uid: string) {
@@ -238,11 +295,14 @@ export function ItineraryBuilder({ initial = null, token: initialToken = null }:
           </ul>
         )}
 
+        <DayMap it={it} />
+
         {it.stay && (
           <section className="mt-8">
             <h2 className="font-serif text-2xl font-black text-stone-900">Where you stay</h2>
             <div className="mt-3">
-              <ItemCard item={it.stay} busy={swapping === it.stay.uid} onSwap={() => swap(it.stay!.uid)} />
+              <ItemCard item={it.stay} busy={swapping === it.stay.uid} onSwap={() => swap(it.stay!.uid)} onChoose={() => showAlternatives(it.stay!.uid)} />
+              {alts?.uid === it.stay.uid && <AltList alts={alts.items} onPick={(n) => chooseAlternative(it.stay!.uid, n)} />}
             </div>
           </section>
         )}
@@ -256,19 +316,33 @@ export function ItineraryBuilder({ initial = null, token: initialToken = null }:
               <div className="mt-3 space-y-3">
                 {d.items.length === 0 && <p className="rounded-2xl border border-dashed border-stone-300 p-4 text-sm text-stone-500">Nothing matched for this day. Try other interests or a wider area.</p>}
                 {d.items.map((item, idx) => (
+                  <div key={item.uid}>
                   <ItemCard
-                    key={item.uid}
                     item={item}
                     busy={swapping === item.uid}
                     onSwap={() => swap(item.uid)}
+                    onChoose={() => showAlternatives(item.uid)}
                     onRemove={() => remove(di, item.uid)}
                     onUp={idx > 0 ? () => move(di, idx, -1) : undefined}
                     onDown={idx < d.items.length - 1 ? () => move(di, idx, 1) : undefined}
                   />
+                  {alts?.uid === item.uid && <AltList alts={alts.items} onPick={(n) => chooseAlternative(item.uid, n)} />}
+                  </div>
                 ))}
               </div>
             </section>
           ))}
+        </div>
+
+        <div className="mt-8 flex flex-wrap gap-2 print:hidden">
+          <button type="button" onClick={addDay} disabled={pending || it.days.length >= 14} className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-5 py-2.5 text-sm font-semibold hover:bg-stone-50 disabled:opacity-50">
+            <PlusCircle className="size-4" /> Add another day
+          </button>
+          {it.days.length > 1 && (
+            <button type="button" onClick={removeLastDay} className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-5 py-2.5 text-sm font-semibold hover:bg-stone-50">
+              <Minus className="size-4" /> Remove the last day
+            </button>
+          )}
         </div>
 
         <p className="mt-10 text-xs text-stone-500">
@@ -403,6 +477,7 @@ function ItemCard({
   item,
   busy,
   onSwap,
+  onChoose,
   onRemove,
   onUp,
   onDown,
@@ -410,6 +485,7 @@ function ItemCard({
   item: PlanItem;
   busy: boolean;
   onSwap: () => void;
+  onChoose?: () => void;
   onRemove?: () => void;
   onUp?: () => void;
   onDown?: () => void;
@@ -449,6 +525,11 @@ function ItemCard({
         <button type="button" className={btn} title="Swap for something else" disabled={busy} onClick={onSwap}>
           <RefreshCw className={cn("size-4", busy && "animate-spin")} />
         </button>
+        {onChoose && (
+          <button type="button" className={btn} title="Choose from a few alternatives" onClick={onChoose}>
+            <ListChecks className="size-4" />
+          </button>
+        )}
         {onUp && (
           <button type="button" className={btn} title="Move earlier" onClick={onUp}>
             <ArrowUp className="size-4" />
@@ -466,5 +547,37 @@ function ItemCard({
         )}
       </div>
     </article>
+  );
+}
+
+function AltList({ alts, onPick }: { alts: PlanItem[] | null; onPick: (item: PlanItem) => void }) {
+  return (
+    <div className="mt-2 rounded-2xl border border-stone-200 bg-cool-grey p-3 print:hidden">
+      <p className="text-xs font-semibold tracking-wide text-stone-500 uppercase">Or choose one of these</p>
+      {alts === null && <p className="mt-2 text-sm text-stone-500">Looking...</p>}
+      {alts && alts.length === 0 && <p className="mt-2 text-sm text-stone-500">No other places match your answers nearby.</p>}
+      <ul className="mt-2 grid gap-2 sm:grid-cols-2">
+        {(alts ?? []).map((a) => (
+          <li key={a.id}>
+            <button
+              type="button"
+              onClick={() => onPick(a)}
+              className="flex w-full items-center gap-3 rounded-xl bg-white p-2 text-left hover:ring-2 hover:ring-somerset-green"
+            >
+              {a.imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={a.imageUrl} alt="" className="size-14 shrink-0 rounded-lg object-cover" />
+              ) : (
+                <span className="size-14 shrink-0 rounded-lg bg-stone-200" />
+              )}
+              <span className="min-w-0">
+                <strong className="block truncate text-sm text-stone-900">{a.title}</strong>
+                <span className="block truncate text-xs text-stone-500">{[a.town, a.priceText].filter(Boolean).join(" · ")}</span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
