@@ -178,7 +178,7 @@ const NEEDED_ACCESS = (p: Prefs) => p.access.filter((a) => a !== "dogFriendly");
 
 // Things-to-do contains shops, holiday parks and accommodation listed by
 // attraction owners; they are not a day out.
-const NOT_A_DAY_OUT = /(caravan|campsite|camping|holiday park|self[- ]?catering|b&b|bed and breakfast|shop|store|hire|cottages?)/i;
+const NOT_A_DAY_OUT = /(caravan|campsite|camping|holiday park|self[- ]?catering|b&b|bed and breakfast|shop|store|hire|cottages?|huts?|glamping|cabins?|yurts?|pods?|apartments?|hotel|suites?|holiday (?:home|let|lodge)s?)/i;
 
 function allowed(item: PoolItem, p: Prefs, relax: { access: boolean; price: boolean }): boolean {
   if (item.kind === "do" && NOT_A_DAY_OUT.test(item.title)) return false;
