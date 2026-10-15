@@ -7,6 +7,7 @@ import { Img } from "@/components/cms/page-builder/listing-ui";
 import { EnquiryForm } from "./enquiry-form";
 import { RoomsSection } from "./rooms-section";
 import { ShareButton } from "./share-button";
+import { AddToCollectionButton } from "@/components/trip/add-to-collection";
 import { TrackedLink } from "@/components/site/tracked-link";
 import { BuyPanel } from "@/components/site/shop/buy-panel";
 import { OffersSection } from "./offers-section";
@@ -202,6 +203,7 @@ export function ListingDetail({
           <AddToTripPill {...tripPayload} variant="save" />
           <AddToTripPill {...tripPayload} variant="trip" dateKey={info.startDate} />
           {eventObj && <AddToCalendarMenu event={eventObj} path={`/${page.slug}`} season={seasonCal} />}
+          <AddToCollectionButton pageId={page.id} />
           <ShareButton title={page.title} />
         </div>
       )}

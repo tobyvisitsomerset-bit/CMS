@@ -45,6 +45,8 @@ type TripContextValue = {
   removeTrip: (tripId: string) => void;
   switchTrip: (tripId: string) => void;
   restore: (snapshot: TripStore) => void;
+  /** True when a visitor is signed in (collections and synced trips). */
+  signedIn: boolean;
 };
 
 const TripContext = createContext<TripContextValue | null>(null);
@@ -106,8 +108,9 @@ export function TripProvider({ children, signedIn = false }: { children: React.R
       removeTrip: (tripId) => deleteTrip(tripId),
       switchTrip: (tripId) => setActiveTrip(tripId),
       restore: (snapshot) => restoreTripStore(snapshot),
+      signedIn,
     };
-  }, [store]);
+  }, [store, signedIn]);
 
   return <TripContext.Provider value={value}>{children}</TripContext.Provider>;
 }

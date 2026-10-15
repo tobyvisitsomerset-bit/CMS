@@ -43,6 +43,9 @@ export default async function AccountPage() {
         <Link href="/plan" className="rounded-full bg-damson px-5 py-2.5 text-sm font-bold text-white hover:opacity-90">
           Build a new itinerary
         </Link>
+        <Link href="/account/collections" className="rounded-full border border-stone-300 bg-white px-5 py-2.5 text-sm font-semibold hover:bg-stone-50">
+          My collections
+        </Link>
         <Link href="/my-trip" className="rounded-full border border-stone-300 bg-white px-5 py-2.5 text-sm font-semibold hover:bg-stone-50">
           Go to My Trip{tripCount > 0 ? ` (${tripCount} trip${tripCount === 1 ? "" : "s"})` : ""}
         </Link>
