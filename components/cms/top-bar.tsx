@@ -39,6 +39,7 @@ export function TopBar({
             <>
               <DropdownMenuItem render={<Link href="/cms/approvals">Pending pages</Link>} />
               <DropdownMenuItem render={<Link href="/cms/enquiries">Forms (enquiries &amp; signups)</Link>} />
+              <DropdownMenuItem render={<Link href="/cms/users">Users</Link>} />
             </>
           )}
           <DropdownMenuSeparator />
@@ -86,6 +87,7 @@ export function TopBar({
             <div className="text-xs font-normal text-neutral-500">{user.roleName}</div>
           </div>
           <DropdownMenuSeparator />
+          <DropdownMenuItem render={<Link href="/cms/account">Change my password</Link>} />
           <DropdownMenuItem onClick={() => signOutAction()}>Sign out</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

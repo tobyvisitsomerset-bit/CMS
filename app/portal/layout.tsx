@@ -18,6 +18,7 @@ export default async function PortalLayout({ children }: { children: React.React
   if (!session?.user) redirect("/login");
   if (session.user.roleKey !== "MEMBER") redirect("/cms");
 
+  const me = await prisma.user.findUnique({ where: { id: session.user.id }, select: { mustChangePassword: true } });
   const owned = await prisma.page.findMany({
     where: { assignedMemberId: session.user.id, status: { not: "ARCHIVED" } },
     select: { id: true, title: true },
@@ -69,6 +70,16 @@ export default async function PortalLayout({ children }: { children: React.React
         </div>
       </header>
 
+      {me?.mustChangePassword && (
+        <div className="bg-damson/10 text-sm text-stone-800">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 px-6 py-2">
+            <span>You are using a temporary password.</span>
+            <Link href="/portal/account" className="font-bold text-damson underline-offset-2 hover:underline">
+              Choose your own now
+            </Link>
+          </div>
+        </div>
+      )}
       <main className="mx-auto max-w-7xl px-6 py-8">{children}</main>
 
       <footer className="border-t border-stone-200 py-6 text-center text-xs text-stone-500">

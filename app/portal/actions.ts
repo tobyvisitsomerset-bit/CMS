@@ -122,7 +122,10 @@ export async function changePasswordAction(_prev: PasswordResult | null, formDat
   if (!user || !(await bcrypt.compare(current, user.passwordHash))) {
     return { ok: false, error: "Your current password is not right." };
   }
-  await prisma.user.update({ where: { id: session.user.id }, data: { passwordHash: await bcrypt.hash(next, 12) } });
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { passwordHash: await bcrypt.hash(next, 12), mustChangePassword: false },
+  });
   return { ok: true };
 }
 

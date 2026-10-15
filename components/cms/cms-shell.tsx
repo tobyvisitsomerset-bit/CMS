@@ -21,6 +21,8 @@ const NAMED_ROUTES: Record<string, string> = {
   approvals: "Pending pages",
   enquiries: "Forms",
   widgets: "Widgets",
+  users: "Users",
+  account: "My account",
 };
 
 export function CmsShell({

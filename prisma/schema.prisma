@@ -76,6 +76,10 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  // Set when staff create the account or reset the password: the person is
+  // asked to choose their own on first sign-in.
+  mustChangePassword Boolean @default(false)
+
   // Somerset Club (marketing emails): an explicit, un-ticked-by-default opt-in.
   marketingOptIn     Boolean   @default(false)
   marketingOptInAt   DateTime?

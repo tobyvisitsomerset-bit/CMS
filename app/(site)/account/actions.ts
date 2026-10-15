@@ -68,7 +68,10 @@ export async function changeAccountPasswordAction(_prev: FormState, formData: Fo
   if (next.length < 10) return { error: "Use at least 10 characters for the new password." };
   const user = await prisma.user.findUnique({ where: { id: session.user.id }, select: { passwordHash: true } });
   if (!user || !(await bcrypt.compare(current, user.passwordHash))) return { error: "Your current password is not right." };
-  await prisma.user.update({ where: { id: session.user.id }, data: { passwordHash: await bcrypt.hash(next, 12) } });
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { passwordHash: await bcrypt.hash(next, 12), mustChangePassword: false },
+  });
   return { ok: true };
 }
 
