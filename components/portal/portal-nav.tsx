@@ -10,6 +10,7 @@ const ITEMS = [
   { href: "/portal/offers", label: "Offers", match: (p: string) => p.startsWith("/portal/offers") || p.startsWith("/portal/submit/offer") },
   { href: "/portal/enquiries", label: "Enquiries", match: (p: string) => p.startsWith("/portal/enquiries") },
   { href: "/portal/spaces", label: "Bookable spaces", match: (p: string) => p.startsWith("/portal/spaces") },
+  { href: "/portal/appear", label: "Where you appear", match: (p: string) => p.startsWith("/portal/appear") },
   { href: "/portal/photos", label: "Photos", match: (p: string) => p.startsWith("/portal/photos") },
   { href: "/portal/performance", label: "Performance", match: (p: string) => p.startsWith("/portal/performance") },
   { href: "/portal/membership", label: "Membership", match: (p: string) => p.startsWith("/portal/membership") },

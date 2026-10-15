@@ -16,7 +16,17 @@ import {
   type SubmissionKind,
 } from "@/lib/data/submissions";
 import { bookableWeeks, placementByKey, totals } from "@/lib/ad-spaces";
-import { diffProposal, keepUnchanged, proposalFromPage, sanitiseProposal, saveRequest, withdrawRequest } from "@/lib/data/change-requests";
+import {
+  diffProposal,
+  getActiveRequest,
+  keepUnchanged,
+  parseProposal,
+  proposalFromPage,
+  sanitiseProposal,
+  saveRequest,
+  withdrawRequest,
+} from "@/lib/data/change-requests";
+import { getLandingOptions } from "@/lib/data/placements";
 
 // Everything a member does here is scoped to pages assigned to them, and
 // nothing in this file changes a live page: edits become a ChangeRequest that
@@ -233,4 +243,37 @@ export async function cancelAdBookingAction(ref: string): Promise<{ ok: true }> 
   });
   revalidatePath("/portal", "layout");
   return { ok: true };
+}
+
+// ---------- "Where you appear": the simple picker ----------
+
+// Sends just the member's landing page choices for approval. Anything else
+// they have drafted on that listing travels with it, nothing is lost.
+export async function savePlacementsAction(pageId: string, ids: string[]): Promise<ChangeResult> {
+  const session = await requireMember();
+  const page = await ownedPage(pageId, session.user.id);
+  const live = proposalFromPage({ ...page, placements: await placementsFor(page.id) });
+  const active = await getActiveRequest(pageId, session.user.id);
+  const base = (active ? parseProposal(active.proposal) : null) ?? live;
+
+  const valid = new Set((await getLandingOptions()).map((l) => l.id));
+  const cap = placementCap(page.membershipTier);
+  const chosen = Array.from(new Set(ids)).filter((id) => valid.has(id) && id !== pageId).slice(0, cap);
+
+  const proposal = { ...base, placements: chosen };
+  const changes = diffProposal(live, proposal);
+  if (changes.length === 0) {
+    return { ok: false, error: "That is how it is already, so there is nothing to send." };
+  }
+  await saveRequest(pageId, session.user.id, proposal, true);
+  await notifySubmittedForReview(page.title, pageId, session.user.name ?? "A member");
+  await logAudit({
+    userId: session.user.id,
+    pageId,
+    action: "submitted",
+    details: `Member edit: ${changes.map((c) => c.label).join(", ")}`,
+  });
+  revalidatePath("/portal", "layout");
+  revalidatePath("/cms/approvals");
+  return { ok: true, message: "Sent to the Visit Somerset team for approval. You will see it on those pages once they approve it." };
 }
