@@ -16,7 +16,7 @@ export default async function PortalListingPage({ params }: { params: Promise<{ 
   if (!listing) notFound();
 
   const [page, request] = await Promise.all([
-    prisma.page.findUnique({ where: { id }, include: { rooms: { orderBy: { sortOrder: "asc" } } } }),
+    prisma.page.findUnique({ where: { id }, include: { rooms: { orderBy: { sortOrder: "asc" } }, tags: { select: { name: true } } } }),
     getActiveRequest(id, userId),
   ]);
   const proposal = request ? parseProposal(request.proposal) : null;

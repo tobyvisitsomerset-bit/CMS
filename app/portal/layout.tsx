@@ -56,7 +56,9 @@ export default async function PortalLayout({ children }: { children: React.React
           <PortalNav newEnquiries={newEnquiries} />
 
           <div className="ml-auto flex items-center gap-3 text-sm">
-            <span className="hidden text-white/80 sm:block">{label}</span>
+            <Link href="/portal/account" className="hidden text-white/80 hover:text-white sm:block">
+              {label}
+            </Link>
             <span className="flex size-8 items-center justify-center rounded-full bg-white text-xs font-bold text-somerset-green">{initials}</span>
             <form action={signOutAction}>
               <button type="submit" className="text-xs font-medium text-white/80 underline-offset-2 hover:text-white hover:underline">

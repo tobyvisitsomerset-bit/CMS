@@ -31,9 +31,11 @@ export type DetailExtras = {
   season: { label: string; events: SeasonEvent[] } | null;
   // The member's own online shop (Form tab > Online shop), with live products.
   shop: ShopProducer | null;
+  // Live special offers for this listing (from approved member offers).
+  offers: { id: string; title: string; description: string | null; url: string | null; validTo: Date | null }[];
 };
 
-export const EMPTY_EXTRAS: DetailExtras = { nearbyPlaces: [], nearbyStays: [], season: null, shop: null };
+export const EMPTY_EXTRAS: DetailExtras = { nearbyPlaces: [], nearbyStays: [], season: null, shop: null, offers: [] };
 
 function haversineMiles(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
   const R = 3958.8;
@@ -82,11 +84,18 @@ export async function getDetailExtras(page: {
     heroImageUrl: page.heroImageUrl ?? null,
     customFields: page.customFields,
   });
+  const now = new Date();
+  const offers = await prisma.offer.findMany({
+    where: { pageId: page.id, OR: [{ validTo: null }, { validTo: { gte: now } }], AND: [{ OR: [{ validFrom: null }, { validFrom: { lte: now } }] }] },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+    select: { id: true, title: true, description: true, url: true, validTo: true },
+  });
   const info = getBusinessInfo(parseCustomFields(page.customFields));
-  if (!info) return { ...EMPTY_EXTRAS, shop };
+  if (!info) return { ...EMPTY_EXTRAS, shop, offers };
 
   const isEvent = !!info.startDate;
-  const extras: DetailExtras = { nearbyPlaces: [], nearbyStays: [], season: null, shop };
+  const extras: DetailExtras = { nearbyPlaces: [], nearbyStays: [], season: null, shop, offers };
 
   if (info.mapLat != null && info.mapLng != null) {
     const here = { lat: info.mapLat, lng: info.mapLng };

@@ -17,10 +17,11 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
 
   const page = await prisma.page.findFirst({
     where: { id, assignedMemberId: userId, status: { not: "ARCHIVED" } },
-    include: { rooms: { orderBy: { sortOrder: "asc" } } },
+    include: { rooms: { orderBy: { sortOrder: "asc" } }, tags: { select: { name: true } } },
   });
   if (!page) notFound();
 
+  const tagRows = await prisma.tag.findMany({ select: { name: true }, orderBy: { name: "asc" }, take: 60 });
   const live = proposalFromPage(page);
   const request = await getActiveRequest(id, userId);
   const saved = request ? parseProposal(request.proposal) : null;
@@ -38,6 +39,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
         slug={page.slug}
         section={labelForSlugSegment(page.slug.split("/")[0])}
         tierLabel={levelLabel(page.membershipTier)}
+        tagOptions={tagRows.map((t) => t.name)}
         published={page.status === "PUBLISHED"}
         live={live}
         initial={saved ?? live}

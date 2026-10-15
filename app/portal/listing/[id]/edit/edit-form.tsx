@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 
 const EMPTY_ROOM: ProposalRoom = { name: "", description: "", imageUrl: "", priceLabel: "", features: "", bookingUrl: "" };
 
-type TabKey = "details" | "photos" | "hours" | "contact" | "address" | "rooms";
+type TabKey = "details" | "photos" | "hours" | "access" | "facilities" | "contact" | "address" | "rooms" | "spaces";
 
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
@@ -33,6 +33,7 @@ export function EditForm({
   slug,
   section,
   tierLabel,
+  tagOptions,
   published,
   live,
   initial,
@@ -44,6 +45,7 @@ export function EditForm({
   slug: string;
   section: string;
   tierLabel: string | null;
+  tagOptions: string[];
   published: boolean;
   live: Proposal;
   initial: Proposal;
@@ -53,6 +55,7 @@ export function EditForm({
   const router = useRouter();
   const [p, setP] = useState<Proposal>(initial);
   const [tab, setTab] = useState<TabKey>("details");
+  const [newTag, setNewTag] = useState("");
   const [pending, start] = useTransition();
 
   const set = <K extends keyof Proposal>(key: K, value: Proposal[K]) => setP((cur) => ({ ...cur, [key]: value }));
@@ -102,9 +105,12 @@ export function EditForm({
     { key: "details", label: "Details" },
     { key: "photos", label: `Photos ${photoCount}` },
     { key: "hours", label: "Opening hours & prices" },
+    { key: "access", label: "Access" },
+    { key: "facilities", label: "Facilities" },
     { key: "contact", label: "Contact & booking" },
     { key: "address", label: "Address" },
     { key: "rooms", label: `Rooms ${p.rooms.length || ""}`.trim() },
+    { key: "spaces", label: "Bookable spaces" },
   ];
 
   return (
@@ -152,6 +158,16 @@ export function EditForm({
                   <Input {...text("town")} />
                 </Field>
               </div>
+              {(live.startDate || p.startDate) && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Starts">
+                    <Input type="date" {...text("startDate")} />
+                  </Field>
+                  <Field label="Ends">
+                    <Input type="date" {...text("endDate")} />
+                  </Field>
+                </div>
+              )}
               <Field label="Tagline" hint="A few words, shown under the name.">
                 <Input maxLength={300} {...text("tagline")} />
               </Field>
@@ -195,6 +211,70 @@ export function EditForm({
                 <Textarea rows={5} maxLength={4000} {...text("admission")} />
               </Field>
             </>
+          )}
+
+          {tab === "access" && (
+            <>
+              <Field label="Access and general information" hint="Step-free access, parking, dogs, anything a visitor should know before they come.">
+                <Textarea rows={5} maxLength={2000} {...text("accessNotes")} />
+              </Field>
+              <Field label="Road directions">
+                <Textarea rows={4} maxLength={2000} {...text("roadDirections")} />
+              </Field>
+              <Field label="Public transport">
+                <Textarea rows={4} maxLength={2000} {...text("publicTransport")} />
+              </Field>
+            </>
+          )}
+
+          {tab === "facilities" && (
+            <>
+              <p className="text-sm text-stone-600">Tags shown on your card. Choose the ones that describe you, or add your own.</p>
+              <div className="flex flex-wrap gap-2">
+                {Array.from(new Set([...tagOptions, ...p.tags])).map((t) => {
+                  const on = p.tags.includes(t);
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => set("tags", on ? p.tags.filter((x) => x !== t) : [...p.tags, t].slice(0, 12))}
+                      className={cn(
+                        "rounded-full border px-4 py-1.5 text-sm font-semibold",
+                        on ? "border-somerset-green bg-somerset-green text-white" : "border-stone-300 text-stone-700 hover:bg-stone-50",
+                      )}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
+              </div>
+              <form
+                className="flex max-w-sm gap-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const v = newTag.trim().slice(0, 40);
+                  if (v && !p.tags.includes(v)) set("tags", [...p.tags, v].slice(0, 12));
+                  setNewTag("");
+                }}
+              >
+                <Input value={newTag} onChange={(e) => setNewTag(e.target.value)} placeholder="Add your own tag" />
+                <button type="submit" className="rounded-full border border-stone-300 px-4 text-sm font-semibold hover:bg-stone-50">
+                  Add
+                </button>
+              </form>
+            </>
+          )}
+
+          {tab === "spaces" && (
+            <div className="space-y-3 text-sm text-stone-700">
+              <p>
+                Put this listing at the top of a Visit Somerset page for a week or more, with a Featured ribbon. Choose the pages and weeks
+                on the Bookable spaces screen.
+              </p>
+              <Link href="/portal/spaces" className="inline-block rounded-full bg-somerset-green px-5 py-2.5 font-bold text-white hover:opacity-90">
+                Book advertising space
+              </Link>
+            </div>
           )}
 
           {tab === "contact" && (

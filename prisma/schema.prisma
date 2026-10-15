@@ -403,3 +403,67 @@ model ChangeRequest {
   @@index([pageId, status])
   @@index([status])
 }
+
+// A new listing, event or offer proposed by a member. Nothing is created on
+// the site until the team approves it (see lib/data/submissions.ts).
+model Submission {
+  id           String    @id @default(cuid())
+  kind         String // LISTING | EVENT | OFFER
+  authorId     String
+  status       String    @default("DRAFT") // DRAFT | SUBMITTED | APPROVED | REJECTED
+  title        String
+  data         String // JSON
+  note         String? // reviewer's reason when sent back
+  resultPageId String? // the page created on approval
+  decidedById  String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  submittedAt  DateTime?
+  decidedAt    DateTime?
+
+  @@index([status])
+  @@index([authorId])
+}
+
+// A special offer shown on a listing page. Created when a member's offer
+// submission is approved.
+model Offer {
+  id          String    @id @default(cuid())
+  pageId      String
+  title       String
+  description String?
+  url         String?
+  validFrom   DateTime?
+  validTo     DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([pageId])
+}
+
+// Real, simple view counting for listing pages that belong to a member.
+model PageView {
+  pageId String
+  day    String // yyyy-mm-dd
+  views  Int    @default(0)
+
+  @@id([pageId, day])
+}
+
+// One row per placement per week requested through "Bookable spaces". The
+// team confirms and invoices; there is no card payment on this site yet.
+model AdSlotBooking {
+  id         String   @id @default(cuid())
+  ref        String
+  memberId   String
+  pageId     String // the listing being promoted
+  placement  String // key from lib/ad-spaces.ts
+  weekStart  String // yyyy-mm-dd (a Monday)
+  pricePence Int
+  status     String   @default("REQUESTED") // REQUESTED | CONFIRMED | CANCELLED
+  poNumber   String?
+  createdAt  DateTime @default(now())
+
+  @@index([placement, weekStart])
+  @@index([memberId])
+  @@index([ref])
+}

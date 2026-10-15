@@ -5,6 +5,8 @@ import { getDetailExtras } from "@/lib/data/detail-extras";
 import { getAllListingsGrouped } from "@/lib/data/listings";
 import { resolveBlockData } from "@/lib/data/block-data";
 import { PagePreview } from "@/components/cms/page-editor/page-preview";
+import { recordView } from "@/lib/data/views";
+import { headers } from "next/headers";
 
 type Params = { slug: string[] };
 
@@ -45,6 +47,11 @@ export default async function PublicPage({
     const canonical = await getPageById(page.linkedPageId);
     if (canonical) redirect(`/${canonical.slug}`);
     notFound();
+  }
+
+  if (page.assignedMemberId) {
+    const ua = (await headers()).get("user-agent");
+    await recordView(page.id, ua);
   }
 
   const [listings, extras, childPages, blockData] = await Promise.all([

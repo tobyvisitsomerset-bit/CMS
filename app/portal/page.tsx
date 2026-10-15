@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getMemberEnquiries, getMemberListings } from "@/lib/data/member";
 import { MarkReadButton } from "@/components/portal/mark-read-button";
 import { WithdrawButton } from "@/components/portal/withdraw-button";
+import { viewsByDay } from "@/lib/data/views";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,8 @@ export default async function PortalDashboard() {
     prisma.notification.findMany({ where: { userId, read: false }, orderBy: { createdAt: "desc" }, take: 5 }),
   ]);
 
+  const daily = await viewsByDay(listings.map((l) => l.id), 30);
+  const views30 = Object.values(daily).reduce((s, d) => s + d.reduce((x, y) => x + y.views, 0), 0);
   const first = (session!.user.name ?? "there").split(" ")[0];
   const live = listings.filter((l) => l.status === "PUBLISHED").length;
   const waiting = listings.filter((l) => l.change === "SUBMITTED").length;
@@ -49,9 +52,19 @@ export default async function PortalDashboard() {
       <p className="text-[11px] font-semibold tracking-[0.18em] text-stone-500 uppercase">
         {tier ? `${tier} member` : "Visit Somerset member"}
       </p>
-      <h1 className="mt-1 font-serif text-4xl font-black tracking-tight text-stone-900">
-        {greeting()}, {first}
-      </h1>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <h1 className="mt-1 font-serif text-4xl font-black tracking-tight text-stone-900">
+          {greeting()}, {first}
+        </h1>
+        <div className="flex gap-2 text-sm font-bold">
+          <Link href="/portal/submit/event" className="rounded-full border border-stone-300 bg-white px-4 py-2 hover:bg-stone-50">
+            + Add an event
+          </Link>
+          <Link href="/portal/submit/listing" className="rounded-full bg-somerset-green px-4 py-2 text-white hover:opacity-90">
+            + New listing
+          </Link>
+        </div>
+      </div>
       <p className="mt-1 text-stone-600">
         {listings.length === 0
           ? "No listings are assigned to you yet. Please get in touch with the Visit Somerset team."
@@ -63,8 +76,8 @@ export default async function PortalDashboard() {
       </p>
 
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Stat value={String(listings.length)} label="Listings assigned to you" />
-        <Stat value={String(live)} label="Live on visitsomerset.co.uk" />
+        <Stat value={views30.toLocaleString("en-GB")} label="Listing views, last 30 days" />
+        <Stat value={String(live)} label={`Live of ${listings.length} listing${listings.length === 1 ? "" : "s"}`} />
         <Stat value={String(newEnquiries)} label="New enquiries" />
         <Stat value={String(waiting)} label="Change awaiting approval" tone="pink" />
       </div>
@@ -210,6 +223,16 @@ export default async function PortalDashboard() {
                 ))}
               </ul>
             )}
+          </div>
+
+          <div className="rounded-3xl bg-somerset-green p-5 text-white">
+            <h3 className="font-serif text-lg font-black">Bookable spaces</h3>
+            <p className="mt-1 text-sm text-white/90">
+              Put your listing at the top of a Visit Somerset page, sold by the week with a Featured ribbon.
+            </p>
+            <Link href="/portal/spaces" className="mt-3 inline-block rounded-full bg-white px-4 py-2 text-sm font-bold text-somerset-green hover:opacity-90">
+              Book advertising space
+            </Link>
           </div>
 
           <div className="rounded-3xl bg-stone-100 p-5">

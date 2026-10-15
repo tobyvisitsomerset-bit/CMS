@@ -6,6 +6,15 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
 import { notifySubmittedForReview } from "@/lib/data/notifications";
+import {
+  deleteSubmission,
+  problemsWith,
+  sanitise,
+  saveSubmission,
+  titleOf,
+  type SubmissionKind,
+} from "@/lib/data/submissions";
+import { bookableWeeks, placementByKey, totals } from "@/lib/ad-spaces";
 import { diffProposal, keepUnchanged, proposalFromPage, sanitiseProposal, saveRequest, withdrawRequest } from "@/lib/data/change-requests";
 
 // Everything a member does here is scoped to pages assigned to them, and
@@ -22,7 +31,7 @@ async function requireMember() {
 async function ownedPage(pageId: string, userId: string) {
   const page = await prisma.page.findFirst({
     where: { id: pageId, assignedMemberId: userId },
-    include: { rooms: { orderBy: { sortOrder: "asc" } } },
+    include: { rooms: { orderBy: { sortOrder: "asc" } }, tags: { select: { name: true } } },
   });
   if (!page) throw new Error("Not permitted");
   return page;
@@ -101,5 +110,124 @@ export async function changePasswordAction(_prev: PasswordResult | null, formDat
     return { ok: false, error: "Your current password is not right." };
   }
   await prisma.user.update({ where: { id: session.user.id }, data: { passwordHash: await bcrypt.hash(next, 12) } });
+  return { ok: true };
+}
+
+// ---------- New listings, events and offers ----------
+
+export type SubmissionResult = { ok: true; message: string; id: string } | { ok: false; error: string };
+
+export async function saveSubmissionAction(
+  kind: SubmissionKind,
+  raw: unknown,
+  submit: boolean,
+  id?: string | null,
+): Promise<SubmissionResult> {
+  const session = await requireMember();
+  if (!["LISTING", "EVENT", "OFFER"].includes(kind)) return { ok: false, error: "Unknown type." };
+  const data = sanitise(kind, raw);
+
+  if (kind === "OFFER") {
+    // An offer can only be for one of the member's own listings.
+    const owned = await prisma.page.findFirst({
+      where: { id: (data as { pageId: string }).pageId, assignedMemberId: session.user.id },
+      select: { id: true },
+    });
+    if (!owned) return { ok: false, error: "Choose one of your own listings for this offer." };
+  }
+
+  if (submit) {
+    const problems = problemsWith(kind, data);
+    if (problems.length > 0) return { ok: false, error: problems[0] };
+  } else if (!titleOf(kind, data)) {
+    return { ok: false, error: "Add a name first so the draft can be saved." };
+  }
+
+  const saved = await saveSubmission({ id, kind, authorId: session.user.id, data, submit });
+  if (submit) {
+    const label = kind === "LISTING" ? "new listing" : kind === "EVENT" ? "new event" : "new offer";
+    await notifySubmittedForReview(`${titleOf(kind, data)} (${label})`, saved.id, session.user.name ?? "A member");
+  }
+  revalidatePath("/portal", "layout");
+  revalidatePath("/cms/approvals");
+  return {
+    ok: true,
+    id: saved.id,
+    message: submit
+      ? "Sent to the Visit Somerset team for approval. It goes live on the site once they approve it."
+      : "Draft saved. It is not visible to anyone else until you send it for approval.",
+  };
+}
+
+export async function deleteSubmissionAction(id: string): Promise<{ ok: true }> {
+  const session = await requireMember();
+  await deleteSubmission(id, session.user.id);
+  revalidatePath("/portal", "layout");
+  revalidatePath("/cms/approvals");
+  return { ok: true };
+}
+
+// ---------- Bookable spaces (advertising placements) ----------
+
+export async function requestAdSpaceAction(input: {
+  pageId: string;
+  placements: string[];
+  weeks: string[];
+  poNumber?: string;
+}): Promise<{ ok: true; ref: string; total: number } | { ok: false; error: string }> {
+  const session = await requireMember();
+  await ownedPage(input.pageId, session.user.id);
+
+  const allowedWeeks = new Set(bookableWeeks());
+  const weeks = Array.from(new Set(input.weeks)).filter((w) => allowedWeeks.has(w)).sort();
+  const keys = Array.from(new Set(input.placements)).filter((k) => placementByKey(k));
+  if (keys.length === 0) return { ok: false, error: "Choose at least one page." };
+  if (weeks.length === 0) return { ok: false, error: "Choose at least one week." };
+
+  // Slots are checked again on the server; the screen only shows a snapshot.
+  const existing = await prisma.adSlotBooking.findMany({
+    where: { placement: { in: keys }, weekStart: { in: weeks }, status: { not: "CANCELLED" } },
+    select: { placement: true, weekStart: true, memberId: true, pageId: true },
+  });
+  for (const k of keys) {
+    const slots = placementByKey(k)!.slots;
+    for (const w of weeks) {
+      const taken = existing.filter((e) => e.placement === k && e.weekStart === w);
+      if (taken.length >= slots) {
+        return { ok: false, error: `${placementByKey(k)!.label} is sold out for the week of ${w}. Please pick another week.` };
+      }
+      if (taken.some((e) => e.pageId === input.pageId)) {
+        return { ok: false, error: `This listing already has ${placementByKey(k)!.label} for the week of ${w}.` };
+      }
+    }
+  }
+
+  const ref = `VS-AD-${Date.now().toString(36).toUpperCase().slice(-6)}`;
+  await prisma.adSlotBooking.createMany({
+    data: keys.flatMap((k) =>
+      weeks.map((w) => ({
+        ref,
+        memberId: session.user.id,
+        pageId: input.pageId,
+        placement: k,
+        weekStart: w,
+        pricePence: placementByKey(k)!.weekPencePrice,
+        poNumber: (input.poNumber ?? "").trim().slice(0, 60) || null,
+      })),
+    ),
+  });
+  const t = totals(keys, weeks);
+  await notifySubmittedForReview(`Advertising space ${ref}: ${keys.map((k) => placementByKey(k)!.label).join(", ")}`, input.pageId, session.user.name ?? "A member");
+  revalidatePath("/portal", "layout");
+  return { ok: true, ref, total: t.total };
+}
+
+export async function cancelAdBookingAction(ref: string): Promise<{ ok: true }> {
+  const session = await requireMember();
+  await prisma.adSlotBooking.updateMany({
+    where: { ref, memberId: session.user.id, status: "REQUESTED" },
+    data: { status: "CANCELLED" },
+  });
+  revalidatePath("/portal", "layout");
   return { ok: true };
 }

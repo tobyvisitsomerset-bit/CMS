@@ -6,10 +6,13 @@ import { cn } from "@/lib/utils";
 
 const ITEMS = [
   { href: "/portal", label: "My listings", match: (p: string) => p === "/portal" || p.startsWith("/portal/listing") },
+  { href: "/portal/events", label: "Events", match: (p: string) => p.startsWith("/portal/events") || p.startsWith("/portal/submit/event") },
+  { href: "/portal/offers", label: "Offers", match: (p: string) => p.startsWith("/portal/offers") || p.startsWith("/portal/submit/offer") },
   { href: "/portal/enquiries", label: "Enquiries", match: (p: string) => p.startsWith("/portal/enquiries") },
+  { href: "/portal/spaces", label: "Bookable spaces", match: (p: string) => p.startsWith("/portal/spaces") },
   { href: "/portal/photos", label: "Photos", match: (p: string) => p.startsWith("/portal/photos") },
+  { href: "/portal/performance", label: "Performance", match: (p: string) => p.startsWith("/portal/performance") },
   { href: "/portal/membership", label: "Membership", match: (p: string) => p.startsWith("/portal/membership") },
-  { href: "/portal/account", label: "Account", match: (p: string) => p.startsWith("/portal/account") },
 ];
 
 export function PortalNav({ newEnquiries }: { newEnquiries: number }) {

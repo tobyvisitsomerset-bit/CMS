@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { setPageTagsAndCategories } from "@/lib/data/pages";
 import { parseCustomFieldsArray, serializeCustomFields, setCF, type CustomField } from "@/lib/custom-fields";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
 
@@ -35,6 +36,12 @@ export type Proposal = {
   facebook: string;
   twitter: string;
   instagram: string;
+  startDate: string;
+  endDate: string;
+  roadDirections: string;
+  publicTransport: string;
+  accessNotes: string;
+  tags: string[];
   rooms: ProposalRoom[];
 };
 
@@ -54,6 +61,11 @@ const INFO_KEYS: Record<string, keyof Proposal> = {
   ItemFacebook: "facebook",
   ItemTwitter: "twitter",
   ItemInstagram: "instagram",
+  ItemStartDate: "startDate",
+  ItemEndDate: "endDate",
+  ItemRoadDirections: "roadDirections",
+  ItemPublicTransportDirections: "publicTransport",
+  ItemGeneralOpeningInformation: "accessNotes",
 };
 
 export const FIELD_LABELS: Record<keyof Proposal, string> = {
@@ -76,6 +88,12 @@ export const FIELD_LABELS: Record<keyof Proposal, string> = {
   facebook: "Facebook",
   twitter: "Twitter / X",
   instagram: "Instagram",
+  startDate: "Starts",
+  endDate: "Ends",
+  roadDirections: "Road directions",
+  publicTransport: "Public transport",
+  accessNotes: "Access and general information",
+  tags: "Tags on your card",
   rooms: "Rooms",
 };
 
@@ -86,6 +104,7 @@ type PageForProposal = {
   heroImageUrl: string | null;
   galleryUrls: string | null;
   customFields: string | null;
+  tags?: { name: string }[];
   rooms: { name: string; description: string | null; imageUrl: string | null; priceLabel: string | null; features: string | null; bookingUrl: string | null }[];
 };
 
@@ -125,6 +144,12 @@ export function proposalFromPage(page: PageForProposal): Proposal {
     facebook: fields.ItemFacebook ?? "",
     twitter: fields.ItemTwitter ?? "",
     instagram: fields.ItemInstagram ?? "",
+    startDate: (fields.ItemStartDate ?? "").slice(0, 10),
+    endDate: (fields.ItemEndDate ?? "").slice(0, 10),
+    roadDirections: plain(fields.ItemRoadDirections),
+    publicTransport: plain(fields.ItemPublicTransportDirections),
+    accessNotes: plain(fields.ItemGeneralOpeningInformation),
+    tags: (page.tags ?? []).map((t) => t.name),
     rooms: page.rooms.map((r) => {
       let features = "";
       try {
@@ -178,6 +203,14 @@ export function sanitiseProposal(raw: unknown): Proposal {
     facebook: clip(r.facebook, 200),
     twitter: clip(r.twitter, 200),
     instagram: clip(r.instagram, 200),
+    startDate: clip(r.startDate, 10),
+    endDate: clip(r.endDate, 10),
+    roadDirections: clip(r.roadDirections, 2000),
+    publicTransport: clip(r.publicTransport, 2000),
+    accessNotes: clip(r.accessNotes, 2000),
+    tags: Array.isArray(r.tags)
+      ? Array.from(new Set((r.tags as unknown[]).map((t) => clip(t, 40)).filter(Boolean))).slice(0, 12)
+      : [],
     rooms: rooms
       .filter((room) => clip(room.name, 120))
       .map((room) => ({
@@ -214,6 +247,7 @@ export type FieldChange = { key: keyof Proposal; label: string; before: string; 
 
 function show(key: keyof Proposal, p: Proposal): string {
   if (key === "gallery") return p.gallery.length ? `${p.gallery.length} photo${p.gallery.length === 1 ? "" : "s"}` : "none";
+  if (key === "tags") return p.tags.length ? p.tags.join(", ") : "none";
   if (key === "rooms") return p.rooms.length ? p.rooms.map((r) => `${r.name}${r.priceLabel ? ` (${r.priceLabel})` : ""}`).join("; ") : "none";
   const v = p[key] as string;
   return v || "—";
@@ -260,7 +294,10 @@ export async function withdrawRequest(pageId: string, authorId: string) {
 // actually changed are written, so untouched rich text (e.g. opening times
 // authored in Kentico) is never flattened by an unrelated edit.
 export async function applyProposal(pageId: string, proposal: Proposal) {
-  const page = await prisma.page.findUnique({ where: { id: pageId }, include: { rooms: { orderBy: { sortOrder: "asc" } } } });
+  const page = await prisma.page.findUnique({
+    where: { id: pageId },
+    include: { rooms: { orderBy: { sortOrder: "asc" } }, tags: { select: { name: true } } },
+  });
   if (!page) throw new Error("Page not found");
   const before = proposalFromPage(page);
   const changed = (key: keyof Proposal) => JSON.stringify(before[key]) !== JSON.stringify(proposal[key]);
@@ -306,4 +343,9 @@ export async function applyProposal(pageId: string, proposal: Proposal) {
     );
   }
   await prisma.$transaction(ops);
+
+  if (changed("tags")) {
+    const cats = await prisma.page.findUnique({ where: { id: pageId }, select: { categories: { select: { name: true } } } });
+    await setPageTagsAndCategories(pageId, proposal.tags, (cats?.categories ?? []).map((c) => c.name));
+  }
 }
