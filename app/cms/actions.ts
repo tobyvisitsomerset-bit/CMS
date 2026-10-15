@@ -2,6 +2,7 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { withListingMarker } from "@/lib/listing-marker";
+import { setPlacements } from "@/lib/data/placements";
 import { auth } from "@/lib/auth";
 import { hasCapability, canAccessPage, canEditLive, isAdmin } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
@@ -495,6 +496,16 @@ export async function listPendingApprovalsAction() {
     include: { assignedMember: { select: { name: true } }, author: { select: { name: true } } },
     orderBy: { updatedAt: "desc" },
   });
+}
+
+export async function setPlacementsAction(pageId: string, landingIds: string[]) {
+  const session = await requireSession();
+  if (!canEditLive(session.user.roleKey) || !hasCapability(session.user.roleKey, "pages.edit")) throw new Error("Not permitted");
+  const kept = await setPlacements(pageId, landingIds, session.user.id, null);
+  await logAudit({ userId: session.user.id, pageId, action: "updated", details: `Shown on ${kept.length} extra landing page(s)` });
+  updateTag("listings");
+  revalidatePath("/cms");
+  return { count: kept.length };
 }
 
 export async function linkExistingPageAction(parentId: string, targetId: string) {

@@ -13,11 +13,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { PlacementsPicker, type PlacementOption } from "@/components/cms/placements-picker";
 import { ACCESS_FEATURES } from "@/lib/accessibility";
 
 const EMPTY_ROOM: ProposalRoom = { name: "", description: "", imageUrl: "", priceLabel: "", features: "", bookingUrl: "" };
 
-type TabKey = "details" | "photos" | "hours" | "access" | "facilities" | "contact" | "address" | "rooms" | "spaces";
+type TabKey = "details" | "photos" | "hours" | "access" | "facilities" | "where" | "contact" | "address" | "rooms" | "spaces";
 
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
@@ -37,6 +38,9 @@ export function EditForm({
   tierLabel,
   tagOptions,
   detectedAccess,
+  landingOptions,
+  homeIds,
+  placementCap,
   published,
   live,
   initial,
@@ -50,6 +54,9 @@ export function EditForm({
   tierLabel: string | null;
   tagOptions: string[];
   detectedAccess: string[];
+  landingOptions: PlacementOption[];
+  homeIds: string[];
+  placementCap: number;
   published: boolean;
   live: Proposal;
   initial: Proposal;
@@ -111,6 +118,7 @@ export function EditForm({
     { key: "hours", label: "Opening hours & prices" },
     { key: "access", label: "Access" },
     { key: "facilities", label: "Facilities" },
+    { key: "where", label: `Where you appear ${p.placements.length || ""}`.trim() },
     { key: "contact", label: "Contact & booking" },
     { key: "address", label: "Address" },
     { key: "rooms", label: `Rooms ${p.rooms.length || ""}`.trim() },
@@ -288,6 +296,28 @@ export function EditForm({
                   Add
                 </button>
               </form>
+            </>
+          )}
+
+          {tab === "where" && (
+            <>
+              <p className="text-sm text-stone-600">
+                Choose other landing pages your listing should also appear on, such as Animals or Family fun. Your level allows up to{" "}
+                <strong>{placementCap}</strong> extra landing page{placementCap === 1 ? "" : "s"}, in addition to where you already sit.
+              </p>
+              {placementCap === 0 ? (
+                <p className="rounded-2xl bg-cool-grey p-4 text-sm text-stone-700">
+                  Extra landing pages come with a membership level. Ask the team about upgrading.
+                </p>
+              ) : (
+                <PlacementsPicker
+                  options={landingOptions}
+                  selected={p.placements}
+                  onChange={(ids) => set("placements", ids)}
+                  cap={placementCap}
+                  homeIds={homeIds}
+                />
+              )}
             </>
           )}
 

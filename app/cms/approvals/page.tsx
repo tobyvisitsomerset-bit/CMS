@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { hasCapability } from "@/lib/permissions";
 import { listPendingApprovalsAction } from "@/app/cms/actions";
 import { diffProposal, parseProposal, proposalFromPage } from "@/lib/data/change-requests";
+import { getLandingOptions, placementsFor } from "@/lib/data/placements";
 import { ApprovalsList } from "@/components/cms/approvals/approvals-list";
 import { ChangeRequestsList, type ChangeItem } from "@/components/cms/approvals/change-requests-list";
 import { SubmissionsList, type SubmissionItem, type AdRequestItem } from "@/components/cms/approvals/submissions-list";
@@ -36,6 +37,10 @@ export default async function ApprovalsPage() {
     prisma.user.findMany({ where: { id: { in: requests.map((r) => r.authorId) } }, select: { id: true, name: true } }),
   ]);
 
+  const landingLabels = Object.fromEntries((await getLandingOptions()).map((l) => [l.id, l.title]));
+  const placementMap = new Map<string, string[]>();
+  for (const p of livePages) placementMap.set(p.id, await placementsFor(p.id));
+
   const items: ChangeItem[] = [];
   for (const r of requests) {
     const page = livePages.find((p) => p.id === r.pageId);
@@ -48,7 +53,7 @@ export default async function ApprovalsPage() {
       pageSlug: page.slug,
       author: authors.find((a) => a.id === r.authorId)?.name ?? "A member",
       submittedAt: (r.submittedAt ?? r.updatedAt).toISOString(),
-      changes: diffProposal(proposalFromPage(page), proposal),
+      changes: diffProposal(proposalFromPage({ ...page, placements: placementMap.get(page.id) ?? [] }), proposal, landingLabels),
     });
   }
 

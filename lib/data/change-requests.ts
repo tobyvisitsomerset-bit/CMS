@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { withListingMarker } from "@/lib/listing-marker";
+import { placementCap, placementsFor, setPlacements } from "@/lib/data/placements";
 import { ACCESS_FEATURES, accessLabel, ownAccessKeys } from "@/lib/accessibility";
 import { setPageTagsAndCategories } from "@/lib/data/pages";
 import { parseCustomFieldsArray, serializeCustomFields, setCF, type CustomField } from "@/lib/custom-fields";
@@ -44,6 +45,8 @@ export type Proposal = {
   publicTransport: string;
   accessNotes: string;
   accessibility: string[];
+  /** Landing page ids this listing also appears on (capped by membership level). */
+  placements: string[];
   tags: string[];
   rooms: ProposalRoom[];
 };
@@ -97,6 +100,7 @@ export const FIELD_LABELS: Record<keyof Proposal, string> = {
   publicTransport: "Public transport",
   accessNotes: "Access and general information",
   accessibility: "Accessibility features",
+  placements: "Also shown on landing pages",
   tags: "Tags on your card",
   rooms: "Rooms",
 };
@@ -109,6 +113,7 @@ type PageForProposal = {
   galleryUrls: string | null;
   customFields: string | null;
   tags?: { name: string }[];
+  placements?: string[];
   rooms: { name: string; description: string | null; imageUrl: string | null; priceLabel: string | null; features: string | null; bookingUrl: string | null }[];
 };
 
@@ -154,6 +159,7 @@ export function proposalFromPage(page: PageForProposal): Proposal {
     publicTransport: plain(fields.ItemPublicTransportDirections),
     accessNotes: plain(fields.ItemGeneralOpeningInformation),
     accessibility: ownAccessKeys(page.customFields),
+    placements: page.placements ?? [],
     tags: (page.tags ?? []).map((t) => t.name),
     rooms: page.rooms.map((r) => {
       let features = "";
@@ -216,6 +222,9 @@ export function sanitiseProposal(raw: unknown): Proposal {
     accessibility: Array.isArray(r.accessibility)
       ? ACCESS_FEATURES.map((f) => f.key as string).filter((k) => (r.accessibility as unknown[]).includes(k))
       : [],
+    placements: Array.isArray(r.placements)
+      ? Array.from(new Set((r.placements as unknown[]).map((t) => clip(t, 40)).filter(Boolean))).slice(0, 12)
+      : [],
     tags: Array.isArray(r.tags)
       ? Array.from(new Set((r.tags as unknown[]).map((t) => clip(t, 40)).filter(Boolean))).slice(0, 12)
       : [],
@@ -253,7 +262,8 @@ export function parseProposal(json: string): Proposal | null {
 
 export type FieldChange = { key: keyof Proposal; label: string; before: string; after: string };
 
-function show(key: keyof Proposal, p: Proposal): string {
+function show(key: keyof Proposal, p: Proposal, labels?: Record<string, string>): string {
+  if (key === "placements") return p.placements.length ? p.placements.map((id) => labels?.[id] ?? id).join(", ") : "none";
   if (key === "gallery") return p.gallery.length ? `${p.gallery.length} photo${p.gallery.length === 1 ? "" : "s"}` : "none";
   if (key === "tags") return p.tags.length ? p.tags.join(", ") : "none";
   if (key === "accessibility") return p.accessibility.length ? p.accessibility.map(accessLabel).join(", ") : "none";
@@ -262,12 +272,12 @@ function show(key: keyof Proposal, p: Proposal): string {
   return v || "—";
 }
 
-export function diffProposal(before: Proposal, after: Proposal): FieldChange[] {
+export function diffProposal(before: Proposal, after: Proposal, labels?: Record<string, string>): FieldChange[] {
   const changes: FieldChange[] = [];
   (Object.keys(FIELD_LABELS) as (keyof Proposal)[]).forEach((key) => {
     const a = JSON.stringify(before[key]);
     const b = JSON.stringify(after[key]);
-    if (a !== b) changes.push({ key, label: FIELD_LABELS[key], before: show(key, before), after: show(key, after) });
+    if (a !== b) changes.push({ key, label: FIELD_LABELS[key], before: show(key, before, labels), after: show(key, after, labels) });
   });
   return changes;
 }
@@ -302,13 +312,13 @@ export async function withdrawRequest(pageId: string, authorId: string) {
 // Apply an approved proposal to the live page. Only fields the member
 // actually changed are written, so untouched rich text (e.g. opening times
 // authored in Kentico) is never flattened by an unrelated edit.
-export async function applyProposal(pageId: string, proposal: Proposal) {
+export async function applyProposal(pageId: string, proposal: Proposal, actorId: string) {
   const page = await prisma.page.findUnique({
     where: { id: pageId },
     include: { rooms: { orderBy: { sortOrder: "asc" } }, tags: { select: { name: true } } },
   });
   if (!page) throw new Error("Page not found");
-  const before = proposalFromPage(page);
+  const before = proposalFromPage({ ...page, placements: await placementsFor(pageId) });
   const changed = (key: keyof Proposal) => JSON.stringify(before[key]) !== JSON.stringify(proposal[key]);
 
   let cf: CustomField[] = parseCustomFieldsArray(page.customFields);
@@ -356,6 +366,10 @@ export async function applyProposal(pageId: string, proposal: Proposal) {
     );
   }
   await prisma.$transaction(ops);
+
+  if (changed("placements")) {
+    await setPlacements(pageId, proposal.placements, actorId, placementCap(page.membershipTier));
+  }
 
   if (changed("tags")) {
     const cats = await prisma.page.findUnique({ where: { id: pageId }, select: { categories: { select: { name: true } } } });

@@ -56,6 +56,7 @@ export function EditorShell({
   master,
   offers,
   diagnostics,
+  placementData,
 }: {
   page: PageDetail;
   canEdit: boolean;
@@ -72,6 +73,7 @@ export function EditorShell({
   master: MasterSettings;
   offers: { id: string; title: string; description: string | null; validFrom: string | null; validTo: string | null }[];
   diagnostics: ListingDiagnostics;
+  placementData: { options: { id: string; title: string; context: string }[]; selected: string[]; homeIds: string[]; cap: number };
 }) {
   const { mode, setMode } = useEditorMode();
   const [tab, setTab] = useState<Tab>("page");
@@ -190,7 +192,7 @@ export function EditorShell({
             )}
             {tab === "form" && (
               <div>
-                <FormTab page={page} readOnly={!canEdit} offers={offers} />
+                <FormTab page={page} readOnly={!canEdit} offers={offers} placementData={placementData} />
                 <div className="mx-auto max-w-5xl px-6 pb-10">
                   <h2 className="mb-2 bg-[#e5e5e5] px-4 py-2 text-[15px] font-semibold text-[#262524]">Rooms &amp; reviews</h2>
                   <RoomsReviewsTab page={page} readOnly={!canEdit} />

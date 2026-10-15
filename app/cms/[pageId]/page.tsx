@@ -11,6 +11,7 @@ import { prisma } from "@/lib/prisma";
 import { EditorShell } from "@/components/cms/page-editor/editor-shell";
 import { isFormDriven } from "@/components/cms/page-editor/page-preview";
 import { getListingDiagnostics } from "@/lib/data/listing-diagnostics";
+import { getLandingOptions, homeLandingIds, placementCap, placementsFor } from "@/lib/data/placements";
 
 export default async function PageEditorPage({ params }: { params: Promise<{ pageId: string }> }) {
   const { pageId } = await params;
@@ -47,6 +48,7 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
   const blockData = await resolveBlockData(page.contentBlocks);
   const members = canManageMembers ? await listMembers() : [];
   const diagnostics = await getListingDiagnostics(page);
+  const [landings, placed, homeIds] = await Promise.all([getLandingOptions(), placementsFor(page.id), homeLandingIds(page.id)]);
   const offers = await prisma.offer.findMany({ where: { pageId: page.id }, orderBy: { createdAt: "desc" } });
 
   return (
@@ -64,6 +66,7 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
       blockData={blockData}
       members={members}
       diagnostics={diagnostics}
+      placementData={{ options: landings.filter((l) => l.id !== page.id).map((l) => ({ id: l.id, title: l.title, context: l.context })), selected: placed, homeIds, cap: placementCap(page.membershipTier) }}
       offers={offers.map((o) => ({ id: o.id, title: o.title, description: o.description, validFrom: o.validFrom?.toISOString() ?? null, validTo: o.validTo?.toISOString() ?? null }))}
       canManageMembers={canManageMembers}
     />

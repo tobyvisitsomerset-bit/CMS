@@ -38,7 +38,7 @@ export async function approveChangeAction(requestId: string) {
   const page = await prisma.page.findUnique({ where: { id: request.pageId }, select: { title: true, slug: true } });
   if (!page) throw new Error("Page not found");
 
-  await applyProposal(request.pageId, proposal);
+  await applyProposal(request.pageId, proposal, session.user.id);
   await prisma.changeRequest.update({
     where: { id: requestId },
     data: { status: "APPROVED", decidedById: session.user.id, decidedAt: new Date(), note: null },

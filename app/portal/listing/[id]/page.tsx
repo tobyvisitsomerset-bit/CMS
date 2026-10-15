@@ -4,6 +4,7 @@ import { ArrowLeft, CheckCircle2, Circle, ExternalLink } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getMemberListings } from "@/lib/data/member";
+import { getLandingOptions, placementsFor } from "@/lib/data/placements";
 import { diffProposal, getActiveRequest, parseProposal, proposalFromPage } from "@/lib/data/change-requests";
 
 export const dynamic = "force-dynamic";
@@ -20,8 +21,9 @@ export default async function PortalListingPage({ params }: { params: Promise<{ 
     getActiveRequest(id, userId),
   ]);
   const offers = await prisma.offer.findMany({ where: { pageId: id }, orderBy: { createdAt: "desc" } });
+  const labels = Object.fromEntries((await getLandingOptions()).map((l) => [l.id, l.title]));
   const proposal = request ? parseProposal(request.proposal) : null;
-  const changes = page && proposal ? diffProposal(proposalFromPage(page), proposal) : [];
+  const changes = page && proposal ? diffProposal(proposalFromPage({ ...page, placements: await placementsFor(id) }), proposal, labels) : [];
 
   return (
     <div className="max-w-3xl">

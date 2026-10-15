@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MediaPickerField } from "@/components/cms/media-library/media-picker-field";
 import { GalleryField } from "@/components/cms/media-library/gallery-field";
-import { saveContentAction, deleteOfferAction } from "@/app/cms/actions";
+import { saveContentAction, deleteOfferAction, setPlacementsAction } from "@/app/cms/actions";
+import { PlacementsPicker, type PlacementOption } from "@/components/cms/placements-picker";
 import { type CustomField, getCF, parseCustomFieldsArray, serializeCustomFields, setCF } from "@/lib/custom-fields";
 import type { getPageById } from "@/lib/data/pages";
 import type { MembershipTier } from "@prisma/client";
@@ -95,7 +96,19 @@ function Field({ label, children }: { label: string; full?: boolean; children: R
 
 type OfferRow = { id: string; title: string; description: string | null; validFrom: string | null; validTo: string | null };
 
-export function FormTab({ page, readOnly, offers = [] }: { page: PageDetail; readOnly: boolean; offers?: OfferRow[] }) {
+type PlacementData = { options: PlacementOption[]; selected: string[]; homeIds: string[]; cap: number };
+
+export function FormTab({
+  page,
+  readOnly,
+  offers = [],
+  placementData,
+}: {
+  page: PageDetail;
+  readOnly: boolean;
+  offers?: OfferRow[];
+  placementData?: PlacementData;
+}) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [cf, setCfState] = useState<CustomField[]>(() => parseCustomFieldsArray(page.customFields));
@@ -107,6 +120,7 @@ export function FormTab({ page, readOnly, offers = [] }: { page: PageDetail; rea
   const [publishDate, setPublishDate] = useState(dateToIso(page.publishDate));
   const [expiryDate, setExpiryDate] = useState(dateToIso(page.expiryDate));
   const [dirty, setDirty] = useState(false);
+  const [placements, setPlacementsState] = useState<string[]>(placementData?.selected ?? []);
   const formRef = useRef<HTMLFormElement>(null);
 
   // The toolbar's Save button (Kentico-style, above the tabs) triggers this.
@@ -165,6 +179,10 @@ export function FormTab({ page, readOnly, offers = [] }: { page: PageDetail; rea
             categories: (values.categories ?? "").split(",").map((s) => s.trim()).filter(Boolean),
           },
         );
+        if (placementData) {
+          const changed = JSON.stringify([...placements].sort()) !== JSON.stringify([...placementData.selected].sort());
+          if (changed) await setPlacementsAction(page.id, placements);
+        }
         toast.success("Saved");
         setDirty(false);
         router.refresh();
@@ -479,11 +497,27 @@ export function FormTab({ page, readOnly, offers = [] }: { page: PageDetail; rea
         </Section>
 
         <Section title="Organization" defaultOpen={false}>
+          <Field label="Also show this page on">
+            <PlacementsPicker
+              options={placementData?.options ?? []}
+              selected={placements}
+              onChange={(ids) => {
+                setPlacementsState(ids);
+                setDirty(true);
+              }}
+              cap={null}
+              homeIds={placementData?.homeIds ?? []}
+              readOnly={readOnly}
+            />
+            {placementData && placementData.cap > 0 && (
+              <p className="text-xs text-neutral-500">
+                Members at this level can choose up to {placementData.cap} extra landing page{placementData.cap === 1 ? "" : "s"} themselves.
+                Staff are not limited.
+              </p>
+            )}
+          </Field>
           <Field label="Tags">
             <Input placeholder="family-friendly, dog-friendly" {...register("tags")} />
-          </Field>
-          <Field label="Categories">
-            <Input placeholder="Attractions, Outdoors" {...register("categories")} />
           </Field>
         </Section>
 

@@ -7,6 +7,7 @@ import { getActiveRequest, parseProposal, proposalFromPage } from "@/lib/data/ch
 import { levelLabel } from "@/lib/membership";
 import { labelForSlugSegment } from "@/lib/site-nav";
 import { EditForm } from "./edit-form";
+import { getLandingOptions, homeLandingIds, placementCap, placementsFor } from "@/lib/data/placements";
 import { getListingAccess } from "@/lib/accessibility";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +24,8 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
   if (!page) notFound();
 
   const tagRows = await prisma.tag.findMany({ select: { name: true }, orderBy: { name: "asc" }, take: 60 });
-  const live = proposalFromPage(page);
+  const [landings, placed, home] = await Promise.all([getLandingOptions(), placementsFor(id), homeLandingIds(id)]);
+  const live = proposalFromPage({ ...page, placements: placed });
   const request = await getActiveRequest(id, userId);
   const saved = request ? parseProposal(request.proposal) : null;
 
@@ -42,6 +44,9 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
         tierLabel={levelLabel(page.membershipTier)}
         tagOptions={tagRows.map((t) => t.name)}
         detectedAccess={getListingAccess(page.customFields).features}
+        landingOptions={landings.filter((l) => l.id !== id).map((l) => ({ id: l.id, title: l.title, context: l.context }))}
+        homeIds={home}
+        placementCap={placementCap(page.membershipTier)}
         published={page.status === "PUBLISHED"}
         live={live}
         initial={saved ?? live}

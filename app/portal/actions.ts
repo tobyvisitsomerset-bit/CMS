@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
 import { notifySubmittedForReview } from "@/lib/data/notifications";
+import { placementCap, placementsFor } from "@/lib/data/placements";
 import {
   deleteSubmission,
   problemsWith,
@@ -42,8 +43,10 @@ export type ChangeResult = { ok: true; message: string } | { ok: false; error: s
 export async function saveChangeAction(pageId: string, raw: unknown, submit: boolean): Promise<ChangeResult> {
   const session = await requireMember();
   const page = await ownedPage(pageId, session.user.id);
-  const live = proposalFromPage(page);
+  const live = proposalFromPage({ ...page, placements: await placementsFor(page.id) });
+  const cap = placementCap(page.membershipTier);
   const proposal = keepUnchanged(sanitiseProposal(raw), live);
+  proposal.placements = proposal.placements.slice(0, cap);
 
   const changes = diffProposal(live, proposal);
   if (submit && changes.length === 0) {
