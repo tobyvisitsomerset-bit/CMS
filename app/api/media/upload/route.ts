@@ -5,8 +5,8 @@ import { auth } from "@/lib/auth";
 import { hasCapability } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { kindFromMimeType } from "@/lib/data/media";
+import { UPLOAD_DIR } from "@/lib/uploads";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const MAX_SIZE = 15 * 1024 * 1024; // 15MB, dev-only guard
 
 // Files are served from the site's own origin, so anything the browser would
