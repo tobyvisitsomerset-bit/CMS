@@ -6,14 +6,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Minus, Plus, X } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MediaPickerField } from "@/components/cms/media-library/media-picker-field";
-import { MediaPickerDialog } from "@/components/cms/media-library/media-picker-dialog";
+import { GalleryField } from "@/components/cms/media-library/gallery-field";
 import { saveContentAction } from "@/app/cms/actions";
 import { type CustomField, getCF, parseCustomFieldsArray, serializeCustomFields, setCF } from "@/lib/custom-fields";
 import type { getPageById } from "@/lib/data/pages";
@@ -97,7 +97,6 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
   const [pending, startTransition] = useTransition();
   const [cf, setCfState] = useState<CustomField[]>(() => parseCustomFieldsArray(page.customFields));
   const [gallery, setGallery] = useState<string[]>(() => (page.galleryUrls ? JSON.parse(page.galleryUrls) : []));
-  const [galleryPickerOpen, setGalleryPickerOpen] = useState(false);
   const [heroImageUrl, setHeroImageUrl] = useState(page.heroImageUrl ?? "");
   const [membershipTier, setMembershipTier] = useState<MembershipTier | null>(
     (toLevel(page.membershipTier) as MembershipTier | null) ?? null,
@@ -226,48 +225,16 @@ export function FormTab({ page, readOnly }: { page: PageDetail; readOnly: boolea
           <Field label="Video Link">
             <Input value={getCF(cf, "ItemVideoLink")} onChange={(e) => set("ItemVideoLink", e.target.value)} />
           </Field>
-          <div className="col-span-2 space-y-1.5">
-            <div className="flex items-center justify-between">
-              <Label>Gallery</Label>
-              {!readOnly && (
-                <Button type="button" size="sm" variant="outline" onClick={() => setGalleryPickerOpen(true)}>
-                  <Plus className="h-3.5 w-3.5" /> Add image
-                </Button>
-              )}
-            </div>
-            {gallery.length === 0 ? (
-              <p className="text-xs text-neutral-400">No gallery images yet.</p>
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {gallery.map((url, i) => (
-                  <div key={url + i} className="relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={url} alt="" className="h-16 w-24 rounded-md border object-cover" />
-                    {!readOnly && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setGallery((g) => g.filter((_, idx) => idx !== i));
-                          setDirty(true);
-                        }}
-                        className="absolute -right-1.5 -top-1.5 rounded-full bg-white p-0.5 text-neutral-500 shadow ring-1 ring-neutral-200 hover:text-red-600"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-            <MediaPickerDialog
-              open={galleryPickerOpen}
-              onOpenChange={setGalleryPickerOpen}
-              onSelect={(url) => {
-                setGallery((g) => [...g, url]);
+          <Field label="Gallery">
+            <GalleryField
+              urls={gallery}
+              onChange={(u) => {
+                setGallery(u);
                 setDirty(true);
               }}
+              disabled={readOnly}
             />
-          </div>
+          </Field>
         </Section>
 
         <Section title="Address" defaultOpen={false}>

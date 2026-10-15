@@ -59,7 +59,14 @@ export function MediaPickerDialog({
             accept="image/*"
             className="hidden"
             onChange={(e) => {
-              if (e.target.files?.length) uploadFiles(e.target.files, null);
+              if (e.target.files?.length) {
+                void uploadFiles(e.target.files, null).then((urls) => {
+                  if (urls.length === 1) {
+                    onSelect(urls[0]);
+                    onOpenChange(false);
+                  }
+                });
+              }
               e.target.value = "";
             }}
           />

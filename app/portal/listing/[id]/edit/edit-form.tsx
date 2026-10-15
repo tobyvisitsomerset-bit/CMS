@@ -8,6 +8,7 @@ import { Plus, Trash2 } from "lucide-react";
 import type { Proposal, ProposalRoom } from "@/lib/data/change-requests";
 import { saveChangeAction, withdrawChangeAction } from "@/app/portal/actions";
 import { MediaPickerField } from "@/components/cms/media-library/media-picker-field";
+import { GalleryField } from "@/components/cms/media-library/gallery-field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -185,19 +186,8 @@ export function EditForm({
               <Field label="Main photo">
                 <MediaPickerField value={p.heroImageUrl} onChange={(u) => set("heroImageUrl", u)} />
               </Field>
-              <Field label="Gallery" hint="Up to 24 photos. Add real photos of your business.">
-                <div className="flex flex-wrap gap-3">
-                  {p.gallery.map((url, i) => (
-                    <MediaPickerField
-                      key={`${i}-${url}`}
-                      value={url}
-                      onChange={(u) =>
-                        set("gallery", u ? p.gallery.map((g, idx) => (idx === i ? u : g)) : p.gallery.filter((_, idx) => idx !== i))
-                      }
-                    />
-                  ))}
-                  <MediaPickerField value="" onChange={(u) => u && set("gallery", [...p.gallery, u].slice(0, 24))} />
-                </div>
+              <Field label="Gallery" hint="Up to 24 photos. Upload them and they are added straight away.">
+                <GalleryField urls={p.gallery} onChange={(u) => set("gallery", u)} />
               </Field>
             </>
           )}
