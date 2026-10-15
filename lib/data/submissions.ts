@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { setCF, serializeCustomFields, type CustomField } from "@/lib/custom-fields";
+import { LISTING_CLASS } from "@/lib/listing-marker";
 
 // New listings, events and offers proposed by members. Nothing exists on the
 // site until the team approves the submission; approval creates the page (or
@@ -237,7 +238,8 @@ async function uniqueSlug(prefix: string, title: string): Promise<string> {
 }
 
 function fieldsFor(entries: [string, string][]): string | null {
-  let cf: CustomField[] = [];
+  // The marker is what makes the site list, search and map the page.
+  let cf: CustomField[] = setCF([], "_kenticoClassName", LISTING_CLASS);
   for (const [k, v] of entries) if (v) cf = setCF(cf, k, v);
   return serializeCustomFields(cf);
 }

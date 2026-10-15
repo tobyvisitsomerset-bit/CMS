@@ -706,13 +706,9 @@ async function main() {
         },
         {
           name: "Business Detail",
-          description: "Hero with a tagline and summary, for a member business's own page.",
+          description: "A member business page. Nothing to build: the page template is filled from the Form tab.",
           createdById: superAdmin.id,
-          blocks: JSON.stringify([
-            { type: "hero", config: { heading: "Business name", subheading: "Tagline goes here", ctaLabel: "" } },
-            { type: "text", config: { heading: "About", body: "" } },
-            { type: "gallery", config: { imageUrls: [] } },
-          ]),
+          blocks: JSON.stringify([]),
         },
         {
           name: "Listing Page",

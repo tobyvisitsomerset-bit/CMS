@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { withListingMarker } from "@/lib/listing-marker";
 import { setPageTagsAndCategories } from "@/lib/data/pages";
 import { parseCustomFieldsArray, serializeCustomFields, setCF, type CustomField } from "@/lib/custom-fields";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
@@ -310,7 +311,9 @@ export async function applyProposal(pageId: string, proposal: Proposal) {
     else cf = setCF(cf, cfKey, value);
   }
 
-  const data: Record<string, unknown> = { customFields: serializeCustomFields(cf) };
+  const data: Record<string, unknown> = {
+    customFields: withListingMarker(serializeCustomFields(cf), { slug: page.slug, isSection: page.isSection }),
+  };
   if (changed("tagline")) data.tagline = proposal.tagline || null;
   if (changed("subtitle")) data.subtitle = proposal.subtitle || null;
   if (changed("bodyContent")) data.bodyContent = proposal.bodyContent || null;

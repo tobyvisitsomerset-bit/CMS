@@ -236,7 +236,7 @@ const getCachedMegaMenu = unstable_cache(
     return buildMegaMenuColumns(root.id, slug);
   },
   ["mega-menu"],
-  { revalidate: 300 },
+  { revalidate: 300, tags: ["listings"] },
 );
 
 export async function getAllMegaMenus(slugs: string[]): Promise<Record<string, MegaMenuColumn[]>> {
@@ -458,7 +458,7 @@ async function loadPins(): Promise<PageMapPin[]> {
   return pins;
 }
 
-export const getPagesWithCoordinates = unstable_cache(loadPins, ["pages-with-coordinates"], { revalidate: 300 });
+export const getPagesWithCoordinates = unstable_cache(loadPins, ["pages-with-coordinates"], { revalidate: 300, tags: ["listings"] });
 
 export type SocialLink = { platform: string; url: string };
 

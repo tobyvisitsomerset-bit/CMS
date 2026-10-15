@@ -4,7 +4,7 @@ import { getPageBySlug, getPageById, getChildPages } from "@/lib/data/pages";
 import { getDetailExtras } from "@/lib/data/detail-extras";
 import { getAllListingsGrouped } from "@/lib/data/listings";
 import { resolveBlockData } from "@/lib/data/block-data";
-import { PagePreview } from "@/components/cms/page-editor/page-preview";
+import { PagePreview, isFormDriven } from "@/components/cms/page-editor/page-preview";
 import { recordView } from "@/lib/data/views";
 import { headers } from "next/headers";
 
@@ -56,9 +56,9 @@ export default async function PublicPage({
 
   const [listings, extras, childPages, blockData] = await Promise.all([
     getAllListingsGrouped(),
-    page.contentBlocks.length === 0 ? getDetailExtras(page) : Promise.resolve(undefined),
-    page.contentBlocks.length === 0 ? getChildPages(page.id) : Promise.resolve([]),
-    resolveBlockData(page.contentBlocks, sp),
+    isFormDriven(page) ? getDetailExtras(page) : Promise.resolve(undefined),
+    isFormDriven(page) ? getChildPages(page.id) : Promise.resolve([]),
+    isFormDriven(page) ? Promise.resolve({}) : resolveBlockData(page.contentBlocks, sp),
   ]);
 
   return (

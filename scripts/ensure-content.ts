@@ -237,7 +237,67 @@ async function ensureHome() {
   console.log("[ensure-content] home sections added and ordered");
 }
 
+// The "Business Detail" starter template used to add placeholder hero/text/
+// gallery widgets that hid the Form tab. A business page is now one template
+// fed by its form, so the starter adds nothing.
+async function ensureBusinessTemplate() {
+  const t = await prisma.pageTemplate.findFirst({ where: { name: "Business Detail" } });
+  if (!t) return;
+  if (t.blocks === "[]") return;
+  await prisma.pageTemplate.update({
+    where: { id: t.id },
+    data: {
+      blocks: "[]",
+      description: "A member business page. Nothing to build: the page template is filled from the Form tab.",
+    },
+  });
+  console.log("[ensure-content] Business Detail template no longer adds placeholder widgets");
+}
+
+// Pages created in this CMS (not imported from Kentico) were never given the
+// class marker the listing explorers, map and search look for, so they were
+// saved but never listed. Add it, additively, to pages that are clearly
+// listings: they carry business fields, or belong to a member/tier/rooms.
+const BUSINESS_KEYS = ["ItemPhone", "ItemEmail", "ItemWeb", "ItemAddress1", "ItemTown", "ItemPostcode", "ItemOpeningTimes", "ItemAdmission", "ItemBookingWeb", "ItemStartDate", "ItemMapLatitude"];
+
+async function ensureListingMarkers() {
+  const rows = await prisma.page.findMany({
+    where: {
+      status: { not: "ARCHIVED" },
+      isSection: false,
+      OR: [{ customFields: null }, { NOT: { customFields: { contains: "_kenticoClassName" } } }],
+      AND: [
+        {
+          OR: [
+            { slug: { startsWith: "places-to-stay/" } },
+            { slug: { startsWith: "things-to-do/" } },
+            { slug: { startsWith: "festivals-events/" } },
+          ],
+        },
+      ],
+    },
+    select: { id: true, slug: true, customFields: true, membershipTier: true, assignedMemberId: true, _count: { select: { rooms: true } } },
+  });
+  let n = 0;
+  for (const r of rows) {
+    let cf: { key: string; value: string }[] = [];
+    try {
+      cf = r.customFields ? JSON.parse(r.customFields) : [];
+    } catch {
+      cf = [];
+    }
+    const hasBusiness = cf.some((f) => BUSINESS_KEYS.includes(f.key) && f.value);
+    if (!hasBusiness && !r.membershipTier && !r.assignedMemberId && r._count.rooms === 0) continue;
+    cf.push({ key: "_kenticoClassName", value: "sz.touristitem" });
+    await prisma.page.update({ where: { id: r.id }, data: { customFields: JSON.stringify(cf) } });
+    n++;
+  }
+  if (n > 0) console.log(`[ensure-content] marked ${n} CMS-created listing page(s) so they appear in listings`);
+}
+
 async function main() {
+  await ensureBusinessTemplate();
+  await ensureListingMarkers();
   await ensureExplorers();
   await ensureHome();
   await ensureShopAndExperiences();

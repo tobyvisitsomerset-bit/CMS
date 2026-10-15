@@ -27,6 +27,25 @@ function resolveDirectoryCategory(blocks: { type: string; config: string }[]): L
 
 type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
 
+// The "Business Detail" starter template put placeholder hero/text/gallery
+// widgets on a page, which hid everything typed into the Form tab. A listing
+// page that only has those starter widgets is rendered from its form instead.
+const STARTER_TYPES = new Set(["hero", "text", "gallery"]);
+const LISTING_ROOTS = ["places-to-stay/", "things-to-do/", "festivals-events/"];
+
+export function isFormDriven(page: { slug: string; membershipTier: unknown; assignedMemberId: string | null; rooms: unknown[]; customFields: string | null; contentBlocks: { type: string }[] }) {
+  if (page.contentBlocks.length === 0) return true;
+  if (!page.contentBlocks.every((b) => STARTER_TYPES.has(b.type))) return false;
+  const info = getBusinessInfo(parseCustomFields(page.customFields));
+  return (
+    !!info ||
+    !!page.membershipTier ||
+    !!page.assignedMemberId ||
+    page.rooms.length > 0 ||
+    LISTING_ROOTS.some((r) => page.slug.startsWith(r))
+  );
+}
+
 export function PagePreview({
   page,
   listings,
@@ -49,7 +68,7 @@ export function PagePreview({
   /** Editor "Page" tab: wrap each widget so it can be clicked to edit. */
   wrapBlock?: (blockId: string, type: string, node: React.ReactNode) => React.ReactNode;
 }) {
-  if (page.contentBlocks.length > 0) {
+  if (!isFormDriven(page)) {
     const blockList = page.contentBlocks.map((block) => {
       const node = (
         <BlockRenderer
@@ -88,11 +107,26 @@ export function PagePreview({
   const fields = parseCustomFields(page.customFields);
   // Member businesses always use the listing template; it reads the Form tab
   // boxes directly, so there is nothing to rebuild per page.
-  const isMemberPage = !!page.membershipTier || !!page.assignedMemberId || page.rooms.length > 0;
+  const isMemberPage =
+    !!page.membershipTier ||
+    !!page.assignedMemberId ||
+    page.rooms.length > 0 ||
+    (page.contentBlocks.length > 0 && LISTING_ROOTS.some((r) => page.slug.startsWith(r)));
   const info = getBusinessInfo(fields) ?? (isMemberPage ? emptyBusinessInfo() : null);
   const gallery: string[] = page.galleryUrls ? JSON.parse(page.galleryUrls) : [];
   const subtitle = decodeKenticoText(page.subtitle);
-  const bodyContent = decodeKenticoText(page.bodyContent);
+  // Starter "About" text typed into a widget is kept when the form has no description.
+  const starterText = page.contentBlocks
+    .filter((b) => b.type === "text")
+    .map((b) => {
+      try {
+        return String(JSON.parse(b.config || "{}").body ?? "");
+      } catch {
+        return "";
+      }
+    })
+    .find(Boolean);
+  const bodyContent = decodeKenticoText(page.bodyContent) ?? decodeKenticoText(starterText);
 
   // A real business/attraction/event page — full listing-detail layout
   // (gallery strip, rooms, reviews, nearby, contact sidebar).

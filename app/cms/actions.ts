@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { withListingMarker } from "@/lib/listing-marker";
 import { auth } from "@/lib/auth";
 import { hasCapability, canAccessPage, canEditLive, isAdmin } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
@@ -161,7 +162,11 @@ export async function saveContentAction(
   if (!canAccessPage(session.user.roleKey, session.user.id, existing)) throw new Error("Not permitted");
   if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
 
+  if (data.customFields !== undefined) {
+    data = { ...data, customFields: withListingMarker(data.customFields, { slug: data.slug ?? existing.slug, isSection: existing.isSection }) };
+  }
   const page = await pagesData.updatePage(pageId, data);
+  updateTag("listings");
   if (relations) {
     await pagesData.setPageTagsAndCategories(pageId, relations.tags, relations.categories);
   }

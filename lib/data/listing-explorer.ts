@@ -135,7 +135,7 @@ async function loadExplorerItems(rootSlug: string): Promise<ExplorerItem[]> {
 }
 
 // Cached across requests (5 min) — hundreds of rows, parsed once.
-export const getExplorerItems = unstable_cache(loadExplorerItems, ["explorer-items"], { revalidate: 300 });
+export const getExplorerItems = unstable_cache(loadExplorerItems, ["explorer-items"], { revalidate: 300, tags: ["listings"] });
 
 export type ExplorerParams = {
   q?: string;

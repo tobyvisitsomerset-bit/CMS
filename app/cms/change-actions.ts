@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { hasCapability } from "@/lib/permissions";
@@ -22,6 +22,7 @@ async function requireReviewer() {
 }
 
 function refresh(slug: string | null) {
+  updateTag("listings");
   revalidatePath("/cms", "layout");
   revalidatePath("/portal", "layout");
   if (slug) revalidatePath(`/${slug}`);

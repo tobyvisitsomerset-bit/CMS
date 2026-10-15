@@ -8,6 +8,7 @@ import { resolveBlockData } from "@/lib/data/block-data";
 import { listMembers } from "@/lib/data/users";
 import { canAccessPage, hasCapability, isAdmin } from "@/lib/permissions";
 import { EditorShell } from "@/components/cms/page-editor/editor-shell";
+import { isFormDriven } from "@/components/cms/page-editor/page-preview";
 
 export default async function PageEditorPage({ params }: { params: Promise<{ pageId: string }> }) {
   const { pageId } = await params;
@@ -40,7 +41,7 @@ export default async function PageEditorPage({ params }: { params: Promise<{ pag
   const listings = await getAllListingsGrouped();
   const extras = await getDetailExtras(page);
   const master = await getMasterSettings();
-  const childPages = page.contentBlocks.length === 0 ? await getChildPages(page.id) : [];
+  const childPages = isFormDriven(page) ? await getChildPages(page.id) : [];
   const blockData = await resolveBlockData(page.contentBlocks);
   const members = canManageMembers ? await listMembers() : [];
 
