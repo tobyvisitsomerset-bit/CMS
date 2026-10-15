@@ -506,11 +506,12 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
             A searchable, filterable list of real pages under a section, with a map. Live preview isn&apos;t available - save to see it on the real page.
           </p>
           <Field label="What it lists">
-            <Select value={config.kind ?? "accommodation"} onValueChange={(v) => set({ kind: v })}>
+            <Select value={config.kind ?? "auto"} onValueChange={(v) => set({ kind: v })}>
               <SelectTrigger className="w-56">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="auto">Automatic (from where this page sits)</SelectItem>
                 <SelectItem value="accommodation">Accommodation (dates + map)</SelectItem>
                 <SelectItem value="things">Things to do</SelectItem>
                 <SelectItem value="food">Food &amp; drink</SelectItem>

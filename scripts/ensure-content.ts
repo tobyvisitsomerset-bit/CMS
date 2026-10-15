@@ -306,48 +306,30 @@ const SYSTEM_TEMPLATES: { name: string; description: string; blocks: { type: str
     blocks: [],
   },
   {
-    name: "Section landing: Places to stay",
-    description: "The Places to Stay landing layout: search, filters, map and the listings under this page.",
+    name: "Section landing",
+    description:
+      "The landing layout for any section (Hotels, Camping, Things to do, Food & drink, Events...): search, filters, map and everything under the page, including linked pages. It works out what it is listing from where the page sits.",
     blocks: [
       {
         type: "listing_explorer",
-        config: { kind: "accommodation", rootSlug: "{{slug}}", title: "{{title}} in Somerset", intro: "", noun: "places to stay", parentLabel: "{{parentTitle}}", parentHref: "/{{parentSlug}}" },
-      },
-    ],
-  },
-  {
-    name: "Section landing: Things to do",
-    description: "The Things to Do landing layout for the attractions and activities under this page.",
-    blocks: [
-      {
-        type: "listing_explorer",
-        config: { kind: "things", rootSlug: "{{slug}}", title: "{{title}}", intro: "", noun: "things to do", parentLabel: "{{parentTitle}}", parentHref: "/{{parentSlug}}" },
-      },
-    ],
-  },
-  {
-    name: "Section landing: Food & drink",
-    description: "The Food & Drink landing layout for the places to eat and drink under this page.",
-    blocks: [
-      {
-        type: "listing_explorer",
-        config: { kind: "food", rootSlug: "{{slug}}", title: "{{title}}", intro: "", noun: "places to eat and drink", parentLabel: "{{parentTitle}}", parentHref: "/{{parentSlug}}" },
-      },
-    ],
-  },
-  {
-    name: "Section landing: Festivals & events",
-    description: "The Festivals & Events landing layout: calendar, filters and the events under this page.",
-    blocks: [
-      {
-        type: "listing_explorer",
-        config: { kind: "events", rootSlug: "{{slug}}", title: "{{title}}", intro: "", noun: "events", parentLabel: "{{parentTitle}}", parentHref: "/{{parentSlug}}" },
+        config: { kind: "auto", rootSlug: "{{slug}}", title: "{{title}}", intro: "", noun: "", parentLabel: "{{parentTitle}}", parentHref: "/{{parentSlug}}" },
       },
     ],
   },
 ];
 
+const RETIRED_TEMPLATES = [
+  "Section landing: Places to stay",
+  "Section landing: Things to do",
+  "Section landing: Food & drink",
+  "Section landing: Festivals & events",
+];
+
 async function ensureSystemTemplates() {
+  // Pages copy a template's widgets when it is applied, so removing the
+  // retired near-duplicates changes no page.
+  const removed = await prisma.pageTemplate.deleteMany({ where: { name: { in: RETIRED_TEMPLATES } } });
+  if (removed.count > 0) console.log(`[ensure-content] removed ${removed.count} retired per-section templates`);
   const admin = await prisma.user.findFirst({ where: { role: { key: "SUPER_ADMIN" } }, select: { id: true } });
   if (!admin) return;
   for (const t of SYSTEM_TEMPLATES) {

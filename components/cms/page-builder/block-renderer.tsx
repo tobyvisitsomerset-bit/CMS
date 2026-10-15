@@ -16,6 +16,7 @@ import { AreaTiles, EventsTeaser, MapBand, MoodTiles, PartnersRow, StaysTeaser, 
 import { ListingExplorer } from "@/components/site/explorer/listing-explorer";
 import { EventsExplorer } from "@/components/site/explorer/events-explorer";
 import { ExperiencesHubView } from "@/components/site/explorer/experiences-hub";
+import { defaultNoun } from "@/lib/explorer-kind";
 import { ProducerShop } from "@/components/site/shop/producer-shop";
 import { BuyPanel } from "@/components/site/shop/buy-panel";
 import type { ShopProducer } from "@/lib/data/shop";
@@ -383,7 +384,7 @@ export function BlockRenderer({
             basePath,
             title: config.title || pageTitle || "Somerset",
             intro: config.intro,
-            noun: config.noun || "places",
+            noun: config.noun || defaultNoun(realData.kind),
             crumbs: [
               { label: "Home", href: "/" },
               ...(config.parentLabel ? [{ label: config.parentLabel as string, href: config.parentHref as string | undefined }] : []),

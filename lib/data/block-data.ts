@@ -12,6 +12,7 @@ import { getShopProducer, getShopProducers } from "@/lib/data/shop";
 import { getExperiencesHub } from "@/lib/data/experiences";
 import type { RealBlockData } from "@/components/cms/page-builder/block-renderer";
 import { priorityOf } from "@/lib/membership";
+import { resolveExplorerKind } from "@/lib/explorer-kind";
 
 type BlockLike = { id: string; type: string; config: string };
 export type RawSearchParams = Record<string, string | string[] | undefined>;
@@ -107,8 +108,8 @@ export async function resolveBlockData(
           return [block.id, { type: "mood_tiles", moods: resolved }];
         }
         case "listing_explorer": {
-          const kind = (config.kind ?? "accommodation") as ExplorerKind;
           const rootSlug: string = config.rootSlug ?? "";
+          const kind = resolveExplorerKind(config.kind, rootSlug) as ExplorerKind;
           const params: ExplorerParams = {
             q: sp.q,
             type: sp.type,
