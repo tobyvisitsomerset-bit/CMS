@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { markNotificationsReadAction } from "@/app/(site)/portal/actions";
+import { markNotificationsReadAction } from "@/app/portal/actions";
 
 export function MarkReadButton() {
   const [pending, start] = useTransition();

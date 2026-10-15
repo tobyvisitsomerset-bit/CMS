@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
 import { levelLabel } from "@/lib/membership";
+import { labelForSlugSegment } from "@/lib/site-nav";
 
 // Everything the Member Portal shows is read from the same database as the
 // Content Hub and public site. Nothing here is estimated or invented: counts
@@ -26,6 +27,9 @@ export type MemberListing = {
   tierLabel: string | null;
   heroImageUrl: string | null;
   town: string | null;
+  section: string;
+  updatedAt: Date;
+  photoCount: number;
   summary: string | null;
   strength: { score: number; items: StrengthItem[] };
   enquiryCount: number;
@@ -120,6 +124,16 @@ export async function getMemberListings(userId: string): Promise<MemberListing[]
       tierLabel: levelLabel(p.membershipTier),
       heroImageUrl: p.heroImageUrl,
       town: info?.town ?? null,
+      section: labelForSlugSegment(p.slug.split("/")[0]),
+      updatedAt: p.updatedAt,
+      photoCount: (() => {
+        try {
+          const g = p.galleryUrls ? JSON.parse(p.galleryUrls) : [];
+          return (Array.isArray(g) ? g.length : 0) + (p.heroImageUrl ? 1 : 0);
+        } catch {
+          return p.heroImageUrl ? 1 : 0;
+        }
+      })(),
       summary: decodeKenticoText(p.subtitle) ?? p.tagline,
       strength: computeStrength(p),
       enquiryCount: c.total,

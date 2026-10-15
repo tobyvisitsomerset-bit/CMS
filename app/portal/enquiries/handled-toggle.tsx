@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { setEnquiryHandledAction } from "@/app/(site)/portal/actions";
+import { setEnquiryHandledAction } from "@/app/portal/actions";
 import { Button } from "@/components/ui/button";
 
 export function HandledToggle({ id, handled }: { id: string; handled: boolean }) {

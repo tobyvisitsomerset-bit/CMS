@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { changePasswordAction, type PasswordResult } from "@/app/(site)/portal/actions";
+import { changePasswordAction, type PasswordResult } from "@/app/portal/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
