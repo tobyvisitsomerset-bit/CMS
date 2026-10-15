@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
 import { priorityOf, toLevel } from "@/lib/membership";
@@ -61,6 +62,18 @@ function summarise(body: string | null): string | null {
 }
 
 async function loadExplorerItems(rootSlug: string): Promise<ExplorerItem[]> {
+  // Pages that sit anywhere under the landing page in the content tree, found
+  // by parent links rather than by address, so a page filed under Hotels is
+  // listed on Hotels even if its address was made from a different path.
+  const underRoot = await prisma.$queryRaw<{ id: string }[]>(Prisma.sql`
+    WITH RECURSIVE t AS (
+      SELECT id FROM "Page" WHERE slug = ${rootSlug}
+      UNION ALL
+      SELECT p.id FROM "Page" p JOIN t ON p."parentId" = t.id
+    )
+    SELECT id FROM t`);
+  const underRootIds = underRoot.map((r) => r.id);
+
   const [sections, rows] = await Promise.all([
     prisma.page.findMany({
       where: { parent: { slug: rootSlug }, status: "PUBLISHED" },
@@ -70,7 +83,7 @@ async function loadExplorerItems(rootSlug: string): Promise<ExplorerItem[]> {
       where: {
         status: "PUBLISHED",
         linkedPageId: null,
-        slug: { startsWith: `${rootSlug}/` },
+        OR: [{ slug: { startsWith: `${rootSlug}/` } }, { id: { in: underRootIds } }],
         customFields: { contains: "sz.touristitem" },
       },
       select: {
@@ -102,7 +115,7 @@ async function loadExplorerItems(rootSlug: string): Promise<ExplorerItem[]> {
   return unique.map((r): ExplorerItem => {
     const fields = parseCustomFields(r.customFields);
     const info = getBusinessInfo(fields);
-    const rest = r.slug.slice(rootSlug.length + 1).split("/");
+    const rest = r.slug.startsWith(`${rootSlug}/`) ? r.slug.slice(rootSlug.length + 1).split("/") : [r.slug];
     const typeSlug = rest.length > 1 ? rest[0] : "";
     const price = parsePrice(info?.admission ?? null);
     const lat = info?.mapLat ?? null;

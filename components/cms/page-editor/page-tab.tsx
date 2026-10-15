@@ -7,6 +7,7 @@ import { blockLabel } from "@/components/cms/page-builder/block-types";
 import type { ListingsByCategory, RealBlockData } from "@/components/cms/page-builder/block-renderer";
 import type { getPageById, ChildPageTile } from "@/lib/data/pages";
 import type { DetailExtras } from "@/lib/data/detail-extras";
+import type { ListingDiagnostics } from "@/lib/data/listing-diagnostics";
 
 type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
 
@@ -22,6 +23,7 @@ export function PageTab({
   readOnly,
   onEditWidget,
   onEditForm,
+  diagnostics,
 }: {
   page: PageDetail;
   listings: ListingsByCategory;
@@ -31,6 +33,7 @@ export function PageTab({
   readOnly: boolean;
   onEditWidget: (blockId: string) => void;
   onEditForm: () => void;
+  diagnostics?: ListingDiagnostics;
 }) {
   const hasWidgets = page.contentBlocks.length > 0;
   return (
@@ -56,6 +59,24 @@ export function PageTab({
           </div>
         )}
       </div>
+      {diagnostics && (diagnostics.problems.length > 0 || diagnostics.appearsOn.length > 0) && (
+        <div className="mx-auto mb-3 max-w-5xl px-4">
+          {diagnostics.problems.length > 0 ? (
+            <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              <p className="font-semibold">Not showing in the lists yet</p>
+              <ul className="mt-1 list-disc pl-5">
+                {diagnostics.problems.map((p) => (
+                  <li key={p}>{p}</li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <div className="rounded-md border border-somerset-green/30 bg-somerset-green/5 px-3 py-2 text-sm text-neutral-700">
+              Listed on: {diagnostics.appearsOn.map((a) => a.title).join(", ")}
+            </div>
+          )}
+        </div>
+      )}
       <div
         className="mx-auto max-w-[1280px] overflow-hidden bg-white shadow-sm"
         // Links and forms inside the canvas are inert — this is an editing view.

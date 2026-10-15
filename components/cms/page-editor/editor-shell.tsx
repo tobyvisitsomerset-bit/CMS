@@ -23,6 +23,7 @@ import { ListingPreview } from "./listing-preview";
 import type { ListingsByCategory, RealBlockData } from "@/components/cms/page-builder/block-renderer";
 import type { getPageById, ChildPageTile } from "@/lib/data/pages";
 import type { DetailExtras } from "@/lib/data/detail-extras";
+import type { ListingDiagnostics } from "@/lib/data/listing-diagnostics";
 import type { listMembers } from "@/lib/data/users";
 import type { MasterSettings } from "@/lib/data/site-settings";
 
@@ -54,6 +55,7 @@ export function EditorShell({
   canManageMembers,
   master,
   offers,
+  diagnostics,
 }: {
   page: PageDetail;
   canEdit: boolean;
@@ -69,6 +71,7 @@ export function EditorShell({
   canManageMembers: boolean;
   master: MasterSettings;
   offers: { id: string; title: string; description: string | null; validFrom: string | null; validTo: string | null }[];
+  diagnostics: ListingDiagnostics;
 }) {
   const { mode, setMode } = useEditorMode();
   const [tab, setTab] = useState<Tab>("page");
@@ -171,6 +174,7 @@ export function EditorShell({
                   setTab("design");
                 }}
                 onEditForm={() => setTab("form")}
+                diagnostics={diagnostics}
               />
             )}
             {tab === "design" && (
