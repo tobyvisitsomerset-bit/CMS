@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { hasClassMarker } from "@/lib/listing-marker";
 
@@ -5,11 +6,17 @@ import { hasClassMarker } from "@/lib/listing-marker";
 // is the page published, is it recognised as a listing, and which landing
 // pages above it list what sits under them.
 
+const BUSINESS_KEYS = ["ItemPhone", "ItemEmail", "ItemWeb", "ItemAddress1", "ItemTown", "ItemPostcode", "ItemOpeningTimes", "ItemAdmission", "ItemBookingWeb", "ItemStartDate"];
+
 export type ListingDiagnostics = {
   isListing: boolean;
   published: boolean;
   problems: string[];
   appearsOn: { title: string; slug: string }[];
+  /** Other places in the tree this page is linked into. */
+  alsoOn: string[];
+  /** Published pages beneath this section that are not marked as listings. */
+  unmarkedBelow: number;
 };
 
 export async function getListingDiagnostics(page: {
@@ -50,5 +57,31 @@ export async function getListingDiagnostics(page: {
       "No landing page sits above this page in the tree, so no list shows it. Move it under a section such as Hotels, or give its section a landing template.",
     );
   }
-  return { isListing, published, problems, appearsOn };
+  const links = await prisma.page.findMany({
+    where: { linkedPageId: page.id },
+    select: { parent: { select: { title: true } } },
+  });
+  const alsoOn = links.map((l) => l.parent?.title).filter((t): t is string => !!t);
+
+  let unmarkedBelow = 0;
+  if (page.isSection || (await prisma.page.count({ where: { parentId: page.id } })) > 0) {
+    const below = await prisma.$queryRaw<{ id: string }[]>(Prisma.sql`
+      WITH RECURSIVE t AS (
+        SELECT id FROM "Page" WHERE id = ${page.id}
+        UNION ALL
+        SELECT p.id FROM "Page" p JOIN t ON p."parentId" = t.id
+      )
+      SELECT id FROM t`);
+    unmarkedBelow = await prisma.page.count({
+      where: {
+        id: { in: below.map((b) => b.id).filter((id) => id !== page.id) },
+        status: "PUBLISHED",
+        linkedPageId: null,
+        isSection: false,
+        OR: [{ customFields: null }, { NOT: { customFields: { contains: "_kenticoClassName" } } }],
+        AND: [{ OR: BUSINESS_KEYS.map((k) => ({ customFields: { contains: `"key":"${k}"` } })) }],
+      },
+    });
+  }
+  return { isListing, published, problems, appearsOn, alsoOn, unmarkedBelow };
 }

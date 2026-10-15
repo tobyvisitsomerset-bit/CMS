@@ -3,6 +3,7 @@
 import { Pencil } from "lucide-react";
 import { PagePreview } from "./page-preview";
 import { ChangeTemplateButton } from "./change-template-dialog";
+import { FixSectionBanner } from "./fix-section-banner";
 import { blockLabel } from "@/components/cms/page-builder/block-types";
 import type { ListingsByCategory, RealBlockData } from "@/components/cms/page-builder/block-renderer";
 import type { getPageById, ChildPageTile } from "@/lib/data/pages";
@@ -59,7 +60,7 @@ export function PageTab({
           </div>
         )}
       </div>
-      {diagnostics && (diagnostics.problems.length > 0 || diagnostics.appearsOn.length > 0) && (
+      {diagnostics && (diagnostics.problems.length > 0 || diagnostics.appearsOn.length > 0 || diagnostics.alsoOn.length > 0 || diagnostics.unmarkedBelow > 0) && (
         <div className="mx-auto mb-3 max-w-5xl px-4">
           {diagnostics.problems.length > 0 ? (
             <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
@@ -72,9 +73,15 @@ export function PageTab({
             </div>
           ) : (
             <div className="rounded-md border border-somerset-green/30 bg-somerset-green/5 px-3 py-2 text-sm text-neutral-700">
-              Listed on: {diagnostics.appearsOn.map((a) => a.title).join(", ")}
+              {diagnostics.appearsOn.length > 0 && <div>Listed on: {diagnostics.appearsOn.map((a) => a.title).join(", ")}</div>}
+              {diagnostics.alsoOn.length > 0 && <div>Also linked into: {diagnostics.alsoOn.join(", ")}</div>}
             </div>
           )}
+        </div>
+      )}
+      {diagnostics && diagnostics.unmarkedBelow > 0 && !readOnly && (
+        <div className="mx-auto mb-3 max-w-5xl px-4">
+          <FixSectionBanner pageId={page.id} count={diagnostics.unmarkedBelow} />
         </div>
       )}
       <div

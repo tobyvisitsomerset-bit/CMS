@@ -18,7 +18,7 @@ export function ChangeTemplateButton({ pageId, pageTitle }: { pageId: string; pa
   const [open, setOpen] = useState(false);
   const [templates, setTemplates] = useState<T[]>([]);
   const [chosen, setChosen] = useState<string>("");
-  const [sub, setSub] = useState(false);
+  const [scope, setScope] = useState<"page" | "children" | "all">("page");
   const [pending, start] = useTransition();
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export function ChangeTemplateButton({ pageId, pageTitle }: { pageId: string; pa
     if (!chosen) return;
     start(async () => {
       try {
-        const res = await changePageTemplateAction({ pageId, templateId: chosen, includeSubsections: sub });
+        const res = await changePageTemplateAction({ pageId, templateId: chosen, scope });
         toast.success(res.changed.length > 1 ? `Template changed on ${res.changed.length} pages` : "Template changed");
         setOpen(false);
         router.refresh();
@@ -75,10 +75,22 @@ export function ChangeTemplateButton({ pageId, pageTitle }: { pageId: string; pa
             ))}
             {templates.length === 0 && <p className="text-sm text-neutral-400">Loading templates...</p>}
           </div>
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={sub} onChange={(e) => setSub(e.target.checked)} />
-            Also apply to the sections under this page that have no widgets yet
-          </label>
+          <fieldset className="space-y-1.5 text-sm">
+            <legend className="mb-1 font-semibold text-neutral-700">Apply it to</legend>
+            {(
+              [
+                ["page", "Just this page"],
+                ["children", "This page and the sections directly under it"],
+                ["all", "This page and every section beneath it, at any level"],
+              ] as const
+            ).map(([k, label]) => (
+              <label key={k} className="flex items-center gap-2">
+                <input type="radio" name="scope" checked={scope === k} onChange={() => setScope(k)} />
+                {label}
+              </label>
+            ))}
+            <p className="text-xs text-neutral-500">Sections that already have widgets built on them are left alone.</p>
+          </fieldset>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel

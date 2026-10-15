@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath, updateTag } from "next/cache";
+import { Prisma } from "@prisma/client";
 import { withListingMarker } from "@/lib/listing-marker";
 import { setPlacements } from "@/lib/data/placements";
 import { auth } from "@/lib/auth";
@@ -49,21 +50,36 @@ export async function createPageAction(input: {
 
 // Re-templates a page (and optionally its sub-sections) so a family of pages,
 // e.g. Hotels, B&Bs, Camping, can all use the same landing layout.
-export async function changePageTemplateAction(input: { pageId: string; templateId: string; includeSubsections?: boolean }) {
+export async function changePageTemplateAction(input: {
+  pageId: string;
+  templateId: string;
+  scope?: "page" | "children" | "all";
+  /** Older callers: true meant the sections directly under the page. */
+  includeSubsections?: boolean;
+}) {
   const session = await requireSession();
   if (!canEditLive(session.user.roleKey) || !hasCapability(session.user.roleKey, "pages.edit")) throw new Error("Not permitted");
   const page = await pagesData.getPageById(input.pageId);
   if (!page) throw new Error("Page not found");
 
   const targets: { id: string; title: string }[] = [{ id: page.id, title: page.title }];
-  if (input.includeSubsections) {
-    // Direct children that are themselves sections (they have pages under
-    // them) and are still plain, so nothing an editor built is overwritten.
-    const kids = await prisma.page.findMany({
-      where: { parentId: page.id, status: { not: "ARCHIVED" }, linkedPageId: null },
-      select: { id: true, title: true, _count: { select: { children: true, contentBlocks: true } } },
-    });
-    for (const k of kids) if (k._count.children > 0 && k._count.contentBlocks === 0) targets.push({ id: k.id, title: k.title });
+  const scope = input.scope ?? (input.includeSubsections ? "children" : "page");
+  if (scope !== "page") {
+    // Sections (pages with pages under them) that are still plain, so nothing
+    // an editor built is overwritten. "all" walks every level beneath.
+    let frontier = [page.id];
+    for (let depth = 0; frontier.length > 0 && depth < (scope === "children" ? 1 : 6) && targets.length < 200; depth++) {
+      const kids = await prisma.page.findMany({
+        where: { parentId: { in: frontier }, status: { not: "ARCHIVED" }, linkedPageId: null },
+        select: { id: true, title: true, _count: { select: { children: true, contentBlocks: true } } },
+      });
+      frontier = [];
+      for (const k of kids) {
+        if (k._count.children === 0) continue;
+        frontier.push(k.id);
+        if (k._count.contentBlocks === 0) targets.push({ id: k.id, title: k.title });
+      }
+    }
   }
 
   for (const t of targets) {
@@ -506,6 +522,43 @@ export async function setPlacementsAction(pageId: string, landingIds: string[]) 
   updateTag("listings");
   revalidatePath("/cms");
   return { count: kept.length };
+}
+
+// Marks the pages beneath a section that carry business details but were
+// never given the listing marker (created in the CMS), so lists, the map and
+// search include them.
+export async function markSectionListingsAction(pageId: string) {
+  const session = await requireSession();
+  if (!canEditLive(session.user.roleKey) || !hasCapability(session.user.roleKey, "pages.edit")) throw new Error("Not permitted");
+  const below = await prisma.$queryRaw<{ id: string }[]>(Prisma.sql`
+    WITH RECURSIVE t AS (
+      SELECT id FROM "Page" WHERE id = ${pageId}
+      UNION ALL
+      SELECT p.id FROM "Page" p JOIN t ON p."parentId" = t.id
+    )
+    SELECT id FROM t`);
+  const rows = await prisma.page.findMany({
+    where: {
+      id: { in: below.map((b) => b.id).filter((id) => id !== pageId).slice(0, 5000) },
+      status: "PUBLISHED",
+      linkedPageId: null,
+      isSection: false,
+      OR: [{ customFields: null }, { NOT: { customFields: { contains: "_kenticoClassName" } } }],
+    },
+    select: { id: true, slug: true, isSection: true, customFields: true },
+  });
+  let n = 0;
+  for (const r of rows) {
+    const next = withListingMarker(r.customFields, { slug: r.slug, isSection: r.isSection });
+    if (next && next !== r.customFields) {
+      await prisma.page.update({ where: { id: r.id }, data: { customFields: next } });
+      n++;
+    }
+  }
+  await logAudit({ userId: session.user.id, pageId, action: "updated", details: `Marked ${n} page(s) as listings` });
+  updateTag("listings");
+  revalidatePath("/cms");
+  return { marked: n };
 }
 
 export async function linkExistingPageAction(parentId: string, targetId: string) {
