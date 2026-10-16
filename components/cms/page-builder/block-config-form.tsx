@@ -62,13 +62,13 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
     case "hero":
       return (
         <div className="space-y-4">
-          <Field label="Heading">
+          <Field label="Heading (the big text)">
             <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
           </Field>
           <Field label="Eyebrow (small line above the heading)">
             <Input value={config.eyebrow ?? ""} onChange={(e) => set({ eyebrow: e.target.value })} />
           </Field>
-          <Field label="Subheading">
+          <Field label="Subheading (the line under the heading)">
             <Textarea rows={2} value={config.subheading ?? ""} onChange={(e) => set({ subheading: e.target.value })} />
           </Field>
           <Field label="Background image">
@@ -86,6 +86,56 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
             <Switch checked={config.showSearchBar ?? false} onCheckedChange={(v) => set({ showSearchBar: v })} />
             <Label>Show the homepage search bar (Stay / Things to do / Eat &amp; drink / What&apos;s on)</Label>
           </div>
+          {config.showSearchBar && (
+            <div className="space-y-3 rounded-lg border bg-neutral-50 p-3">
+              <div>
+                <p className="text-sm font-semibold">Rotating photos</p>
+                <p className="text-xs text-neutral-500">
+                  Add photos and they take turns behind the heading. Each can credit a member, with their logo and a link to their website,
+                  shown bottom right. With no photos here, the background image above is used.
+                </p>
+              </div>
+              {(config.slides ?? []).map((sl: any, i: number) => {
+                const patch = (p: Record<string, string>) =>
+                  set({ slides: (config.slides ?? []).map((x: any, idx: number) => (idx === i ? { ...x, ...p } : x)) });
+                return (
+                  <div key={i} className="space-y-2 rounded-md border bg-white p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold">Photo {i + 1}</span>
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => set({ slides: (config.slides ?? []).filter((_: any, idx: number) => idx !== i) })}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                    <Field label="Photo">
+                      <MediaPickerField value={sl.imageUrl ?? ""} onChange={(url) => patch({ imageUrl: url })} />
+                    </Field>
+                    <Field label="Member name (shown bottom right)">
+                      <Input value={sl.label ?? ""} onChange={(e) => patch({ label: e.target.value })} />
+                    </Field>
+                    <Field label="Link to their website (https://...)">
+                      <Input value={sl.link ?? ""} onChange={(e) => patch({ link: e.target.value })} />
+                    </Field>
+                    <Field label="Member logo (optional, transparent PNG or SVG)">
+                      <MediaPickerField value={sl.logoUrl ?? ""} onChange={(url) => patch({ logoUrl: url })} />
+                    </Field>
+                  </div>
+                );
+              })}
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => set({ slides: [...(config.slides ?? []), { imageUrl: "", label: "", link: "", logoUrl: "" }] })}
+              >
+                <Plus className="h-3.5 w-3.5" /> Add a photo
+              </Button>
+            </div>
+          )}
         </div>
       );
 

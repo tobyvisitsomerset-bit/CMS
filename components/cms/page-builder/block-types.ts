@@ -119,7 +119,7 @@ export function blockLabel(type: string): string {
 export function defaultConfigFor(type: BlockType): Record<string, unknown> {
   switch (type) {
     case "hero":
-      return { heading: "New hero heading", subheading: "", imageUrl: "", ctaLabel: "", ctaUrl: "", showSearchBar: false, eyebrow: "" };
+      return { heading: "New hero heading", subheading: "", imageUrl: "", ctaLabel: "", ctaUrl: "", showSearchBar: false, eyebrow: "", slides: [] };
     case "text":
       return { heading: "", body: "" };
     case "gallery":

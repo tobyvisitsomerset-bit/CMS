@@ -12,6 +12,7 @@ import { ListingSearchBar } from "./listing-search-bar";
 import { InteractiveListingGrid } from "./interactive-listing-grid";
 import { InteractiveEventCalendar } from "./interactive-event-calendar";
 import { HomepageSearchBar } from "@/components/site/homepage-search-bar";
+import { HeroSlides } from "@/components/site/hero-slides";
 import { AreaTiles, EventsTeaser, MapBand, MoodTiles, PartnersRow, StaysTeaser, TownsRow } from "@/components/site/home-sections";
 import { ListingExplorer } from "@/components/site/explorer/listing-explorer";
 import { EventsExplorer } from "@/components/site/explorer/events-explorer";
@@ -104,7 +105,11 @@ export function BlockRenderer({
         return (
           <section className="relative isolate bg-white">
             <div className="relative isolate overflow-hidden bg-gradient-to-br from-somerset-green to-deep-green text-white">
-              {config.imageUrl && <Img src={config.imageUrl} alt="" className="absolute inset-0 -z-10 h-full w-full" />}
+              {(config.slides ?? []).some((x: any) => x?.imageUrl) ? (
+                <HeroSlides slides={config.slides} bottomClass="bottom-36" />
+              ) : (
+                config.imageUrl && <Img src={config.imageUrl} alt="" className="absolute inset-0 -z-10 h-full w-full" />
+              )}
               <div className="absolute inset-0 -z-10 bg-gradient-to-b from-deep-green/50 via-deep-green/30 to-deep-green/70" />
               <div className="mx-auto max-w-4xl px-6 pt-20 pb-44 text-center sm:pt-28">
                 <p className="text-[11px] font-semibold tracking-[0.28em] text-white/80 uppercase">
