@@ -12,8 +12,15 @@ import { getListingAccess } from "@/lib/accessibility";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditListingPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ tab?: string }>;
+}) {
   const { id } = await params;
+  const { tab } = await searchParams;
   const session = await auth();
   const userId = session!.user.id;
 
@@ -37,6 +44,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
       <h1 className="font-serif text-3xl font-black text-stone-900">Editing: {page.title}</h1>
       <p className="mt-1 mb-5 text-stone-600">Changes go live once we have approved them. Your live page stays as it is until then.</p>
       <EditForm
+        initialTab={tab}
         pageId={id}
         title={page.title}
         slug={page.slug}

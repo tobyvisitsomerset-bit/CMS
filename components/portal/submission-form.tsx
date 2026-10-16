@@ -13,7 +13,7 @@ import type { SubmissionData, SubmissionKind } from "@/lib/data/submissions";
 
 type Data = SubmissionData;
 
-const BACK: Record<SubmissionKind, string> = { LISTING: "/portal", EVENT: "/portal/events", OFFER: "/portal/offers", NEWS: "/portal/news" };
+const BACK: Record<SubmissionKind, string> = { LISTING: "/portal", EVENT: "/portal/events", OFFER: "/portal/offers", NEWS: "/portal/events" };
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (

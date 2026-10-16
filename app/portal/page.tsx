@@ -235,7 +235,7 @@ export default async function PortalDashboard() {
           <div className="rounded-3xl border border-stone-200 bg-white p-5">
             <h3 className="font-serif text-lg font-black">Where you appear</h3>
             <p className="mt-1 text-sm text-stone-600">Pick the landing pages your listing shows on, like Animals or Family fun.</p>
-            <Link href="/portal/appear" className="mt-3 inline-block rounded-full bg-somerset-green px-4 py-2 text-sm font-bold text-white hover:opacity-90">
+            <Link href={listings.length === 1 ? `/portal/listing/${listings[0].id}/edit?tab=where` : "/portal"} className="mt-3 inline-block rounded-full bg-somerset-green px-4 py-2 text-sm font-bold text-white hover:opacity-90">
               Choose where you appear
             </Link>
           </div>

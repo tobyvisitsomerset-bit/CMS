@@ -36,6 +36,7 @@ export function EditForm({
   title,
   slug,
   section,
+  initialTab,
   tierLabel,
   tagOptions,
   detectedAccess,
@@ -52,6 +53,7 @@ export function EditForm({
   title: string;
   slug: string;
   section: string;
+  initialTab?: string;
   tierLabel: string | null;
   tagOptions: string[];
   detectedAccess: string[];
@@ -66,7 +68,11 @@ export function EditForm({
 }) {
   const router = useRouter();
   const [p, setP] = useState<Proposal>(initial);
-  const [tab, setTab] = useState<TabKey>("details");
+  const [tab, setTab] = useState<TabKey>(
+    (["details", "photos", "hours", "access", "facilities", "where", "contact", "address", "rooms", "spaces"] as string[]).includes(initialTab ?? "")
+      ? (initialTab as TabKey)
+      : "details",
+  );
   const [newTag, setNewTag] = useState("");
   const [pending, start] = useTransition();
 
