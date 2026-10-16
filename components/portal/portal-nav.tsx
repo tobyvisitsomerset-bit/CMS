@@ -8,6 +8,7 @@ const ITEMS = [
   { href: "/portal", label: "My listings", match: (p: string) => p === "/portal" || p.startsWith("/portal/listing") },
   { href: "/portal/events", label: "Events", match: (p: string) => p.startsWith("/portal/events") || p.startsWith("/portal/submit/event") },
   { href: "/portal/vs-events", label: "VS events", match: (p: string) => p.startsWith("/portal/vs-events") },
+  { href: "/portal/news", label: "News", match: (p: string) => p.startsWith("/portal/news") || p.startsWith("/portal/submit/news") },
   { href: "/portal/offers", label: "Offers", match: (p: string) => p.startsWith("/portal/offers") || p.startsWith("/portal/submit/offer") },
   { href: "/portal/enquiries", label: "Enquiries", match: (p: string) => p.startsWith("/portal/enquiries") },
   { href: "/portal/spaces", label: "Bookable spaces", match: (p: string) => p.startsWith("/portal/spaces") },

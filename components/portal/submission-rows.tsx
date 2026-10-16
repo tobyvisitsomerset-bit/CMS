@@ -10,7 +10,7 @@ const BADGE: Record<string, { label: string; cls: string }> = {
 };
 
 // A member's own submissions (drafts, waiting, sent back) for one kind.
-export function SubmissionRows({ rows, kind, empty }: { rows: Row[]; kind: "listing" | "event" | "offer"; empty: string }) {
+export function SubmissionRows({ rows, kind, empty }: { rows: Row[]; kind: "listing" | "event" | "offer" | "news"; empty: string }) {
   if (rows.length === 0) return <p className="rounded-3xl border border-stone-200 bg-white p-6 text-sm text-stone-500">{empty}</p>;
   return (
     <div className="space-y-3">

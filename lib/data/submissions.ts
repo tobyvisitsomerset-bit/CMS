@@ -6,7 +6,7 @@ import { LISTING_CLASS } from "@/lib/listing-marker";
 // site until the team approves the submission; approval creates the page (or
 // offer) and assigns it to the member who sent it.
 
-export type SubmissionKind = "LISTING" | "EVENT" | "OFFER";
+export type SubmissionKind = "LISTING" | "EVENT" | "OFFER" | "NEWS";
 
 import { LISTING_SECTIONS } from "@/lib/submission-meta";
 export { LISTING_SECTIONS };
@@ -47,6 +47,16 @@ export type OfferData = {
   validFrom: string;
   validTo: string;
 };
+
+export type NewsData = {
+  title: string;
+  releaseDate: string;
+  summary: string;
+  content: string;
+  imageUrl: string;
+};
+
+export type SubmissionData = ListingData | EventData | OfferData | NewsData;
 
 function clip(v: unknown, max: number): string {
   return typeof v === "string" ? v.trim().slice(0, max) : "";
@@ -109,17 +119,34 @@ export function sanitiseOffer(raw: unknown): OfferData {
   };
 }
 
-export function sanitise(kind: SubmissionKind, raw: unknown): ListingData | EventData | OfferData {
-  return kind === "LISTING" ? sanitiseListing(raw) : kind === "EVENT" ? sanitiseEvent(raw) : sanitiseOffer(raw);
+export function sanitiseNews(raw: unknown): NewsData {
+  const r = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  return {
+    title: clip(r.title, 160),
+    releaseDate: isoDate(r.releaseDate),
+    summary: clip(r.summary, 600),
+    content: clip(r.content, 20000),
+    imageUrl: clip(r.imageUrl, 500),
+  };
 }
 
-export function titleOf(kind: SubmissionKind, data: ListingData | EventData | OfferData): string {
-  if (kind === "OFFER") return (data as OfferData).title;
+export function sanitise(kind: SubmissionKind, raw: unknown): SubmissionData {
+  return kind === "LISTING"
+    ? sanitiseListing(raw)
+    : kind === "EVENT"
+      ? sanitiseEvent(raw)
+      : kind === "NEWS"
+        ? sanitiseNews(raw)
+        : sanitiseOffer(raw);
+}
+
+export function titleOf(kind: SubmissionKind, data: SubmissionData): string {
+  if (kind === "OFFER" || kind === "NEWS") return (data as OfferData | NewsData).title;
   return (data as ListingData | EventData).name;
 }
 
 /** What is missing before it can be sent for approval (empty = ready). */
-export function problemsWith(kind: SubmissionKind, data: ListingData | EventData | OfferData): string[] {
+export function problemsWith(kind: SubmissionKind, data: SubmissionData): string[] {
   const out: string[] = [];
   if (kind === "LISTING") {
     const d = data as ListingData;
@@ -132,6 +159,11 @@ export function problemsWith(kind: SubmissionKind, data: ListingData | EventData
     if (!d.startDate) out.push("Add the start date.");
     if (d.endDate && d.endDate < d.startDate) out.push("The end date cannot be before the start date.");
     if (!d.summary && !d.description) out.push("Add a short description.");
+  } else if (kind === "NEWS") {
+    const d = data as NewsData;
+    if (!d.title) out.push("Give the story a headline.");
+    if (!d.releaseDate) out.push("Add the date of release.");
+    if (!d.content) out.push("Add the story itself.");
   } else {
     const d = data as OfferData;
     if (!d.pageId) out.push("Choose which listing the offer is for.");
@@ -141,7 +173,7 @@ export function problemsWith(kind: SubmissionKind, data: ListingData | EventData
   return out;
 }
 
-export function parseData(kind: SubmissionKind, json: string): ListingData | EventData | OfferData {
+export function parseData(kind: SubmissionKind, json: string): SubmissionData {
   try {
     return sanitise(kind, JSON.parse(json));
   } catch {
@@ -150,7 +182,7 @@ export function parseData(kind: SubmissionKind, json: string): ListingData | Eve
 }
 
 /** Label/value rows for the review screen. */
-export function describe(kind: SubmissionKind, data: ListingData | EventData | OfferData): { label: string; value: string }[] {
+export function describe(kind: SubmissionKind, data: SubmissionData): { label: string; value: string }[] {
   const rows: [string, string][] = [];
   if (kind === "LISTING") {
     const d = data as ListingData;
@@ -181,6 +213,16 @@ export function describe(kind: SubmissionKind, data: ListingData | EventData | O
       ["Price", d.price],
       ["Photo", d.imageUrl ? "Yes" : ""],
     );
+  } else if (kind === "NEWS") {
+    const d = data as NewsData;
+    rows.push(
+      ["Headline", d.title],
+      ["Date of release", d.releaseDate],
+      ["Summary", d.summary],
+      ["Story", d.content],
+      ["Photo", d.imageUrl ? "Yes" : ""],
+      ["Will be filed under", d.releaseDate ? `News / ${monthTitle(d.releaseDate)}` : ""],
+    );
   } else {
     const d = data as OfferData;
     rows.push(["Offer", d.title], ["Details", d.description], ["Link", d.url], ["From", d.validFrom], ["Until", d.validTo]);
@@ -194,7 +236,7 @@ export async function saveSubmission(input: {
   id?: string | null;
   kind: SubmissionKind;
   authorId: string;
-  data: ListingData | EventData | OfferData;
+  data: SubmissionData;
   submit: boolean;
 }) {
   const payload = {
@@ -237,6 +279,90 @@ async function uniqueSlug(prefix: string, title: string): Promise<string> {
   return slug;
 }
 
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+/** "2026-10-16" -> "October 2026", the title of the month folder under News. */
+function monthTitle(iso: string): string {
+  const [y, m] = iso.split("-").map(Number);
+  return `${MONTHS[m - 1]} ${y}`;
+}
+
+function fieldValue(customFields: string | null, key: string): string | null {
+  if (!customFields) return null;
+  try {
+    const rows = JSON.parse(customFields) as { key: string; value: string }[];
+    return rows.find((r) => r.key === key)?.value ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Finds the month folder under News for the release date, creating it (newest first) if it is the first story that month. */
+async function newsMonthFolder(releaseDate: string): Promise<{ id: string; slug: string }> {
+  const news = await prisma.page.findUnique({ where: { slug: "news" }, select: { id: true, slug: true } });
+  if (!news) throw new Error("The News section does not exist");
+  const title = monthTitle(releaseDate);
+  const existing = await prisma.page.findFirst({
+    where: { parentId: news.id, title: { equals: title, mode: "insensitive" } },
+    select: { id: true, slug: true },
+  });
+  if (existing) return existing;
+
+  const start = `${releaseDate.slice(0, 7)}-01`;
+  const months = await prisma.page.findMany({
+    where: { parentId: news.id, customFields: { contains: "cms.blogmonth" } },
+    select: { sortOrder: true, customFields: true },
+    orderBy: { sortOrder: "asc" },
+  });
+  // Newest month first: slot in just before the first month that is older.
+  const older = months.find((m) => (fieldValue(m.customFields, "BlogMonthStartingDate") ?? "").slice(0, 10) < start);
+  const target = older ? older.sortOrder : (months.at(-1)?.sortOrder ?? 0) + 1;
+  await prisma.page.updateMany({ where: { parentId: news.id, sortOrder: { gte: target } }, data: { sortOrder: { increment: 1 } } });
+
+  let cf: CustomField[] = [];
+  cf = setCF(cf, "BlogMonthName", title);
+  cf = setCF(cf, "BlogMonthStartingDate", `${start}T00:00:00+00:00`);
+  cf = setCF(cf, "_kenticoClassName", "cms.blogmonth");
+  const folder = await prisma.page.create({
+    data: {
+      title,
+      slug: await uniqueSlug(news.slug, title),
+      parentId: news.id,
+      isSection: true,
+      status: "PUBLISHED",
+      sortOrder: target,
+      customFields: serializeCustomFields(cf),
+    },
+    select: { id: true, slug: true },
+  });
+  return folder;
+}
+
+async function createNewsPage(d: NewsData, authorId: string): Promise<string> {
+  const folder = await newsMonthFolder(d.releaseDate);
+  const first = await prisma.page.findFirst({ where: { parentId: folder.id }, orderBy: { sortOrder: "asc" }, select: { sortOrder: true } });
+  let cf: CustomField[] = [];
+  cf = setCF(cf, "BlogPostDate", `${d.releaseDate}T09:00:00+00:00`);
+  cf = setCF(cf, "_kenticoClassName", "cms.blogpost");
+  const page = await prisma.page.create({
+    data: {
+      title: d.title,
+      slug: await uniqueSlug(folder.slug, d.title.slice(0, 60)),
+      parentId: folder.id,
+      status: "PUBLISHED",
+      sortOrder: first ? first.sortOrder - 1 : 0,
+      authorId,
+      ownerId: authorId,
+      assignedMemberId: authorId,
+      subtitle: d.summary || null,
+      bodyContent: d.content,
+      heroImageUrl: d.imageUrl || null,
+      customFields: serializeCustomFields(cf),
+    },
+  });
+  return page.id;
+}
+
 function fieldsFor(entries: [string, string][]): string | null {
   // The marker is what makes the site list, search and map the page.
   let cf: CustomField[] = setCF([], "_kenticoClassName", LISTING_CLASS);
@@ -252,7 +378,7 @@ function fieldsFor(entries: [string, string][]): string | null {
  */
 export async function createFromSubmission(
   kind: SubmissionKind,
-  data: ListingData | EventData | OfferData,
+  data: SubmissionData,
   authorId: string,
 ): Promise<string> {
   if (kind === "OFFER") {
@@ -303,6 +429,8 @@ export async function createFromSubmission(
     });
     return page.id;
   }
+
+  if (kind === "NEWS") return createNewsPage(data as NewsData, authorId);
 
   const d = data as EventData;
   const start = new Date(`${d.startDate}T12:00:00`);

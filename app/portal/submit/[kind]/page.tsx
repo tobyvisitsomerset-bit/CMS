@@ -21,6 +21,13 @@ const KINDS: Record<string, { kind: SubmissionKind; heading: string; back: strin
     back: "/portal/events",
     intro: "Events go live on the Festivals and Events section once the team has approved them.",
   },
+  news: {
+    kind: "NEWS",
+    heading: "Add a news story",
+    back: "/portal/news",
+    intro:
+      "Once the team approves it, your story goes straight into the right month of the Visit Somerset news, based on the date of release.",
+  },
   offer: {
     kind: "OFFER",
     heading: "Add an offer",

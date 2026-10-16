@@ -140,7 +140,7 @@ export async function saveSubmissionAction(
   id?: string | null,
 ): Promise<SubmissionResult> {
   const session = await requireMember();
-  if (!["LISTING", "EVENT", "OFFER"].includes(kind)) return { ok: false, error: "Unknown type." };
+  if (!["LISTING", "EVENT", "OFFER", "NEWS"].includes(kind)) return { ok: false, error: "Unknown type." };
   const data = sanitise(kind, raw);
 
   if (kind === "OFFER") {
@@ -161,7 +161,7 @@ export async function saveSubmissionAction(
 
   const saved = await saveSubmission({ id, kind, authorId: session.user.id, data, submit });
   if (submit) {
-    const label = kind === "LISTING" ? "new listing" : kind === "EVENT" ? "new event" : "new offer";
+    const label = kind === "LISTING" ? "new listing" : kind === "EVENT" ? "new event" : kind === "NEWS" ? "news story" : "new offer";
     await notifySubmittedForReview(`${titleOf(kind, data)} (${label})`, saved.id, session.user.name ?? "A member");
   }
   revalidatePath("/portal", "layout");

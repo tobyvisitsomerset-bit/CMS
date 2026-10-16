@@ -92,7 +92,7 @@ export async function approveSubmissionAction(id: string) {
       message:
         kind === "OFFER"
           ? `Your offer "${titleOf(kind, data)}" was approved and is now on your listing`
-          : `Your ${kind === "EVENT" ? "event" : "listing"} "${titleOf(kind, data)}" was approved and is now live`,
+          : `Your ${kind === "EVENT" ? "event" : kind === "NEWS" ? "news story" : "listing"} "${titleOf(kind, data)}" was approved and is now live`,
     },
   });
   refresh(page?.slug ?? null);

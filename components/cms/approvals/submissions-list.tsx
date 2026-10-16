@@ -15,7 +15,7 @@ import {
 
 export type SubmissionItem = {
   id: string;
-  kind: "LISTING" | "EVENT" | "OFFER";
+  kind: "LISTING" | "EVENT" | "OFFER" | "NEWS";
   title: string;
   author: string;
   submittedAt: string;
@@ -33,7 +33,7 @@ export type AdRequestItem = {
   requestedAt: string;
 };
 
-const KIND_LABEL = { LISTING: "New listing", EVENT: "New event", OFFER: "New offer" } as const;
+const KIND_LABEL = { LISTING: "New listing", EVENT: "New event", OFFER: "New offer", NEWS: "News story" } as const;
 
 export function SubmissionsList({ items, ads }: { items: SubmissionItem[]; ads: AdRequestItem[] }) {
   const router = useRouter();

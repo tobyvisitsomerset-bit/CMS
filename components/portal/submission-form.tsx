@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { LISTING_SECTIONS } from "@/lib/submission-meta";
-import type { EventData, ListingData, OfferData, SubmissionKind } from "@/lib/data/submissions";
+import type { SubmissionData, SubmissionKind } from "@/lib/data/submissions";
 
-type Data = ListingData | EventData | OfferData;
+type Data = SubmissionData;
+
+const BACK: Record<SubmissionKind, string> = { LISTING: "/portal", EVENT: "/portal/events", OFFER: "/portal/offers", NEWS: "/portal/news" };
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
@@ -55,7 +57,7 @@ export function SubmissionForm({
       if (res.ok) {
         toast.success(res.message);
         setSavedId(res.id);
-        router.push(kind === "LISTING" ? "/portal" : kind === "EVENT" ? "/portal/events" : "/portal/offers");
+        router.push(BACK[kind]);
         router.refresh();
       } else {
         toast.error(res.error);
@@ -68,7 +70,7 @@ export function SubmissionForm({
     start(async () => {
       await deleteSubmissionAction(savedId);
       toast.success("Draft deleted.");
-      router.push(kind === "LISTING" ? "/portal" : kind === "EVENT" ? "/portal/events" : "/portal/offers");
+      router.push(BACK[kind]);
       router.refresh();
     });
   }
@@ -175,6 +177,26 @@ export function SubmissionForm({
                 <Input maxLength={200} {...bind("price")} />
               </Field>
             </div>
+            <Field label="Photo">
+              <MediaPickerField value={d.imageUrl ?? ""} onChange={(u) => setD((c) => ({ ...c, imageUrl: u }))} />
+            </Field>
+          </>
+        )}
+
+        {kind === "NEWS" && (
+          <>
+            <Field label="Headline">
+              <Input maxLength={160} {...bind("title")} />
+            </Field>
+            <Field label="Date of release" hint="The story is filed under this month in the Visit Somerset news.">
+              <Input type="date" {...bind("releaseDate")} />
+            </Field>
+            <Field label="Short summary" hint="One or two sentences, shown in lists.">
+              <Textarea rows={2} maxLength={600} {...bind("summary")} />
+            </Field>
+            <Field label="Story">
+              <Textarea rows={12} maxLength={20000} {...bind("content")} />
+            </Field>
             <Field label="Photo">
               <MediaPickerField value={d.imageUrl ?? ""} onChange={(u) => setD((c) => ({ ...c, imageUrl: u }))} />
             </Field>
