@@ -151,9 +151,6 @@ export function ListingDetail({
   const titleBlock = (
     <div>
       <div className="flex flex-wrap gap-2">
-        {page.membershipTier && (
-          <span className="rounded-full bg-damson/10 px-3 py-1 text-xs font-bold text-damson">Visit Somerset member</span>
-        )}
         {gradings.slice(0, 3).map((g) => (
           <span key={g} className="rounded-full bg-cool-grey px-3 py-1 text-xs font-medium text-stone-700">
             {g}
