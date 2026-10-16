@@ -14,6 +14,8 @@ import { useEditorMode } from "@/components/cms/editor-mode-context";
 import { EditorToolbar } from "./editor-toolbar";
 import { PageTab } from "./page-tab";
 import { FormTab } from "./form-tab";
+import { LandingFormTab } from "./landing-form-tab";
+import { landingFor } from "@/lib/landing";
 import { DesignTab } from "./design-tab";
 import { RoomsReviewsTab } from "./rooms-reviews-tab";
 import { MasterPageTab } from "./master-page-tab";
@@ -190,7 +192,8 @@ export function EditorShell({
                 onOpened={() => setOpenBlockId(null)}
               />
             )}
-            {tab === "form" && (
+            {tab === "form" && landingFor(page) && <LandingFormTab key={page.id} page={page} landing={landingFor(page)!} readOnly={!canEdit} />}
+            {tab === "form" && !landingFor(page) && (
               <div>
                 <FormTab page={page} readOnly={!canEdit} offers={offers} placementData={placementData} />
                 <div className="mx-auto max-w-5xl px-6 pb-10">

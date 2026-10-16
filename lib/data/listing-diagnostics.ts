@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { hasClassMarker } from "@/lib/listing-marker";
+import { landingFor } from "@/lib/landing";
 
 // "Why isn't this page showing in the list?" Answers it for the editor:
 // is the page published, is it recognised as a listing, and which landing
@@ -27,8 +28,10 @@ export async function getListingDiagnostics(page: {
   customFields: string | null;
   linkedPageId: string | null;
   isSection: boolean;
+  contentBlocks?: { id: string; type: string; config: string | null }[];
 }): Promise<ListingDiagnostics> {
   const problems: string[] = [];
+  const isLanding = !!landingFor({ contentBlocks: page.contentBlocks ?? [] });
   const isListing = hasClassMarker(page.customFields);
   const published = page.status === "PUBLISHED";
 
@@ -47,12 +50,12 @@ export async function getListingDiagnostics(page: {
 
   if (!published) problems.push("This page is not published yet, so it is not listed. Publish it and it will appear.");
   if (page.linkedPageId) problems.push("This page is a link to another page, so the original is the one that is listed.");
-  if (published && !page.isSection && !isListing) {
+  if (published && !page.isSection && !isListing && !isLanding) {
     problems.push(
       "This page is not marked as a listing, so lists and the map skip it. Save the Form tab once (with a town, phone or address filled in) to mark it.",
     );
   }
-  if (published && isListing && appearsOn.length === 0) {
+  if (published && isListing && !isLanding && appearsOn.length === 0) {
     problems.push(
       "No landing page sits above this page in the tree, so no list shows it. Move it under a section such as Hotels, or give its section a landing template.",
     );
