@@ -40,6 +40,7 @@ export function TopBar({
               <DropdownMenuItem render={<Link href="/cms/approvals">Pending pages</Link>} />
               <DropdownMenuItem render={<Link href="/cms/enquiries">Forms (enquiries &amp; signups)</Link>} />
               <DropdownMenuItem render={<Link href="/cms/vs-events">Member events</Link>} />
+              <DropdownMenuItem render={<Link href="/cms/import-photos">Recover photos</Link>} />
               <DropdownMenuItem render={<Link href="/cms/users">Users</Link>} />
             </>
           )}
