@@ -7,7 +7,7 @@ import Link from "next/link";
 import { PlainPage } from "@/components/site/plain-page";
 import { RoomsSection } from "@/components/site/detail/rooms-section";
 import { OffersSection } from "@/components/site/detail/offers-section";
-import { decodeKenticoText, emptyBusinessInfo, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
+import { decodeKenticoText, decodeKenticoBody, emptyBusinessInfo, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
 import type { getPageById, ChildPageTile } from "@/lib/data/pages";
 import { EMPTY_EXTRAS, type DetailExtras } from "@/lib/data/detail-extras";
 
@@ -128,7 +128,7 @@ export function PagePreview({
       }
     })
     .find(Boolean);
-  const bodyContent = decodeKenticoText(page.bodyContent) ?? decodeKenticoText(starterText);
+  const bodyContent = decodeKenticoBody(page.bodyContent) ?? decodeKenticoText(starterText);
 
   // A real business/attraction/event page — full listing-detail layout
   // (gallery strip, rooms, reviews, nearby, contact sidebar).

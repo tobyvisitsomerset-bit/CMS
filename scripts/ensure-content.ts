@@ -11,6 +11,8 @@
 //   * Never throws out of the process — a failure here must not stop the
 //     site from starting.
 
+import { readFileSync } from "fs";
+import path from "path";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -415,6 +417,38 @@ async function syncMailerLite() {
   if (n > 0) console.log(`[ensure-content] sent ${n} Somerset Club signup(s) to MailerLite`);
 }
 
+// One time: the text and SEO fields the first Kentico import skipped (see
+// kentico-import/build-content-fixture.ts). Only fills a field that is empty,
+// so anything an editor has written since is left alone.
+async function applyContentBackfill() {
+  const KEY = "kentico-content-backfill-v1";
+  if (await prisma.siteSetting.findUnique({ where: { key: KEY } })) return;
+  let rows: { slug: string; body?: string; seoTitle?: string; seoDescription?: string }[] = [];
+  try {
+    rows = JSON.parse(readFileSync(path.join(process.cwd(), "kentico-import", "content-backfill.json"), "utf-8"));
+  } catch {
+    return;
+  }
+  let bodies = 0;
+  let titles = 0;
+  let descs = 0;
+  for (const r of rows) {
+    const page = await prisma.page.findUnique({ where: { slug: r.slug }, select: { id: true, bodyContent: true, seoTitle: true, seoDescription: true } });
+    if (!page) continue;
+    const data: { bodyContent?: string; seoTitle?: string; seoDescription?: string } = {};
+    if (r.body && !page.bodyContent) data.bodyContent = r.body;
+    if (r.seoTitle && !page.seoTitle) data.seoTitle = r.seoTitle;
+    if (r.seoDescription && !page.seoDescription) data.seoDescription = r.seoDescription;
+    if (Object.keys(data).length === 0) continue;
+    await prisma.page.update({ where: { id: page.id }, data });
+    if (data.bodyContent) bodies++;
+    if (data.seoTitle) titles++;
+    if (data.seoDescription) descs++;
+  }
+  await prisma.siteSetting.create({ data: { key: KEY, value: JSON.stringify({ bodies, titles, descs, at: new Date().toISOString() }) } });
+  console.log(`[ensure-content] restored ${bodies} page texts, ${titles} SEO titles, ${descs} SEO descriptions from the Kentico export`);
+}
+
 async function main() {
   await syncMailerLite();
   await ensureVisitorRole();
@@ -422,6 +456,7 @@ async function main() {
   await ensureSystemTemplates();
   await ensureBusinessTemplate();
   await ensureListingMarkers();
+  await applyContentBackfill();
   await ensureExplorers();
   await ensureHome();
   await ensureShopAndExperiences();

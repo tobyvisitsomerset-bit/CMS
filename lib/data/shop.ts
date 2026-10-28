@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { decodeKenticoText, parseCustomFields } from "@/lib/kentico-item-fields";
+import { decodeKenticoText, parseCustomFields, webUrl } from "@/lib/kentico-item-fields";
 
 // Buy Somerset (Phase 12): the real producers imported from Kentico's
 // "Virtual Highstreet" section. Each producer record carries its shop
@@ -138,7 +138,7 @@ async function toProducer(r: ProducerRow): Promise<ShopProducer> {
         description: decodeKenticoText(r.bodyContent) ?? decodeKenticoText(r.subtitle) ?? decodeKenticoText(f.ItemSubtitle),
         town: f.ItemTown || f.ItemAddress4 || null,
         heroImageUrl: r.heroImageUrl,
-        website: f.ItemBookingWeb || f.ItemWeb || (f.WebsiteURL ? (f.WebsiteURL.startsWith("http") ? f.WebsiteURL : `https://${f.WebsiteURL}`) : null),
+        website: webUrl(f.ItemBookingWeb) ?? webUrl(f.ItemWeb) ?? webUrl(f.WebsiteURL),
         buyLabel: f.ItemBookingWebButtonText || "Shop",
         products,
       };

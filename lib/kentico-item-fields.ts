@@ -83,6 +83,26 @@ export function decodeKenticoText(value: string | null | undefined): string | nu
   return decoded || null;
 }
 
+/**
+ * Page body text for display: like decodeKenticoText but keeps paragraph
+ * breaks (a blank line between blocks), so long pages such as the terms and
+ * the itineraries read as paragraphs rather than one block.
+ */
+export function decodeKenticoBody(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const text = decodeEntities(
+    value
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/(p|div|h[1-6]|li)>/gi, "\n\n")
+      .replace(/<[^>]+>/g, ""),
+  )
+    .replace(/[ \t ]+/g, " ")
+    .replace(/ *\n */g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+  return text || null;
+}
+
 export type BusinessInfo = {
   address: string | null;
   town: string | null;
@@ -134,24 +154,40 @@ export function emptyBusinessInfo(): BusinessInfo {
   };
 }
 
+/**
+ * Turns what was typed into a Website box into a link that works. Kentico
+ * stored whatever people typed, so "www.example.co.uk" and "example.co.uk"
+ * are common; without a scheme the browser treats them as paths on this site.
+ * Anything that is clearly not a web address ("Book Now", an email address,
+ * text with spaces) returns null so no broken link is shown.
+ */
+export function webUrl(value: string | null | undefined): string | null {
+  const v = (value ?? "").trim();
+  if (!v) return null;
+  if (/^https?:\/\//i.test(v)) return /\s/.test(v) ? null : v;
+  if (v.startsWith("//")) return /\s/.test(v) ? null : `https:${v}`;
+  if (/\s/.test(v) || v.includes("@") || !/^[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?(\?\S*)?$/i.test(v)) return null;
+  return `https://${v}`;
+}
+
 export function getBusinessInfo(fields: ItemFields): BusinessInfo | null {
   const address = [fields.ItemAddress1, fields.ItemAddress2].filter(Boolean).join(", ") || null;
   const town = fields.ItemTown || null;
   const postcode = fields.ItemPostcode || null;
   const phone = fields.ItemPhone || null;
   const email = fields.ItemEmail || null;
-  const website = fields.ItemWeb || null;
-  const bookingUrl = fields.ItemBookingWeb || null;
+  const website = webUrl(fields.ItemWeb);
+  const bookingUrl = webUrl(fields.ItemBookingWeb);
   const bookingLabel = fields.ItemBookingWebButtonText || "Book Now";
   const openingTimes = decodeKenticoText(fields.ItemOpeningTimes);
   const admission = decodeKenticoText(fields.ItemAdmission);
   const mapLat = fields.ItemMapLatitude ? Number(fields.ItemMapLatitude) : null;
   const mapLng = fields.ItemMapLongitude ? Number(fields.ItemMapLongitude) : null;
   const memberName = fields.ItemMemberName || null;
-  const facebook = fields.ItemFacebook || null;
-  const twitter = fields.ItemTwitter || null;
-  const instagram = fields.ItemInstagram || null;
-  const videoLink = fields.ItemVideoLink || null;
+  const facebook = webUrl(fields.ItemFacebook);
+  const twitter = webUrl(fields.ItemTwitter);
+  const instagram = webUrl(fields.ItemInstagram);
+  const videoLink = webUrl(fields.ItemVideoLink);
   const stars = Number(fields.ItemStarRating);
   const starRating = Number.isInteger(stars) && stars >= 1 && stars <= 5 ? stars : null;
   const startDate = fields.ItemStartDate || null;
