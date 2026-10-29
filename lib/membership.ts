@@ -39,6 +39,22 @@ export function priorityOf(tier: string | null | undefined): number {
   return l ? LEVEL_PRIORITY[l] : 0;
 }
 
+/**
+ * Fair rotation inside a membership level. The level always decides first
+ * (Premium, then Partner, then Growth); within a level the order is shuffled
+ * once a day, the same for everyone that day, so every member in the level
+ * takes a turn at the top rather than the same few always leading.
+ */
+export function dailyRank(id: string, day: string): number {
+  let h = 2166136261;
+  const text = `${day}:${id}`;
+  for (let i = 0; i < text.length; i++) {
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
 /** Only Premium members get the pinned "Featured member" placement. */
 export function isFeatured(tier: string | null | undefined): boolean {
   return toLevel(tier) === "PREMIUM";

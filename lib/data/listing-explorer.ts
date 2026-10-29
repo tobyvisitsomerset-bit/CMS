@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { ACCESS_FEATURES, accessKeys } from "@/lib/accessibility";
 import { prisma } from "@/lib/prisma";
 import { decodeKenticoText, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
-import { priorityOf, toLevel } from "@/lib/membership";
+import { dailyRank, priorityOf, toLevel } from "@/lib/membership";
 
 // Real-data listing engine (Phase 12) behind the accommodation, things-to-do,
 // food & drink and festivals & events landing pages. Everything here is
@@ -348,9 +348,15 @@ export async function queryExplorer(kind: ExplorerKind, rootSlug: string, params
         new Date(a.endDate ?? a.startDate ?? 0).getTime() - new Date(b.endDate ?? b.startDate ?? 0).getTime(),
     );
   } else {
-    // recommended: higher membership tier first (the pack's featured-member
-    // rule), otherwise the editorial order already in the tree.
-    filtered.sort((a, b) => priorityOf(b.tier) - priorityOf(a.tier));
+    // recommended: higher membership level first (Premium, Partner, Growth,
+    // then non-members). Members in the same level take turns: their order is
+    // rotated once a day. Non-members keep the editorial order in the tree.
+    const day = new Date().toISOString().slice(0, 10);
+    filtered.sort((a, b) => {
+      const byLevel = priorityOf(b.tier) - priorityOf(a.tier);
+      if (byLevel !== 0) return byLevel;
+      return priorityOf(a.tier) > 0 ? dailyRank(a.id, day) - dailyRank(b.id, day) : 0;
+    });
   }
 
   const pageSize = kind === "events" ? 20 : PAGE_SIZE;
