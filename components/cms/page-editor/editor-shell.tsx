@@ -14,8 +14,9 @@ import { useEditorMode } from "@/components/cms/editor-mode-context";
 import { EditorToolbar } from "./editor-toolbar";
 import { PageTab } from "./page-tab";
 import { FormTab } from "./form-tab";
-import { LandingFormTab } from "./landing-form-tab";
-import { landingFor } from "@/lib/landing";
+import { PageFormTab } from "./page-form-tab";
+import { formKindFor } from "@/lib/landing";
+import { menuGroupFor } from "@/lib/menu-group";
 import { DesignTab } from "./design-tab";
 import { RoomsReviewsTab } from "./rooms-reviews-tab";
 import { MasterPageTab } from "./master-page-tab";
@@ -79,6 +80,7 @@ export function EditorShell({
 }) {
   const { mode, setMode } = useEditorMode();
   const [tab, setTab] = useState<Tab>("page");
+  const formKind = formKindFor(page);
   const [section, setSection] = useState<PropertiesSection>("general");
   const [notify, setNotify] = useState(true);
   const [openBlockId, setOpenBlockId] = useState<string | null>(null);
@@ -192,8 +194,18 @@ export function EditorShell({
                 onOpened={() => setOpenBlockId(null)}
               />
             )}
-            {tab === "form" && landingFor(page) && <LandingFormTab key={page.id} page={page} landing={landingFor(page)!} readOnly={!canEdit} />}
-            {tab === "form" && !landingFor(page) && (
+            {tab === "form" && formKind.kind !== "listing" && (
+              <PageFormTab
+                key={page.id}
+                page={page}
+                kind={formKind.kind}
+                block={formKind.block}
+                menu={menuGroupFor(master, page.slug)}
+                canEditMenu={canPublish}
+                readOnly={!canEdit}
+              />
+            )}
+            {tab === "form" && formKind.kind === "listing" && (
               <div>
                 <FormTab page={page} readOnly={!canEdit} offers={offers} placementData={placementData} />
                 <div className="mx-auto max-w-5xl px-6 pb-10">

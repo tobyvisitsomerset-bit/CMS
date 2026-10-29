@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Img } from "@/components/cms/page-builder/listing-ui";
 import type { ChildPageTile } from "@/lib/data/pages";
+import { ScriptText } from "@/components/site/script-text";
+import { focusStyle, plainTitle } from "@/lib/page-display";
+import { cn } from "@/lib/utils";
 
 // The public layout for a page with no widget blocks and no business data —
 // section indexes (Bath, Taunton, Business in Somerset...) and plain copy
@@ -14,8 +17,17 @@ export function PlainPage({
   gallery,
   childPages,
   cta,
+  titleMarkup,
+  subtitleScript = false,
+  subtitleAbove = false,
+  focus = null,
 }: {
   title: string;
+  /** Display title; *words* use the script font. Falls back to title. */
+  titleMarkup?: string;
+  subtitleScript?: boolean;
+  subtitleAbove?: boolean;
+  focus?: string | null;
   subtitle: string | null;
   body: string | null;
   heroImageUrl: string | null;
@@ -33,7 +45,7 @@ export function PlainPage({
       <section className="relative isolate overflow-hidden bg-gradient-to-br from-somerset-green to-deep-green text-white">
         {heroImageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={heroImageUrl} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover" />
+          <img src={heroImageUrl} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover" style={focusStyle(focus)} />
         )}
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-deep-green/80 via-deep-green/30 to-transparent" />
         <div className="mx-auto max-w-7xl px-6 pt-20 pb-12">
@@ -41,10 +53,17 @@ export function PlainPage({
             <Link href="/" className="hover:underline">
               Home
             </Link>{" "}
-            / <span className="text-white">{title}</span>
+            / <span className="text-white">{plainTitle(titleMarkup ?? title)}</span>
           </nav>
-          <h1 className="font-serif text-4xl leading-tight font-black tracking-tight sm:text-6xl">{title}</h1>
-          {subtitle && <p className="mt-3 max-w-2xl text-lg text-white/90">{subtitle}</p>}
+          {subtitle && subtitleAbove && (
+            <p className={cn("mb-2 max-w-2xl text-white/90", subtitleScript ? "font-script text-3xl sm:text-4xl" : "text-lg")}>{subtitle}</p>
+          )}
+          <h1 className="font-serif text-4xl leading-tight font-black tracking-tight sm:text-6xl">
+            <ScriptText text={titleMarkup ?? title} className="text-[1.15em]" />
+          </h1>
+          {subtitle && !subtitleAbove && (
+            <p className={cn("mt-3 max-w-2xl text-white/90", subtitleScript ? "font-script text-3xl" : "text-lg")}>{subtitle}</p>
+          )}
         </div>
       </section>
 

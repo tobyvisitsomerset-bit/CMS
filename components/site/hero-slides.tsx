@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { focusStyle } from "@/lib/page-display";
 
-export type HeroSlide = { imageUrl?: string; link?: string; label?: string; logoUrl?: string };
+export type HeroSlide = { imageUrl?: string; link?: string; label?: string; logoUrl?: string; focus?: string };
 
 // Rotating background photos for the home hero. Each photo can carry the
 // member it features, shown bottom right with their logo and a link to their
@@ -45,6 +46,7 @@ export function HeroSlides({
             key={`${s.imageUrl}-${i}`}
             src={s.imageUrl}
             alt=""
+            style={focusStyle(s.focus)}
             className={cn(
               "absolute inset-0 h-full w-full object-cover transition-opacity duration-1000",
               i === index ? "opacity-100" : "opacity-0",

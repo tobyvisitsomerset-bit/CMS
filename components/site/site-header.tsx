@@ -13,7 +13,7 @@ import type { MegaMenuColumn } from "@/lib/data/pages";
 // whole header whose content swaps with whichever nav item is hovered.
 const CLOSE_DELAY_MS = 150;
 
-type NavItem = { label: string; slug: string };
+type NavItem = { label: string; slug: string; newTab?: boolean };
 
 export function SiteHeader({
   mainNav,
@@ -25,7 +25,7 @@ export function SiteHeader({
   account,
 }: {
   mainNav: NavItem[];
-  utilityLinks: { label: string; href: string }[];
+  utilityLinks: { label: string; href: string; newTab?: boolean }[];
   mapLabel: string;
   bookLabel: string;
   bookHref: string;
@@ -64,7 +64,7 @@ export function SiteHeader({
           </div>
           <nav className="hidden items-center gap-5 md:flex" aria-label="Utility">
             {utilityLinks.map((l) => (
-              <Link key={l.href + l.label} href={l.href} className="hover:underline">
+              <Link key={l.href + l.label} href={l.href} {...(l.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="hover:underline">
                 {l.label}
               </Link>
             ))}
@@ -101,6 +101,7 @@ export function SiteHeader({
               <Link
                 key={link.slug}
                 href={`/${link.slug}`}
+                {...(link.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 className={cn(
                   "flex items-center gap-1 py-1 transition-colors hover:text-somerset-green",
                   activeSlug === link.slug && "text-somerset-green",

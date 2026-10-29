@@ -11,6 +11,7 @@
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-fraunces);
   --font-serif: var(--font-fraunces);
+  --font-script: var(--font-caveat);
 
   /* Public-site brand palette (Website Redesign mockup pack, screen 00).
      Additive only — never redefine --primary/--secondary/etc above, since

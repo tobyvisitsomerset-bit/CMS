@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MediaPickerField } from "@/components/cms/media-library/media-picker-field";
+import { FocusPicker } from "@/components/cms/focus-picker";
 import type { BlockType } from "./block-types";
 import { PANEL_LAYOUTS } from "@/components/site/content-panel";
 
@@ -62,7 +63,7 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
     case "hero":
       return (
         <div className="space-y-4">
-          <Field label="Heading (the big text)">
+          <Field label="Heading (the big text). Put *asterisks* round words to use the script font">
             <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
           </Field>
           <Field label="Eyebrow (small line above the heading)">
@@ -74,6 +75,7 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
           <Field label="Background image">
             <MediaPickerField value={config.imageUrl ?? ""} onChange={(url) => set({ imageUrl: url })} />
           </Field>
+          <FocusPicker imageUrl={config.imageUrl ?? ""} value={config.focus ?? ""} onChange={(f) => set({ focus: f })} />
           <div className="grid grid-cols-2 gap-3">
             <Field label="CTA label">
               <Input value={config.ctaLabel ?? ""} onChange={(e) => set({ ctaLabel: e.target.value })} />
@@ -114,6 +116,7 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
                     <Field label="Photo">
                       <MediaPickerField value={sl.imageUrl ?? ""} onChange={(url) => patch({ imageUrl: url })} />
                     </Field>
+                    <FocusPicker imageUrl={sl.imageUrl ?? ""} value={sl.focus ?? ""} onChange={(f) => patch({ focus: f })} />
                     <Field label="Member name (shown bottom right)">
                       <Input value={sl.label ?? ""} onChange={(e) => patch({ label: e.target.value })} />
                     </Field>

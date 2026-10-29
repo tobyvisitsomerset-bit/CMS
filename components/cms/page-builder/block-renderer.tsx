@@ -13,6 +13,8 @@ import { InteractiveListingGrid } from "./interactive-listing-grid";
 import { InteractiveEventCalendar } from "./interactive-event-calendar";
 import { HomepageSearchBar } from "@/components/site/homepage-search-bar";
 import { HeroSlides } from "@/components/site/hero-slides";
+import { ScriptText } from "@/components/site/script-text";
+import { focusStyle } from "@/lib/page-display";
 import { AreaTiles, EventsTeaser, MapBand, MoodTiles, PartnersRow, StaysTeaser, TownsRow } from "@/components/site/home-sections";
 import { ListingExplorer } from "@/components/site/explorer/listing-explorer";
 import { EventsExplorer } from "@/components/site/explorer/events-explorer";
@@ -108,7 +110,7 @@ export function BlockRenderer({
               {(config.slides ?? []).some((x: any) => x?.imageUrl) ? (
                 <HeroSlides slides={config.slides} bottomClass="bottom-36" />
               ) : (
-                config.imageUrl && <Img src={config.imageUrl} alt="" className="absolute inset-0 -z-10 h-full w-full" />
+                config.imageUrl && <Img src={config.imageUrl} alt="" className="absolute inset-0 -z-10 h-full w-full" style={focusStyle(config.focus)} />
               )}
               <div className="absolute inset-0 -z-10 bg-gradient-to-b from-deep-green/50 via-deep-green/30 to-deep-green/70" />
               <div className="mx-auto max-w-4xl px-6 pt-20 pb-44 text-center sm:pt-28">
@@ -116,7 +118,7 @@ export function BlockRenderer({
                   {config.eyebrow || "Somerset · England's West Country"}
                 </p>
                 <h1 className="mt-4 font-serif text-6xl leading-none font-black tracking-tight sm:text-8xl">
-                  {config.heading || "Be enchanted"}
+                  <ScriptText text={config.heading || "Be enchanted"} className="text-[1.1em]" />
                 </h1>
                 {config.subheading && <p className="mx-auto mt-5 max-w-2xl text-lg text-white/90">{config.subheading}</p>}
                 {config.ctaLabel && config.ctaUrl && (

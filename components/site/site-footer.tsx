@@ -56,7 +56,7 @@ export function SiteFooter({
               <p>&copy; {new Date().getFullYear()} Visit Somerset</p>
               <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2" aria-label="Legal">
                 {master.legalLinks.map((l) => (
-                  <Link key={l.href + l.label} href={l.href} className="hover:text-white hover:underline">
+                  <Link key={l.href + l.label} href={l.href} {...(l.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="hover:text-white hover:underline">
                     {l.label}
                   </Link>
                 ))}

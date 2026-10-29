@@ -7,6 +7,7 @@ import Link from "next/link";
 import { PlainPage } from "@/components/site/plain-page";
 import { RoomsSection } from "@/components/site/detail/rooms-section";
 import { OffersSection } from "@/components/site/detail/offers-section";
+import { pageDisplay } from "@/lib/page-display";
 import { decodeKenticoText, decodeKenticoBody, emptyBusinessInfo, getBusinessInfo, parseCustomFields } from "@/lib/kentico-item-fields";
 import type { getPageById, ChildPageTile } from "@/lib/data/pages";
 import { EMPTY_EXTRAS, type DetailExtras } from "@/lib/data/detail-extras";
@@ -117,6 +118,7 @@ export function PagePreview({
   const info = getBusinessInfo(fields) ?? (isMemberPage ? emptyBusinessInfo() : null);
   const gallery: string[] = page.galleryUrls ? JSON.parse(page.galleryUrls) : [];
   const subtitle = decodeKenticoText(page.subtitle);
+  const display = pageDisplay(page);
   // Starter "About" text typed into a widget is kept when the form has no description.
   const starterText = page.contentBlocks
     .filter((b) => b.type === "text")
@@ -152,7 +154,11 @@ export function PagePreview({
       <>
       <PlainPage
         title={page.title}
-        subtitle={subtitle}
+        titleMarkup={display.titleMarkup}
+        subtitleScript={display.subtitleScript}
+        subtitleAbove={display.subtitleAbove}
+        focus={display.focus}
+        subtitle={decodeKenticoText(display.subtitle) ?? subtitle}
         body={bodyContent}
         heroImageUrl={page.heroImageUrl}
         gallery={gallery}

@@ -6,8 +6,8 @@ import { prisma } from "@/lib/prisma";
 // Everything falls back to these defaults, so an empty database still
 // renders a complete site.
 
-export type MasterLink = { label: string; href: string };
-export type MasterNavItem = { label: string; slug: string };
+export type MasterLink = { label: string; href: string; newTab?: boolean };
+export type MasterNavItem = { label: string; slug: string; newTab?: boolean };
 export type MasterFooterColumn = { heading: string; links: MasterLink[] };
 
 export type MasterSettings = {
@@ -105,7 +105,7 @@ function links(v: unknown, fallback: MasterLink[]): MasterLink[] {
   if (!Array.isArray(v)) return fallback;
   return v
     .filter((l): l is MasterLink => !!l && typeof l.label === "string" && typeof l.href === "string")
-    .map((l) => ({ label: l.label.trim(), href: l.href.trim() }))
+    .map((l) => ({ label: l.label.trim(), href: l.href.trim(), ...(l.newTab ? { newTab: true } : {}) }))
     .filter((l) => l.label && l.href);
 }
 
@@ -114,7 +114,7 @@ export function normaliseMaster(raw: unknown): MasterSettings {
   const nav = Array.isArray(r.mainNav)
     ? (r.mainNav as MasterNavItem[])
         .filter((n) => n && typeof n.label === "string" && typeof n.slug === "string")
-        .map((n) => ({ label: n.label.trim(), slug: n.slug.trim().replace(/^\/+|\/+$/g, "") }))
+        .map((n) => ({ label: n.label.trim(), slug: n.slug.trim().replace(/^\/+|\/+$/g, ""), ...(n.newTab ? { newTab: true } : {}) }))
         .filter((n) => n.label && n.slug)
     : DEFAULT_MASTER.mainNav;
   const cols = Array.isArray(r.footerColumns)

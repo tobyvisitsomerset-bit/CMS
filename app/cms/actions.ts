@@ -14,6 +14,9 @@ import * as versionsData from "@/lib/data/versions";
 import * as templatesData from "@/lib/data/templates";
 import * as usersData from "@/lib/data/users";
 import * as notificationsData from "@/lib/data/notifications";
+import { parseCustomFieldsArray, serializeCustomFields, setCF } from "@/lib/custom-fields";
+import { getMasterSettings, saveMasterSettings } from "@/lib/data/site-settings";
+import { menuGroupFor, withPageInMenu, type MenuGroup } from "@/lib/menu-group";
 
 async function requireSession() {
   const session = await auth();
@@ -225,6 +228,86 @@ export async function saveContentAction(
   await logAudit({ userId: session.user.id, pageId: page.id, action: "updated" });
   await versionsData.createVersionSnapshot(pageId, session.user.id, "Content updated");
   revalidatePath("/cms");
+  return page;
+}
+
+// The Kentico-style "Page (menu item)" form: page name, display title,
+// subtitle options, summary, menu group, image focus, page text. Landing pages
+// also save their top-of-page widget here. It never adds the listing marker
+// (that belongs to member listings only).
+export async function savePageFormAction(
+  pageId: string,
+  input: {
+    title: string;
+    slug: string;
+    titleMarkup: string;
+    subtitle: string;
+    subtitleScript: boolean;
+    subtitleAbove: boolean;
+    summary: string;
+    menuGroup: MenuGroup;
+    newWindow: boolean;
+    focus: string;
+    heroImageUrl: string | null;
+    bodyContent: string | null;
+    callToActionLabel: string | null;
+    callToActionUrl: string | null;
+    block?: { id: string; config: Record<string, unknown> } | null;
+  },
+) {
+  const session = await requireSession();
+  const existing = await pagesData.getPageById(pageId);
+  if (!existing) throw new Error("Page not found");
+  if (!canAccessPage(session.user.roleKey, session.user.id, existing)) throw new Error("Not permitted");
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
+
+  const title = input.title.trim();
+  if (!title) throw new Error("Page name is required");
+  const slug = existing.slug === "home" ? "home" : input.slug.trim().replace(/^\/+|\/+$/g, "") || existing.slug;
+
+  let cf = parseCustomFieldsArray(existing.customFields);
+  const flag = (key: string, on: boolean) => {
+    cf = setCF(cf, key, on ? "true" : cf.some((f) => f.key === key) ? "false" : "");
+  };
+  const ownTitle = input.titleMarkup.trim();
+  cf = setCF(cf, "MenuItemTitle", ownTitle && ownTitle !== title ? ownTitle : cf.some((f) => f.key === "MenuItemTitle") ? "" : "");
+  cf = setCF(cf, "MenuItemSubtitle", input.subtitle.trim());
+  flag("MenuItemSubtitleScript", input.subtitleScript);
+  flag("MenuItemSupertitle", input.subtitleAbove);
+  cf = setCF(cf, "MenuItemSummary", input.summary.trim());
+  flag("MenuItemNewWindow", input.newWindow);
+  cf = setCF(cf, "HeroFocus", input.focus.trim());
+  cf = setCF(cf, "MenuItemGroup", input.menuGroup === "none" ? (cf.some((f) => f.key === "MenuItemGroup") ? "" : "") : input.menuGroup);
+
+  const page = await pagesData.updatePage(pageId, {
+    title,
+    slug,
+    subtitle: input.subtitle.trim() || null,
+    heroImageUrl: input.heroImageUrl || null,
+    bodyContent: input.bodyContent === null ? existing.bodyContent : input.bodyContent.trim() || null,
+    callToActionLabel: input.callToActionLabel === null ? existing.callToActionLabel : input.callToActionLabel.trim() || null,
+    callToActionUrl: input.callToActionUrl === null ? existing.callToActionUrl : input.callToActionUrl.trim() || null,
+    customFields: serializeCustomFields(cf),
+  });
+
+  if (input.block) {
+    await prisma.contentBlock.updateMany({ where: { id: input.block.id, pageId }, data: { config: JSON.stringify(input.block.config) } });
+  }
+
+  // Menu: only people who may edit the Master page can change the menus.
+  if (hasCapability(session.user.roleKey, "pages.publish")) {
+    const master = await getMasterSettings();
+    const current = menuGroupFor(master, existing.slug);
+    if (current.group !== input.menuGroup || current.newTab !== input.newWindow || existing.slug !== slug) {
+      const without = withPageInMenu(master, { slug: existing.slug, label: title }, "none", false);
+      await saveMasterSettings(withPageInMenu(without, { slug, label: title }, input.menuGroup, input.newWindow), session.user.id);
+    }
+  }
+
+  updateTag("listings");
+  await logAudit({ userId: session.user.id, pageId: page.id, action: "updated" });
+  await versionsData.createVersionSnapshot(pageId, session.user.id, "Page form updated");
+  revalidatePath("/", "layout");
   return page;
 }
 

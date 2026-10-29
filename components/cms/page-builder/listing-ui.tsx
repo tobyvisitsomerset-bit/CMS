@@ -11,7 +11,9 @@ export function Img({
   alt,
   className,
   label,
+  style,
 }: {
+  style?: React.CSSProperties;
   src?: string | null;
   alt: string;
   className?: string;
@@ -31,5 +33,5 @@ export function Img({
     );
   }
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt={alt} className={cn("object-cover", className)} />;
+  return <img src={src} alt={alt} className={cn("object-cover", className)} style={style} />;
 }
