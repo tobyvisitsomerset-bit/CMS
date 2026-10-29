@@ -199,6 +199,29 @@ const MONTH_YEAR_RE = /^[A-Z][a-z]+ \d{4}$/;
 // Phase 10's original flat treatment, now just one case of this rule rather
 // than the only case.
 async function buildMegaMenuColumns(rootId: string, rootSlug: string): Promise<MegaMenuColumn[]> {
+  // Festivals & Events: the same short list of links the current site shows -
+  // the pages marked for the dropdown (menu group "sub"), in tree order, with
+  // months that have already passed left out. No individual events are
+  // featured; the months and a few member pages are the way in.
+  if (rootSlug === "festivals-events") {
+    const rows = await prisma.page.findMany({
+      where: { parentId: rootId, status: "PUBLISHED", linkedPageId: null },
+      orderBy: { sortOrder: "asc" },
+      select: { id: true, title: true, slug: true, customFields: true },
+    });
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const links = rows
+      .filter((r) => /"key":"MenuItemGroup","value":"sub"/.test(r.customFields ?? ""))
+      .filter((r) => {
+        if (!MONTH_YEAR_RE.test(r.title)) return true;
+        const d = new Date(`1 ${r.title}`);
+        return Number.isNaN(d.getTime()) || d >= monthStart;
+      })
+      .map(({ id, title, slug }) => ({ id, title, slug }));
+    if (links.length > 0) return [{ heading: null, links }];
+  }
+
   const children = await getChildPages(rootId);
   if (children.length === 0) return [];
 

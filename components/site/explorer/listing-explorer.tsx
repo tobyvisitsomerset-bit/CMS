@@ -364,6 +364,13 @@ export function ListingExplorer({
           </Chip>
         )}
       </div>
+      {/* The pack's "+ More filters": the accessibility and town chips tuck away until asked for. */}
+      {(ACCESS_FEATURES.some((f) => (result.accessCounts?.[f.key] ?? 0) > 0) || result.towns.length > 0) && (
+        <details className="group mt-3" open={!!sp.access || !!sp.town}>
+          <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-full border border-dashed border-stone-300 px-4 py-1.5 text-sm font-medium text-stone-700 hover:border-stone-400 [&::-webkit-details-marker]:hidden">
+            <span className="group-open:hidden">+ More filters</span>
+            <span className="hidden group-open:inline">- Fewer filters</span>
+          </summary>
       {ACCESS_FEATURES.some((f) => (result.accessCounts?.[f.key] ?? 0) > 0) && (
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <span className="text-xs font-semibold tracking-wide text-stone-400 uppercase">Accessible</span>
@@ -389,6 +396,9 @@ export function ListingExplorer({
             </Chip>
           ))}
         </div>
+      )}
+
+        </details>
       )}
 
       {hasDates && (

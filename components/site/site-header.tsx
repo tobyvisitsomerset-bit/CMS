@@ -206,12 +206,12 @@ export function SiteHeader({
               ) : (
                 // flex-wrap (not a rigid grid-flow-col) so a long flat list
                 // wraps within the panel's real width instead of spilling.
-                <div key={i} className="flex flex-1 flex-wrap content-start gap-x-8 gap-y-2">
+                <div key={i} className="grid flex-1 grid-cols-2 content-start gap-x-8 gap-y-3 xl:grid-cols-4">
                   {col.links.slice(0, 24).map((l) => (
                     <Link
                       key={l.id}
                       href={`/${l.slug}`}
-                      className="w-40 text-sm text-white/80 transition-colors hover:text-white hover:underline"
+                      className="border-b border-white/40 pb-1 text-base font-semibold text-white transition-colors hover:border-white"
                     >
                       {l.title}
                     </Link>
