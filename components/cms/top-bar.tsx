@@ -48,6 +48,7 @@ export function TopBar({
           <div className="px-2 py-1 text-[11px] font-semibold tracking-wide text-neutral-400 uppercase">Development</div>
           <DropdownMenuItem render={<Link href="/cms/widgets">Widgets</Link>} />
           <DropdownMenuItem render={<Link href="/cms/widgets/guide">Editor guide</Link>} />
+          <DropdownMenuItem render={<Link href="/cms/kentico-guide">Coming from Kentico</Link>} />
           <DropdownMenuSeparator />
           <DropdownMenuItem render={<Link href="/portal">Member portal</Link>} />
         </DropdownMenuContent>

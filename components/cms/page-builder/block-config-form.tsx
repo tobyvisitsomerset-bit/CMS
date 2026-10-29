@@ -97,6 +97,12 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
                   shown bottom right. With no photos here, the background image above is used.
                 </p>
               </div>
+              <Field label="Image caption (bottom left, over every photo)">
+                <Input value={config.caption ?? ""} onChange={(e) => set({ caption: e.target.value })} />
+              </Field>
+              <Field label="Image subcaption">
+                <Input value={config.subcaption ?? ""} onChange={(e) => set({ subcaption: e.target.value })} />
+              </Field>
               {(config.slides ?? []).map((sl: any, i: number) => {
                 const patch = (p: Record<string, string>) =>
                   set({ slides: (config.slides ?? []).map((x: any, idx: number) => (idx === i ? { ...x, ...p } : x)) });

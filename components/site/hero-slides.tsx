@@ -15,7 +15,11 @@ export function HeroSlides({
   slides,
   bottomClass = "bottom-4",
   intervalMs = 6000,
+  caption,
+  subcaption,
 }: {
+  caption?: string;
+  subcaption?: string;
   slides: HeroSlide[];
   bottomClass?: string;
   intervalMs?: number;
@@ -56,6 +60,13 @@ export function HeroSlides({
       </div>
       <div className={cn("pointer-events-none absolute inset-x-0 z-10", bottomClass)}>
         <div className="mx-auto flex max-w-7xl items-end justify-between gap-4 px-6">
+          <div className="flex flex-col items-start gap-3">
+          {(caption || subcaption) && (
+            <div className="max-w-md text-white drop-shadow">
+              {caption && <p className="text-sm font-semibold">{caption}</p>}
+              {subcaption && <p className="text-xs text-white/85">{subcaption}</p>}
+            </div>
+          )}
           {count > 1 ? (
             <div
               className="pointer-events-auto flex items-center gap-2"
@@ -78,6 +89,7 @@ export function HeroSlides({
           ) : (
             <span />
           )}
+          </div>
           {hasChip &&
             (() => {
               const inner = (

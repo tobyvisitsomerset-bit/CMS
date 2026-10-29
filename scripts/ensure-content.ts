@@ -449,6 +449,19 @@ async function applyContentBackfill() {
   console.log(`[ensure-content] restored ${bodies} page texts, ${titles} SEO titles, ${descs} SEO descriptions from the Kentico export`);
 }
 
+// The current site keeps its photos in five media libraries. Here they are the
+// five top-level folders of the media library, so the team finds things in the
+// same places. Only added when missing.
+async function ensureMediaLibraries() {
+  for (const name of ["VisitSomerset", "VisitTaunton", "Visit Minehead", "Carnival", "Paranormal"]) {
+    const exists = await prisma.mediaFolder.findFirst({ where: { name, parentId: null }, select: { id: true } });
+    if (!exists) {
+      await prisma.mediaFolder.create({ data: { name } });
+      console.log(`[ensure-content] added media library folder "${name}"`);
+    }
+  }
+}
+
 async function main() {
   await syncMailerLite();
   await ensureVisitorRole();
@@ -457,6 +470,7 @@ async function main() {
   await ensureBusinessTemplate();
   await ensureListingMarkers();
   await applyContentBackfill();
+  await ensureMediaLibraries();
   await ensureExplorers();
   await ensureHome();
   await ensureShopAndExperiences();

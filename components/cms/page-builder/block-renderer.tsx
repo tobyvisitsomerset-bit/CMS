@@ -108,7 +108,7 @@ export function BlockRenderer({
           <section className="relative isolate bg-white">
             <div className="relative isolate overflow-hidden bg-gradient-to-br from-somerset-green to-deep-green text-white">
               {(config.slides ?? []).some((x: any) => x?.imageUrl) ? (
-                <HeroSlides slides={config.slides} bottomClass="bottom-36" />
+                <HeroSlides slides={config.slides} bottomClass="bottom-36" caption={config.caption} subcaption={config.subcaption} />
               ) : (
                 config.imageUrl && <Img src={config.imageUrl} alt="" className="absolute inset-0 -z-10 h-full w-full" style={focusStyle(config.focus)} />
               )}
