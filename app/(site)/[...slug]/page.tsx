@@ -8,6 +8,8 @@ import { PagePreview, isFormDriven } from "@/components/cms/page-editor/page-pre
 import { recordView } from "@/lib/data/views";
 import { headers } from "next/headers";
 import { decodeKenticoText } from "@/lib/kentico-item-fields";
+import { getRelatedTiles } from "@/lib/data/related";
+import { RelatedPages } from "@/components/site/related-pages";
 
 type Params = { slug: string[] };
 
@@ -69,13 +71,14 @@ export default async function PublicPage({
     await recordView(page.id, ua);
   }
 
-  const [listings, extras, childPages, blockData] = await Promise.all([
+  const [listings, extras, childPages, blockData, related] = await Promise.all([
     getAllListingsGrouped(),
     isFormDriven(page)
       ? getDetailExtras(page)
       : getLiveOffers(page.id).then((offers) => ({ ...EMPTY_EXTRAS, offers })),
     isFormDriven(page) ? getChildPages(page.id) : Promise.resolve([]),
     isFormDriven(page) ? Promise.resolve({}) : resolveBlockData(page.contentBlocks, sp),
+    getRelatedTiles(page.id),
   ]);
 
   if (
@@ -90,6 +93,7 @@ export default async function PublicPage({
   return (
     <div>
       <PagePreview page={page} listings={listings} extras={extras} childPages={childPages} blockData={blockData} linkBase="" initialSearchText={q ?? ""} searchParams={flatSp} />
+      <RelatedPages tiles={related} />
     </div>
   );
 }

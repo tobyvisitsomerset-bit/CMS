@@ -85,14 +85,14 @@ model User {
   marketingOptInAt   DateTime?
   mailerliteSyncedAt DateTime?
 
-  pagesAuthored Page[]     @relation("PageAuthor")
-  pagesOwned    Page[]     @relation("PageOwner")
-  assignedPages Page[]     @relation("PageAssignedMember")
-  auditLogs      AuditLog[]
-  uploadedMedia  Media[]
-  versions       Version[]
-  pageTemplates  PageTemplate[]
-  notifications  Notification[]
+  pagesAuthored Page[]         @relation("PageAuthor")
+  pagesOwned    Page[]         @relation("PageOwner")
+  assignedPages Page[]         @relation("PageAssignedMember")
+  auditLogs     AuditLog[]
+  uploadedMedia Media[]
+  versions      Version[]
+  pageTemplates PageTemplate[]
+  notifications Notification[]
 }
 
 model Page {
@@ -120,8 +120,10 @@ model Page {
   // Kentico's "linked document" pattern, where the same business/attraction
   // appears under multiple categories without duplicating the content itself.
   linkedPageId String?
-  linkedPage   Page?   @relation("PageLink", fields: [linkedPageId], references: [id], onDelete: SetNull)
-  linkedFrom   Page[]  @relation("PageLink")
+  linkedPage   Page?          @relation("PageLink", fields: [linkedPageId], references: [id], onDelete: SetNull)
+  relatedTo    PageRelation[] @relation("RelatedFrom")
+  relatedFrom  PageRelation[] @relation("RelatedTo")
+  linkedFrom   Page[]         @relation("PageLink")
 
   authorId String?
   author   User?   @relation("PageAuthor", fields: [authorId], references: [id])
@@ -145,12 +147,12 @@ model Page {
   auditLogs     AuditLog[]
   versions      Version[]
 
-  seoKeywords       String?
-  canonicalUrl      String?
-  ogTitle           String?
-  ogDescription     String?
-  socialShareImage  String?
-  schemaMarkup      String? // JSON-LD, stored as text
+  seoKeywords      String?
+  canonicalUrl     String?
+  ogTitle          String?
+  ogDescription    String?
+  socialShareImage String?
+  schemaMarkup     String? // JSON-LD, stored as text
 
   // Business/member pages (e.g. a business's own listing page)
   tagline        String?
@@ -167,33 +169,33 @@ model Page {
 // member (or an admin) via the page editor — the consumer-facing detail page
 // only shows a "Rooms available" section once at least one of these exists.
 model Room {
-  id            String   @id @default(cuid())
-  pageId        String
-  page          Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  name          String
-  description   String?
-  imageUrl      String?
-  priceLabel    String? // free-text, e.g. "£145/night" — matches Listing.priceLabel
-  features      String? // JSON-encoded string[], e.g. ["Free WiFi", "Dog friendly"]
-  bookingUrl    String? // this room's own booking link (falls back to the listing's)
-  sortOrder     Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id          String   @id @default(cuid())
+  pageId      String
+  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  imageUrl    String?
+  priceLabel  String? // free-text, e.g. "£145/night" — matches Listing.priceLabel
+  features    String? // JSON-encoded string[], e.g. ["Free WiFi", "Dog friendly"]
+  bookingUrl  String? // this room's own booking link (falls back to the listing's)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // A guest review on a page. Entered by the assigned member/admin — the
 // consumer-facing detail page only shows a "Reviews" section once at least
 // one of these exists.
 model Review {
-  id          String    @id @default(cuid())
-  pageId      String
-  page        Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  authorName  String
-  rating      Int // 1-5
-  quote       String
-  reviewDate  DateTime?
-  sortOrder   Int       @default(0)
-  createdAt   DateTime  @default(now())
+  id         String    @id @default(cuid())
+  pageId     String
+  page       Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  authorName String
+  rating     Int // 1-5
+  quote      String
+  reviewDate DateTime?
+  sortOrder  Int       @default(0)
+  createdAt  DateTime  @default(now())
 }
 
 model ContentBlock {
@@ -293,12 +295,12 @@ model Facility {
 }
 
 model Location {
-  id          String   @id @default(cuid())
-  name        String   @unique
+  id          String @id @default(cuid())
+  name        String @unique
   latitude    Float
   longitude   Float
   radiusMiles Int?
-  sortOrder   Int      @default(0)
+  sortOrder   Int    @default(0)
 }
 
 model MembershipTierDefinition {
@@ -358,10 +360,10 @@ model Version {
 // Public newsletter signups from the site footer (Phase 12). Additive model —
 // created by `prisma db push` on deploy, never touches existing tables.
 model NewsletterSubscriber {
-  id        String   @id @default(cuid())
-  email     String   @unique
+  id        String    @id @default(cuid())
+  email     String    @unique
   source    String? // e.g. "footer", "home"
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   syncedAt  DateTime? // when it reached MailerLite
 }
 
@@ -514,13 +516,13 @@ model ClickCount {
 
 // A visitor's saved collection of places, shareable by an unlisted link.
 model Collection {
-  id        String   @id @default(cuid())
+  id        String           @id @default(cuid())
   userId    String
   name      String
-  token     String   @unique
-  isShared  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  token     String           @unique
+  isShared  Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
   items     CollectionItem[]
 
   @@index([userId])
@@ -539,19 +541,19 @@ model CollectionItem {
 // Visit Somerset's own events for members (networking, training, webinars).
 // Entered by the team, or fed from Eventbrite (source = "eventbrite").
 model VsEvent {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  startsAt    DateTime
-  endsAt      DateTime?
-  location    String?
-  url         String? // where to book, e.g. the Eventbrite page
-  capacity    Int?
-  source      String   @default("manual") // manual | eventbrite
-  externalId  String?  @unique
-  published   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String                @id @default(cuid())
+  title         String
+  description   String?
+  startsAt      DateTime
+  endsAt        DateTime?
+  location      String?
+  url           String? // where to book, e.g. the Eventbrite page
+  capacity      Int?
+  source        String                @default("manual") // manual | eventbrite
+  externalId    String?               @unique
+  published     Boolean               @default(true)
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
   registrations VsEventRegistration[]
 
   @@index([startsAt])
@@ -565,4 +567,19 @@ model VsEventRegistration {
   createdAt DateTime @default(now())
 
   @@unique([eventId, userId])
+}
+
+// "Related pages" (Properties menu): pages an editor has chosen to show
+// alongside this one. Additive.
+model PageRelation {
+  id        String   @id @default(cuid())
+  fromId    String
+  toId      String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  from      Page     @relation("RelatedFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to        Page     @relation("RelatedTo", fields: [toId], references: [id], onDelete: Cascade)
+
+  @@unique([fromId, toId])
+  @@index([toId])
 }

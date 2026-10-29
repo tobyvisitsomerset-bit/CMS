@@ -17,6 +17,7 @@ import * as notificationsData from "@/lib/data/notifications";
 import { parseCustomFieldsArray, serializeCustomFields, setCF } from "@/lib/custom-fields";
 import { getMasterSettings, saveMasterSettings } from "@/lib/data/site-settings";
 import { menuGroupFor, withPageInMenu, type MenuGroup } from "@/lib/menu-group";
+import { listChildPages, type ListingParams } from "@/lib/data/page-listing";
 
 async function requireSession() {
   const session = await auth();
@@ -723,6 +724,112 @@ export async function markAllNotificationsReadAction() {
   await notificationsData.markAllNotificationsRead(session.user.id);
 }
 
+
+// ---------- Listing mode (the pages under the selected page) ----------
+
+export async function listChildPagesAction(parentId: string, params: ListingParams) {
+  const session = await requireSession();
+  if (!canAccessPage(session.user.roleKey, session.user.id, {})) throw new Error("Not permitted");
+  return listChildPages(parentId, params);
+}
+
+// Runs one action over the ticked pages. Each page still goes through the same
+// permission check as when it is done one at a time.
+export async function bulkPageAction(ids: string[], action: "publish" | "unpublish" | "archive" | "delete") {
+  const session = await requireSession();
+  if (!canAccessPage(session.user.roleKey, session.user.id, {})) throw new Error("Not permitted");
+  const list = [...new Set(ids)].slice(0, 200);
+  let done = 0;
+  const failed: string[] = [];
+  for (const id of list) {
+    try {
+      if (action === "publish") await publishPageAction(id, { notify: false });
+      else if (action === "unpublish") await unpublishPageAction(id);
+      else if (action === "archive") await archivePageAction(id);
+      else await deletePageAction(id);
+      done++;
+    } catch {
+      failed.push(id);
+    }
+  }
+  updateTag("listings");
+  revalidatePath("/cms");
+  return { done, failed: failed.length };
+}
+
+// ---------- Properties: Categories, Navigation, Related pages, Linked pages ----------
+
+export async function savePageCategoriesAction(pageId: string, categories: string[]) {
+  const session = await requireSession();
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
+  const page = await pagesData.getPageById(pageId);
+  if (!page) throw new Error("Page not found");
+  const clean = [...new Set(categories.map((c) => c.trim()).filter(Boolean))].slice(0, 30);
+  await pagesData.setPageTagsAndCategories(pageId, page.tags.map((t) => t.name), clean);
+  await logAudit({ userId: session.user.id, pageId, action: "updated", details: "Categories" });
+  updateTag("listings");
+  revalidatePath("/cms");
+}
+
+export async function setPageMenuAction(pageId: string, group: MenuGroup, newTab: boolean) {
+  const session = await requireSession();
+  if (!hasCapability(session.user.roleKey, "pages.publish")) throw new Error("Not permitted");
+  const page = await prisma.page.findUnique({ where: { id: pageId }, select: { slug: true, title: true, customFields: true } });
+  if (!page) throw new Error("Page not found");
+  const master = await getMasterSettings();
+  const without = withPageInMenu(master, { slug: page.slug, label: page.title }, "none", false);
+  await saveMasterSettings(withPageInMenu(without, { slug: page.slug, label: page.title }, group, newTab), session.user.id);
+  let cf = parseCustomFieldsArray(page.customFields);
+  cf = setCF(cf, "MenuItemGroup", group === "none" ? "" : group);
+  cf = setCF(cf, "MenuItemNewWindow", newTab ? "true" : cf.some((f) => f.key === "MenuItemNewWindow") ? "false" : "");
+  await prisma.page.update({ where: { id: pageId }, data: { customFields: serializeCustomFields(cf) } });
+  await logAudit({ userId: session.user.id, pageId, action: "updated", details: "Navigation" });
+  revalidatePath("/", "layout");
+  return menuGroupFor(await getMasterSettings(), page.slug);
+}
+
+export async function listLinkedPagesAction(pageId: string) {
+  await requireSession();
+  const rows = await prisma.page.findMany({
+    where: { linkedPageId: pageId },
+    select: { id: true, parent: { select: { id: true, title: true, slug: true } } },
+    orderBy: { createdAt: "asc" },
+  });
+  return rows.map((r) => ({ id: r.id, parentId: r.parent?.id ?? null, parentTitle: r.parent?.title ?? "(top level)", parentSlug: r.parent?.slug ?? "" }));
+}
+
+export async function listRelatedPagesAction(pageId: string) {
+  await requireSession();
+  const rows = await prisma.pageRelation.findMany({
+    where: { fromId: pageId },
+    orderBy: { sortOrder: "asc" },
+    select: { to: { select: { id: true, title: true, slug: true, status: true } } },
+  });
+  return rows.map((r) => r.to);
+}
+
+export async function addRelatedPageAction(pageId: string, targetId: string) {
+  const session = await requireSession();
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
+  if (pageId === targetId) throw new Error("A page cannot be related to itself");
+  const count = await prisma.pageRelation.count({ where: { fromId: pageId } });
+  if (count >= 12) throw new Error("A page can have up to 12 related pages");
+  await prisma.pageRelation.upsert({
+    where: { fromId_toId: { fromId: pageId, toId: targetId } },
+    create: { fromId: pageId, toId: targetId, sortOrder: count },
+    update: {},
+  });
+  await logAudit({ userId: session.user.id, pageId, action: "updated", details: "Related pages" });
+  revalidatePath("/cms");
+}
+
+export async function removeRelatedPageAction(pageId: string, targetId: string) {
+  const session = await requireSession();
+  if (!canEditLive(session.user.roleKey)) throw new Error("Not permitted");
+  await prisma.pageRelation.deleteMany({ where: { fromId: pageId, toId: targetId } });
+  await logAudit({ userId: session.user.id, pageId, action: "updated", details: "Related pages" });
+  revalidatePath("/cms");
+}
 
 // Master page tab — the site-wide header / navigation / footer.
 export async function saveMasterPageAction(settings: import("@/lib/data/site-settings").MasterSettings) {

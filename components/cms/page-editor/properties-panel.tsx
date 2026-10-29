@@ -8,6 +8,8 @@ import { MediaTab } from "./media-tab";
 import { VersionHistorySheet } from "./version-history-sheet";
 import { AuditLogSheet } from "./audit-log-sheet";
 import { widgetByType } from "@/lib/widget-catalogue";
+import { CategoriesSection, LinkedSection, NavigationSection, RelatedSection } from "./properties-extras";
+import type { MenuGroup } from "@/lib/menu-group";
 import type { getPageById } from "@/lib/data/pages";
 import type { listMembers } from "@/lib/data/users";
 
@@ -15,13 +17,29 @@ type PageDetail = NonNullable<Awaited<ReturnType<typeof getPageById>>>;
 
 // The sections under Kentico 11's Properties menu. Each one is a full page in
 // the editor area; the menu itself lives in the tab bar.
-export type PropertiesSection = "general" | "urls" | "template" | "metadata" | "workflow" | "versions" | "security" | "attachments";
+export type PropertiesSection =
+  | "general"
+  | "urls"
+  | "template"
+  | "metadata"
+  | "categories"
+  | "navigation"
+  | "related"
+  | "linked"
+  | "workflow"
+  | "versions"
+  | "security"
+  | "attachments";
 
 export const PROPERTIES_MENU: { key: PropertiesSection; label: string }[] = [
   { key: "general", label: "General" },
   { key: "urls", label: "URLs" },
   { key: "template", label: "Template" },
   { key: "metadata", label: "Metadata" },
+  { key: "categories", label: "Categories" },
+  { key: "navigation", label: "Navigation" },
+  { key: "related", label: "Related pages" },
+  { key: "linked", label: "Linked pages" },
   { key: "workflow", label: "Workflow" },
   { key: "versions", label: "Versions" },
   { key: "security", label: "Security" },
@@ -43,7 +61,11 @@ export function PropertiesPanel({
   members,
   canManageMembers,
   canEdit,
+  menu,
+  canEditMenu,
 }: {
+  menu: { group: MenuGroup; newTab: boolean };
+  canEditMenu: boolean;
   section: PropertiesSection;
   page: PageDetail;
   members: Awaited<ReturnType<typeof listMembers>>;
@@ -58,6 +80,11 @@ export function PropertiesPanel({
   }
 
   if (section === "metadata") return <SeoTab page={page} readOnly={!canEdit} />;
+  if (section === "categories")
+    return <CategoriesSection key={page.id} pageId={page.id} initial={page.categories.map((c) => c.name)} canEdit={canEdit} />;
+  if (section === "navigation") return <NavigationSection key={page.id} pageId={page.id} initial={menu} canEdit={canEditMenu} />;
+  if (section === "related") return <RelatedSection key={page.id} pageId={page.id} canEdit={canEdit} />;
+  if (section === "linked") return <LinkedSection key={page.id} pageId={page.id} canEdit={canEdit} />;
   if (section === "attachments") return <MediaTab page={page} />;
 
   if (section === "urls") {

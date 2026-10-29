@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { FileText, LayoutTemplate } from "lucide-react";
+import { FileText, Folder, LayoutTemplate } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,13 +24,18 @@ export function CreatePageDialog({
   open,
   onOpenChange,
   parentId,
-  isSection,
+  isSection: isSectionProp,
+  onLinkExisting,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   parentId: string | null;
   isSection: boolean;
+  onLinkExisting?: () => void;
 }) {
+  // Kentico asks what kind of page first: a page, or a folder to group pages.
+  const [picked, setPicked] = useState<"page" | "section" | null>(null);
+  const isSection = picked ? picked === "section" : isSectionProp;
   const [title, setTitle] = useState("");
   const [templates, setTemplates] = useState<Template[]>([]);
   const [templateId, setTemplateId] = useState<string | null>(null);
@@ -54,6 +59,7 @@ export function CreatePageDialog({
         const page = await createPageAction({ title: title.trim(), parentId, isSection, templateId });
         toast.success(`${isSection ? "Section" : "Page"} "${page.title}" created`);
         setTitle("");
+        setPicked(null);
         onOpenChange(false);
         if (!isSection) router.push(`/cms/${page.id}`);
       } catch {
@@ -63,11 +69,17 @@ export function CreatePageDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) setPicked(null);
+        onOpenChange(o);
+      }}
+    >
       <DialogContent className={templates.length > 0 ? "max-w-lg" : undefined}>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{isSection ? "Create section" : "Create page"}</DialogTitle>
+            <DialogTitle>Create new {isSection ? "folder" : "page"}</DialogTitle>
             <DialogDescription>
               {isSection
                 ? "Sections group related pages in the content tree and aren't published on their own."
@@ -76,7 +88,46 @@ export function CreatePageDialog({
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="new-page-title">Title</Label>
+              <Label>Please select the page type</Label>
+              <div className="grid grid-cols-2 gap-2">
+                {(
+                  [
+                    ["page", "Page (menu item)", "An ordinary page, such as Contact us or a news story.", FileText],
+                    ["section", "Folder", "Groups other pages in the tree. Not shown on its own.", Folder],
+                  ] as const
+                ).map(([key, label, hint, Icon]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setPicked(key)}
+                    className={cn(
+                      "flex items-start gap-2 rounded-lg border p-3 text-left hover:border-somerset-green/60",
+                      (isSection ? "section" : "page") === key && "border-somerset-green bg-somerset-green/10",
+                    )}
+                  >
+                    <Icon className="mt-0.5 h-5 w-5 shrink-0 text-neutral-500" />
+                    <span>
+                      <span className="block text-sm font-semibold">{label}</span>
+                      <span className="block text-xs text-neutral-500">{hint}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {onLinkExisting && (
+                <button
+                  type="button"
+                  className="text-xs font-medium text-somerset-green underline"
+                  onClick={() => {
+                    onOpenChange(false);
+                    onLinkExisting();
+                  }}
+                >
+                  Link an existing page instead
+                </button>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-page-title">Page name</Label>
               <Input
                 id="new-page-title"
                 autoFocus

@@ -323,6 +323,7 @@ export function ContentTree({
         onOpenChange={setCreateOpen}
         parentId={activeNode ? activeNode.id : null}
         isSection={createSection}
+        onLinkExisting={() => setLinkOpen(true)}
       />
 
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>

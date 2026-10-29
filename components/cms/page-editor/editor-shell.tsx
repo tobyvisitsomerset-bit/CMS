@@ -22,7 +22,7 @@ import { RoomsReviewsTab } from "./rooms-reviews-tab";
 import { MasterPageTab } from "./master-page-tab";
 import { PropertiesPanel, PROPERTIES_MENU, type PropertiesSection } from "./properties-panel";
 import { PagePreview } from "./page-preview";
-import { ListingPreview } from "./listing-preview";
+import { ChildrenListing } from "./children-listing";
 import type { ListingsByCategory, RealBlockData } from "@/components/cms/page-builder/block-renderer";
 import type { getPageById, ChildPageTile } from "@/lib/data/pages";
 import type { DetailExtras } from "@/lib/data/detail-extras";
@@ -222,6 +222,8 @@ export function EditorShell({
                 members={members}
                 canManageMembers={canManageMembers}
                 canEdit={canEdit}
+                menu={menuGroupFor(master, page.slug)}
+                canEditMenu={canPublish}
               />
             )}
           </div>
@@ -235,8 +237,8 @@ export function EditorShell({
       )}
 
       {mode === "listing" && (
-        <div className="min-h-0 flex-1 overflow-y-auto bg-[#e9ffff]">
-          <ListingPreview page={page} />
+        <div className="min-h-0 flex-1 overflow-y-auto bg-white">
+          <ChildrenListing pageId={page.id} parentId={page.parentId} canEdit={canEdit} />
         </div>
       )}
     </div>
