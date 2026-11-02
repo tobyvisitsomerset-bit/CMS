@@ -13,9 +13,10 @@ import { RelatedPages } from "@/components/site/related-pages";
 
 type Params = { slug: string[] };
 
-// Kentico stored site configuration (advert slots, menu entries) as pages.
-// They are not content, so a visitor who lands on one gets a 404 rather than
-// an empty page.
+// Kentico stored advert slots as pages. They are not content, so a visitor who
+// lands on one gets a 404 rather than an empty page. (Empty menu pages are NOT
+// hidden: many are real pages whose content was built from widgets in Kentico
+// and still has to be rebuilt here.)
 function kenticoClass(customFields: string | null): string | null {
   return (customFields ?? "").match(/"key":"_kenticoClassName","value":"([^"]+)"/)?.[1] ?? null;
 }
@@ -80,15 +81,6 @@ export default async function PublicPage({
     isFormDriven(page) ? Promise.resolve({}) : resolveBlockData(page.contentBlocks, sp),
     getRelatedTiles(page.id),
   ]);
-
-  if (
-    kenticoClass(page.customFields) === "cms.menuitem" &&
-    !page.bodyContent &&
-    page.contentBlocks.length === 0 &&
-    childPages.length === 0
-  ) {
-    notFound();
-  }
 
   return (
     <div>
