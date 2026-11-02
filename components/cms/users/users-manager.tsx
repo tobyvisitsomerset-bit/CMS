@@ -7,12 +7,13 @@ import { Copy, KeyRound, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { searchPagesAction } from "@/app/cms/actions";
 import {
   assignPagesToMemberAction,
   createUserAction,
   resetUserPasswordAction,
+  searchAssignablePagesAction,
   unassignPageAction,
+  type AssignablePage,
   type CreateUserResult,
 } from "@/app/cms/users/actions";
 
@@ -25,7 +26,6 @@ type UserRow = {
   pages: { id: string; title: string }[];
   createdAt: string;
 };
-type Hit = { id: string; title: string; slug: string; status: string };
 
 const ROLE_OPTIONS = [
   { key: "MEMBER", label: "Member (looks after their own page)", staff: false },
@@ -36,18 +36,31 @@ const ROLE_OPTIONS = [
 
 function PagePicker({ chosen, onChange }: { chosen: { id: string; title: string }[]; onChange: (p: { id: string; title: string }[]) => void }) {
   const [q, setQ] = useState("");
-  const [result, setResult] = useState<{ q: string; hits: Hit[] }>({ q: "", hits: [] });
+  const [mainOnly, setMainOnly] = useState(true);
+  const [result, setResult] = useState<{ key: string; hits: AssignablePage[] }>({ key: "", hits: [] });
+  const [ticked, setTicked] = useState<string[]>([]);
   const term = q.trim();
+  const key = `${mainOnly ? "main" : "all"}:${term}`;
 
   useEffect(() => {
     if (term.length < 2) return;
     const t = setTimeout(() => {
-      void searchPagesAction(term).then((rows) => setResult({ q: term, hits: rows as Hit[] }));
+      void searchAssignablePagesAction(term, mainOnly).then((rows) => setResult({ key, hits: rows }));
     }, 250);
     return () => clearTimeout(t);
-  }, [term]);
+  }, [term, mainOnly, key]);
 
-  const hits = term.length >= 2 && result.q === term ? result.hits : [];
+  const hits = (term.length >= 2 && result.key === key ? result.hits : []).filter((h) => !chosen.some((c) => c.id === h.id));
+  const tickedHere = hits.filter((h) => ticked.includes(h.id));
+
+  function toggle(id: string) {
+    setTicked((t) => (t.includes(id) ? t.filter((x) => x !== id) : [...t, id]));
+  }
+  function addTicked() {
+    onChange([...chosen, ...tickedHere.map((h) => ({ id: h.id, title: h.title }))]);
+    setTicked([]);
+    setQ("");
+  }
   return (
     <div className="space-y-2">
       {chosen.length > 0 && (
@@ -62,28 +75,37 @@ function PagePicker({ chosen, onChange }: { chosen: { id: string; title: string 
           ))}
         </div>
       )}
-      <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search for their page by name" />
+      <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search for their pages by name" />
+      <label className="flex items-center gap-2 text-xs text-neutral-600">
+        <input type="checkbox" checked={mainOnly} onChange={(e) => setMainOnly(e.target.checked)} />
+        Only show the main page (hide linked copies)
+      </label>
       {hits.length > 0 && (
-        <ul className="max-h-48 overflow-y-auto rounded-md border bg-white">
-          {hits
-            .filter((h) => !chosen.some((c) => c.id === h.id))
-            .map((h) => (
+        <>
+          <ul className="max-h-60 divide-y overflow-y-auto rounded-md border bg-white">
+            {hits.map((h) => (
               <li key={h.id}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    onChange([...chosen, { id: h.id, title: h.title }]);
-                    setQ("");
-                  }}
-                  className="flex w-full flex-col px-3 py-2 text-left text-sm hover:bg-neutral-50"
-                >
-                  <strong>{h.title}</strong>
-                  <span className="text-xs text-neutral-500">/{h.slug}</span>
-                </button>
+                <label className="flex cursor-pointer items-start gap-2.5 px-3 py-2 text-sm hover:bg-neutral-50">
+                  <input type="checkbox" className="mt-1" checked={ticked.includes(h.id)} onChange={() => toggle(h.id)} />
+                  <span className="min-w-0 flex-1">
+                    <strong>{h.title}</strong>
+                    {h.isLinked && <span className="ml-1.5 rounded bg-neutral-100 px-1.5 py-0.5 text-[11px] text-neutral-600">linked copy: assigns the main page</span>}
+                    {h.status !== "PUBLISHED" && <span className="ml-1.5 rounded bg-neutral-100 px-1.5 py-0.5 text-[11px] text-neutral-600">{h.status.toLowerCase()}</span>}
+                    <span className="block truncate text-xs text-neutral-500">
+                      {h.parentTitle ? `in ${h.parentTitle} · ` : ""}/{h.slug}
+                    </span>
+                    {h.memberName && <span className="block text-xs text-amber-700">Currently looked after by {h.memberName}</span>}
+                  </span>
+                </label>
               </li>
             ))}
-        </ul>
+          </ul>
+          <Button type="button" size="sm" variant="outline" disabled={tickedHere.length === 0} onClick={addTicked}>
+            <Plus className="size-3.5" /> Add {tickedHere.length > 0 ? `${tickedHere.length} selected page${tickedHere.length === 1 ? "" : "s"}` : "selected pages"}
+          </Button>
+        </>
       )}
+      {term.length >= 2 && result.key === key && hits.length === 0 && <p className="text-xs text-neutral-500">No pages found{mainOnly ? ". Untick the box above to include linked copies" : ""}.</p>}
     </div>
   );
 }

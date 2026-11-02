@@ -32,6 +32,61 @@ async function requireUserManager() {
   return session;
 }
 
+export type AssignablePage = {
+  id: string;
+  title: string;
+  slug: string;
+  status: string;
+  isLinked: boolean;
+  parentTitle: string | null;
+  memberName: string | null;
+};
+
+// Page search for the "which pages does this member look after" pickers.
+// Linked copies (the same listing shown under another category) are hidden by
+// default so only the real page turns up; ticking them back in is for the
+// rare case someone wants to find a page by where it is linked.
+export async function searchAssignablePagesAction(query: string, mainOnly: boolean): Promise<AssignablePage[]> {
+  await requireUserManager();
+  const q = query.trim();
+  if (q.length < 2) return [];
+  const rows = await prisma.page.findMany({
+    where: {
+      title: { contains: q, mode: "insensitive" },
+      isSection: false,
+      ...(mainOnly ? { linkedPageId: null } : {}),
+    },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      status: true,
+      linkedPageId: true,
+      parent: { select: { title: true } },
+      assignedMember: { select: { name: true } },
+    },
+    orderBy: { title: "asc" },
+    take: 40,
+  });
+  return rows.map((r) => ({
+    id: r.id,
+    title: r.title,
+    slug: r.slug,
+    status: r.status,
+    isLinked: !!r.linkedPageId,
+    parentTitle: r.parent?.title ?? null,
+    memberName: r.assignedMember?.name ?? null,
+  }));
+}
+
+// A linked copy can't be assigned itself, so choosing one assigns the real
+// page it points to.
+async function resolveRealPages(pageIds: string[]) {
+  const picked = await prisma.page.findMany({ where: { id: { in: pageIds.slice(0, 100) } }, select: { id: true, linkedPageId: true } });
+  const realIds = [...new Set(picked.map((p) => p.linkedPageId ?? p.id))];
+  return prisma.page.findMany({ where: { id: { in: realIds } }, select: { id: true, title: true, assignedMemberId: true } });
+}
+
 export type CreateUserResult =
   | { ok: true; id: string; email: string; password: string; emailed: "sent" | "not-configured" | "failed" | "skipped" }
   | { ok: false; error: string };
@@ -70,7 +125,7 @@ export async function createUserAction(input: {
 
   let pageTitles: string[] = [];
   if (input.roleKey === "MEMBER" && input.pageIds?.length) {
-    const pages = await prisma.page.findMany({ where: { id: { in: input.pageIds.slice(0, 50) }, linkedPageId: null }, select: { id: true, title: true } });
+    const pages = await resolveRealPages(input.pageIds);
     await prisma.page.updateMany({ where: { id: { in: pages.map((p) => p.id) } }, data: { assignedMemberId: user.id } });
     for (const p of pages) await notifyAssignment(user.id, p.title, p.id);
     pageTitles = pages.map((p) => p.title);
@@ -126,7 +181,7 @@ export async function assignPagesToMemberAction(userId: string, pageIds: string[
   const session = await requireUserManager();
   const user = await prisma.user.findUnique({ where: { id: userId }, include: { role: true } });
   if (!user || user.role.key !== "MEMBER") throw new Error("Pages can only be assigned to member accounts.");
-  const pages = await prisma.page.findMany({ where: { id: { in: pageIds.slice(0, 50) }, linkedPageId: null }, select: { id: true, title: true, assignedMemberId: true } });
+  const pages = await resolveRealPages(pageIds);
   await prisma.page.updateMany({ where: { id: { in: pages.map((p) => p.id) } }, data: { assignedMemberId: userId } });
   for (const p of pages.filter((x) => x.assignedMemberId !== userId)) await notifyAssignment(userId, p.title, p.id);
   await logAudit({ userId: session.user.id, action: "updated", details: `Assigned ${pages.length} page(s) to ${user.email}` });
