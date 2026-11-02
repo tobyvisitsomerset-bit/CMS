@@ -28,13 +28,23 @@ export type PoolItem = {
   bookingUrl: string | null;
 };
 
+/**
+ * True when the text contains the word or phrase as whole words (plurals
+ * allowed). Plain substring matching was wrong: "gin" matched "beginning" and
+ * "roman" matched "romantic".
+ */
+export function hasInterestWord(text: string, word: string): boolean {
+  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(?:^|[^a-z0-9])${escaped}(?:s|es)?(?![a-z0-9])`).test(text);
+}
+
 export const INTERESTS: { key: string; label: string; words: string[] }[] = [
   { key: "coast", label: "Coast and beaches", words: ["coast", "beach", "sea", "pier", "cliff", "bay", "harbour", "seaside"] },
   { key: "food", label: "Food and drink", words: ["cider", "cheese", "farm shop", "brewery", "vineyard", "gin", "tea room", "tasting", "local produce"] },
   { key: "family", label: "Family adventures", words: ["family", "children", "kids", "play", "zoo", "farm park", "adventure", "fun"] },
   { key: "hidden", label: "Hidden Somerset", words: ["hidden", "secret", "quiet", "village", "gem", "tucked", "peaceful"] },
   { key: "heritage", label: "Heritage and history", words: ["castle", "abbey", "history", "heritage", "museum", "roman", "legend", "cathedral", "medieval", "historic"] },
-  { key: "walking", label: "Walking and outdoors", words: ["walk", "trail", "hill", "moor", "gorge", "nature", "reserve", "cycle", "woodland", "hike"] },
+  { key: "walking", label: "Walking and outdoors", words: ["walk", "walking", "trail", "hill", "moor", "gorge", "nature", "reserve", "cycle", "cycling", "woodland", "hike", "hiking"] },
 ];
 
 export type Pace = "relaxed" | "balanced" | "packed";
@@ -198,7 +208,7 @@ function score(item: PoolItem, p: Prefs, from: { lat: number; lng: number } | nu
   let matches = 0;
   for (const key of p.interests) {
     const words = INTERESTS.find((i) => i.key === key)?.words ?? [];
-    if (words.some((w) => item.text.includes(w))) matches += 1;
+    if (words.some((w) => hasInterestWord(item.text, w))) matches += 1;
   }
   s += Math.min(3, matches) * 8;
   if (p.area && item.town && item.town.toLowerCase() === p.area.toLowerCase()) s += 15;

@@ -250,6 +250,7 @@ export function MyTripView() {
 
   return (
     <div className="print:text-sm">
+      <h1 className="sr-only">My trip</h1>
       {/* Trip switcher */}
       <div className="flex flex-wrap items-center gap-2 print:hidden">
         {trip.trips.map((t) => (

@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { getItineraryPool } from "@/lib/data/itinerary-pool";
-import { INTERESTS, type PoolItem } from "@/lib/itinerary";
+import { INTERESTS, hasInterestWord, type PoolItem } from "@/lib/itinerary";
 import { priorityOf } from "@/lib/membership";
 
 // "Recommended for you": suggestions from what the visitor has told us or
@@ -51,7 +51,7 @@ export async function getRecommendations(userId: string, limit = 6): Promise<Rec
     let reason = "Popular with Visit Somerset members";
     for (const key of interests) {
       const words = INTERESTS.find((i) => i.key === key)?.words ?? [];
-      if (words.some((w) => item.text.includes(w))) {
+      if (words.some((w) => hasInterestWord(item.text, w))) {
         score += 10;
         reason = `Because you like ${INTERESTS.find((i) => i.key === key)?.label.toLowerCase()}`;
       }

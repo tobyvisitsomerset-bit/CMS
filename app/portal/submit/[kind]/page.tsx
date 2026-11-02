@@ -67,7 +67,8 @@ export default async function SubmitPage({
   const listings =
     meta.kind === "OFFER"
       ? await prisma.page.findMany({
-          where: { assignedMemberId: userId, status: { not: "ARCHIVED" } },
+          // Offers belong on a business, attraction or place to stay, not on an event.
+          where: { assignedMemberId: userId, status: { not: "ARCHIVED" }, NOT: { customFields: { contains: "ItemStartDate" } } },
           select: { id: true, title: true },
           orderBy: { title: "asc" },
         })

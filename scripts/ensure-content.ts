@@ -89,6 +89,16 @@ async function ensureExplorers() {
 const BUY_INTRO =
   "Welcome to Buy Somerset - your opportunity to get the best quality products direct from the producer or local retailer. Somerset is world-famous for its food brands and natural resources, but also for the craftspeople and innovators who fashion them into things we love and cannot resist.\n\nThese pages take you straight to those outlets, where the expertise and knowledge is on hand to help you choose and get a smooth delivery to your door. Enjoy shopping!";
 
+// "Submit Festivals & Events" is linked from the Events menu and the events
+// page. It was a form widget in Kentico, so give it the event form here.
+async function ensureSubmitEventPage() {
+  await ensureBlock("festivals-events/submit-festivals-events", "hero", { heading: "Submit a festival or event", subheading: "Free to list. We check every one before it goes live." }, { position: "top" });
+  await ensureBlock("festivals-events/submit-festivals-events", "event_form", {
+    heading: "Submit your festival or event",
+    intro: "Tell us about it and the team will check it before it goes on the site.",
+  });
+}
+
 async function ensureShopAndExperiences() {
   const buy = await pageBySlug("buy-someset");
   if (buy) {
@@ -474,6 +484,7 @@ async function main() {
   await ensureExplorers();
   await ensureHome();
   await ensureShopAndExperiences();
+  await ensureSubmitEventPage();
 }
 
 main()

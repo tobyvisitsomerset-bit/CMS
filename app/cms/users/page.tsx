@@ -33,7 +33,7 @@ export default async function UsersPage() {
       <h1 className="text-xl font-semibold">Users</h1>
       <p className="mb-5 text-sm text-neutral-500">
         Create accounts for members and for the team, assign members to their pages and send them their sign-in details.
-        {visitors > 0 ? ` ${visitors} visitor account${visitors === 1 ? "" : "s"} are not listed here.` : ""}
+        {visitors > 0 ? ` ${visitors} visitor account${visitors === 1 ? " is" : "s are"} not listed here.` : ""}
       </p>
       <UsersManager
         users={users.map((u) => ({

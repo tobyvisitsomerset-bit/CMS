@@ -140,7 +140,7 @@ export function BlockRenderer({
           <div className="absolute inset-0 bg-gradient-to-t from-deep-green/85 via-deep-green/30 to-transparent" />
           <div className="relative mx-auto w-full max-w-7xl p-8 text-white">
             {config.eyebrow && <p className="mb-2 text-[11px] font-semibold tracking-[0.22em] text-white/80 uppercase">{config.eyebrow}</p>}
-            <h2 className="font-serif text-4xl font-black">{config.heading || "Hero heading"}</h2>
+            <h1 className="font-serif text-4xl font-black">{config.heading || "Hero heading"}</h1>
             {config.subheading && <p className="mt-2 max-w-xl text-white/90">{config.subheading}</p>}
             {config.ctaLabel &&
               (config.ctaUrl ? (

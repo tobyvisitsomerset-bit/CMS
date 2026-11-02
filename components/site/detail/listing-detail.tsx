@@ -164,6 +164,7 @@ export function ListingDetail({
         {isEvent && <span className="rounded-full bg-cool-grey px-3 py-1 text-xs font-medium text-stone-700">Event</span>}
       </div>
       <h1 className="mt-3 font-serif text-4xl leading-tight font-black tracking-tight text-stone-900 sm:text-5xl">{page.title}</h1>
+      {page.tagline && <p className="mt-2 max-w-2xl text-lg text-stone-600">{page.tagline}</p>}
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-stone-600">
         {avgRating !== null && (
           <span className="flex items-center gap-2">
