@@ -25,6 +25,7 @@ import { BuyPanel } from "@/components/site/shop/buy-panel";
 import type { ShopProducer } from "@/lib/data/shop";
 import { ContentPanel } from "@/components/site/content-panel";
 import { DisplaySettingsPanel } from "@/components/site/display-settings";
+import { SimpleText } from "@/components/site/simple-text";
 import {
   AdBar,
   AvailabilitySearch,
@@ -186,7 +187,9 @@ export function BlockRenderer({
         <Section>
           <div className="max-w-3xl">
             {config.heading && <h3 className="mb-3 font-serif text-2xl font-black text-stone-900">{config.heading}</h3>}
-            <p className="whitespace-pre-wrap text-stone-600">{config.body || "Body text..."}</p>
+            <div className="text-stone-600">
+              <SimpleText text={config.body || "Body text..."} />
+            </div>
           </div>
         </Section>
       );

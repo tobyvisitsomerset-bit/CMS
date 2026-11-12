@@ -39,6 +39,12 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   return (
     <TripProvider signedIn={!!session?.user}>
       <div className="flex min-h-screen flex-col bg-white">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-somerset-green focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
         <SiteHeader
           mainNav={master.mainNav}
           utilityLinks={master.utilityLinks}
@@ -56,7 +62,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
                   : { href: "/cms", label: "Content Hub" }
           }
         />
-        <main className="flex-1">{children}</main>
+        <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
+          {children}
+        </main>
         <SiteFooter socialLinks={socialLinks} signedIn={!!session?.user} master={{ ...master, footerColumns }} />
       </div>
     </TripProvider>

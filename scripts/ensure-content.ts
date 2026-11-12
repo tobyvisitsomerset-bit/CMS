@@ -473,6 +473,43 @@ async function ensureMediaLibraries() {
   }
 }
 
+// A general accessibility statement. Plain text with the small conventions
+// understood by components/site/simple-text.tsx (## headings, - lists, links).
+// Only says what is true of the site: change the wording in the CMS freely.
+const ACCESSIBILITY_STATEMENT = `Visit Somerset wants everyone to be able to use this website, whatever device or assistive technology they use. This statement explains what we have done, what we know is not yet right, and how to tell us about a problem.
+
+## What you can do on this site
+
+- Use the display settings above to change the text size, switch to greyscale or colour-blind help, increase contrast, use an easy-read font, widen the spacing between letters and lines, or stop movement. Your choices are saved on your own device and apply to every page.
+- Zoom in with your browser (Ctrl and +, or Cmd and + on a Mac). The pages are designed to stay readable without scrolling sideways.
+- Move around using only a keyboard. The first thing you reach when you press Tab is a link to skip straight to the main content.
+- Find places with step-free access, accessible toilets, hearing loops and more using the access filters on our listings, and see the full range on [Accessible Somerset](/accessible-somerset).
+
+## How we check
+
+In November 2026 we ran automated checks against the Web Content Accessibility Guidelines (WCAG) 2.2, level AA, on the main types of page on this site, at desktop and phone sizes, and fixed the problems they found. We also checked keyboard use, page headings and page titles by hand. We aim to meet WCAG 2.2 level AA.
+
+Automated checks only find some problems. We have not yet had this site tested by an independent auditor or by people using screen readers and other assistive technology, so we cannot say that every page fully meets the standard.
+
+## What we know is not yet right
+
+- Information about places comes from the businesses themselves. Access details such as step-free entry or hearing loops are provided by each business and are not checked by us, and a photo may not have a description. If access matters to you, please contact the place before you travel.
+- The interactive map is mainly visual. The same places are listed on the pages for each area and type of place.
+- Some pages and documents moved from our previous website may not yet meet the standard.
+- We link to other websites that we do not control. Some links open in a new tab or window.
+
+## Tell us about a problem
+
+If something on this site is hard to use, or you need information in another format, such as large print, audio or easy read, email info@visitsomerset.co.uk. Please tell us the address of the page, what went wrong, and the device and any assistive technology you use. We aim to reply within five working days.
+
+## If you are not happy with our reply
+
+The Equality Advisory and Support Service (EASS) gives free advice on discrimination and equality in England, Scotland and Wales: [equalityadvisoryservice.com](https://www.equalityadvisoryservice.com/)
+
+## About this statement
+
+This statement was written in November 2026. We will update it when we make changes or find new problems.`;
+
 // The Accessibility page (top menu) carries the visitors' display settings.
 // It used to be plain text, which cannot hold a widget, so the first time it
 // is rebuilt as heading, settings panel, then the existing statement as an
@@ -496,10 +533,39 @@ async function ensureAccessibilityPage() {
       slides: [],
     }, { position: "end" });
     await ensureBlock("accessibility", "display_settings", { heading: "Make this site easier to use", intro: "" }, { position: "end" });
-    const statement = decodeKenticoBody(page.bodyContent);
-    if (statement) await ensureBlock("accessibility", "text", { heading: "Accessibility statement", body: statement }, { position: "end" });
+    await ensureBlock("accessibility", "text", { heading: "Accessibility statement", body: ACCESSIBILITY_STATEMENT }, { position: "end" });
   }
   await prisma.siteSetting.create({ data: { key: KEY, value: JSON.stringify({ built: existing === 0, at: new Date().toISOString() }) } });
+}
+
+// One time: swap the old Kentico statement (kept as a text block by the step
+// above) for the general one. Only a block that still holds the untouched old
+// text is replaced, so anything the team has already reworded is left alone.
+async function ensureAccessibilityStatement() {
+  const KEY = "accessibility-statement-v2";
+  if (await prisma.siteSetting.findUnique({ where: { key: KEY } })) return;
+  const page = await prisma.page.findUnique({ where: { slug: "accessibility" }, select: { id: true, bodyContent: true } });
+  if (!page) return;
+  const oldBody = decodeKenticoBody(page.bodyContent);
+  let replaced = 0;
+  if (oldBody) {
+    const blocks = await prisma.contentBlock.findMany({ where: { pageId: page.id, type: "text" } });
+    for (const b of blocks) {
+      let cfg: Cfg;
+      try {
+        cfg = JSON.parse(b.config || "{}");
+      } catch {
+        continue;
+      }
+      if (cfg.body !== oldBody) continue;
+      await prisma.contentBlock.update({ where: { id: b.id }, data: { config: JSON.stringify({ ...cfg, heading: "Accessibility statement", body: ACCESSIBILITY_STATEMENT }) } });
+      replaced++;
+    }
+    // The page's own text is hidden while it has blocks, but keep it from going stale.
+    if (replaced > 0) await prisma.page.update({ where: { id: page.id }, data: { bodyContent: ACCESSIBILITY_STATEMENT } });
+  }
+  await prisma.siteSetting.create({ data: { key: KEY, value: JSON.stringify({ replaced, at: new Date().toISOString() }) } });
+  if (replaced > 0) console.log("[ensure-content] replaced the old accessibility statement with the general one");
 }
 
 async function main() {
@@ -516,6 +582,7 @@ async function main() {
   await ensureShopAndExperiences();
   await ensureSubmitEventPage();
   await ensureAccessibilityPage();
+  await ensureAccessibilityStatement();
 }
 
 main()
