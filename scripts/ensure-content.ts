@@ -124,7 +124,12 @@ async function ensureShopAndExperiences() {
   await ensureBlock("book-experiences/all-experiences", "experiences_hub", { heading: "All experiences", intro: "" });
 }
 
+// Once the home page has been simplified (see simplifyHome) its sections are the
+// team's choice, so they are never put back.
+const HOME_SIMPLIFIED_KEY = "home-simplified-v1";
+
 async function ensureHome() {
+  if (await prisma.siteSetting.findUnique({ where: { key: HOME_SIMPLIFIED_KEY } })) return;
   const page = await pageBySlug("home");
   if (!page) return;
   const hadStrip = await prisma.contentBlock.count({ where: { pageId: page.id, type: "book_strip" } });
@@ -248,6 +253,44 @@ async function ensureHome() {
     if (ordered[i].sortOrder !== i) await prisma.contentBlock.update({ where: { id: ordered[i].id }, data: { sortOrder: i } });
   }
   console.log("[ensure-content] home sections added and ordered");
+}
+
+// One time: the home page keeps only the hero (with the booking search) and the
+// upcoming events. The other sections (Ready to book, Where to start, Somewhere
+// to stay, Towns & cities, Explore Somerset, the map band and Made in Somerset)
+// are removed. Their settings are saved first, in the same step, under
+// "home-removed-blocks-v1" so they can be put back by hand.
+const HOME_REMOVED_TYPES = ["book_strip", "mood_tiles", "towns_row", "explore_area_tiles", "map_band", "partners_row"];
+
+async function simplifyHome() {
+  if (await prisma.siteSetting.findUnique({ where: { key: HOME_SIMPLIFIED_KEY } })) return;
+  const page = await pageBySlug("home");
+  if (!page) return;
+  const blocks = await prisma.contentBlock.findMany({ where: { pageId: page.id }, orderBy: { sortOrder: "asc" } });
+  const isStays = (config: string) => {
+    try {
+      return JSON.parse(config || "{}").mode === "businesses";
+    } catch {
+      return false;
+    }
+  };
+  const remove = blocks.filter((b) => HOME_REMOVED_TYPES.includes(b.type) || (b.type === "real_teaser" && isStays(b.config)));
+  const backup = remove.map((b) => ({ type: b.type, sortOrder: b.sortOrder, config: b.config }));
+  const at = new Date().toISOString();
+  await prisma.$transaction([
+    prisma.siteSetting.upsert({
+      where: { key: "home-removed-blocks-v1" },
+      create: { key: "home-removed-blocks-v1", value: JSON.stringify({ at, blocks: backup }) },
+      update: {},
+    }),
+    prisma.contentBlock.deleteMany({ where: { id: { in: remove.map((b) => b.id) } } }),
+    prisma.siteSetting.create({ data: { key: HOME_SIMPLIFIED_KEY, value: JSON.stringify({ removed: remove.length, at }) } }),
+  ]);
+  const left = blocks.filter((b) => !remove.some((r) => r.id === b.id));
+  for (let i = 0; i < left.length; i++) {
+    if (left[i].sortOrder !== i) await prisma.contentBlock.update({ where: { id: left[i].id }, data: { sortOrder: i } });
+  }
+  console.log(`[ensure-content] home page simplified: removed ${remove.length} sections (saved as home-removed-blocks-v1)`);
 }
 
 // The "Business Detail" starter template used to add placeholder hero/text/
@@ -583,6 +626,7 @@ async function main() {
   await ensureMediaLibraries();
   await ensureExplorers();
   await ensureHome();
+  await simplifyHome();
   await ensureShopAndExperiences();
   await ensureSubmitEventPage();
   await ensureAccessibilityPage();

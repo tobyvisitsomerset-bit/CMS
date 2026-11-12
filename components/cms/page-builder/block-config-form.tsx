@@ -72,7 +72,7 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
           <Field label="Subheading (the line under the heading)">
             <Textarea rows={2} value={config.subheading ?? ""} onChange={(e) => set({ subheading: e.target.value })} />
           </Field>
-          <Field label="Background image">
+          <Field label="Background image (best at 1900 × 800 pixels)">
             <MediaPickerField value={config.imageUrl ?? ""} onChange={(url) => set({ imageUrl: url })} />
           </Field>
           <FocusPicker imageUrl={config.imageUrl ?? ""} value={config.focus ?? ""} onChange={(f) => set({ focus: f })} />
@@ -93,7 +93,7 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
               <div>
                 <p className="text-sm font-semibold">Rotating photos</p>
                 <p className="text-xs text-neutral-500">
-                  Add photos and they take turns behind the heading. Each can credit a member, with their logo and a link to their website,
+                  Add photos and they take turns behind the heading. Use photos 1900 × 800 pixels (wide and short). Each can credit a member, with their logo and a link to their website,
                   shown bottom right. With no photos here, the background image above is used.
                 </p>
               </div>

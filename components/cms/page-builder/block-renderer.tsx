@@ -108,14 +108,15 @@ export function BlockRenderer({
       if (config.showSearchBar) {
         return (
           <section className="relative isolate bg-white">
-            <div className="relative isolate overflow-hidden bg-gradient-to-br from-somerset-green to-deep-green text-white">
+            {/* The photo is 1900 x 800: that shape on wide screens, never shorter than the words need on a phone, never taller than 800px. */}
+            <div className="relative isolate flex min-h-[min(800px,max(22rem,calc(100vw*800/1900)))] items-center justify-center overflow-hidden bg-gradient-to-br from-somerset-green to-deep-green text-white">
               {(config.slides ?? []).some((x: any) => x?.imageUrl) ? (
-                <HeroSlides slides={config.slides} bottomClass="bottom-36" caption={config.caption} subcaption={config.subcaption} />
+                <HeroSlides slides={config.slides} bottomClass="bottom-4" caption={config.caption} subcaption={config.subcaption} />
               ) : (
                 config.imageUrl && <Img src={config.imageUrl} alt="" className="absolute inset-0 -z-10 h-full w-full" style={focusStyle(config.focus)} />
               )}
               <div className="absolute inset-0 -z-10 bg-gradient-to-b from-deep-green/50 via-deep-green/30 to-deep-green/70" />
-              <div className="mx-auto max-w-4xl px-6 pt-20 pb-44 text-center sm:pt-28">
+              <div className="mx-auto max-w-4xl px-6 py-16 text-center">
                 <p className="text-[11px] font-semibold tracking-[0.28em] text-white/80 uppercase">
                   {config.eyebrow || "Somerset · England's West Country"}
                 </p>
@@ -130,8 +131,11 @@ export function BlockRenderer({
                 )}
               </div>
             </div>
-            <div className="relative z-10 mx-auto -mt-32 max-w-5xl px-6">
-              <HomepageSearchBar />
+            {/* The booking search sits under the photo, not over it. */}
+            <div className="bg-cool-grey">
+              <div className="mx-auto max-w-5xl px-6 py-8">
+                <HomepageSearchBar />
+              </div>
             </div>
           </section>
         );
