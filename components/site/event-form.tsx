@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { submitEventListingAction, type FormResult } from "@/app/(site)/actions";
 
 const FIELD =
-  "block w-full rounded-2xl border border-stone-200 bg-white px-4 py-2.5 text-sm font-medium text-stone-900 placeholder:text-stone-400 focus:border-somerset-green focus:outline-none";
+  "block w-full rounded-2xl border border-stone-200 bg-white px-4 py-2.5 text-sm font-medium text-stone-900 placeholder:text-stone-500 focus:border-somerset-green focus:outline-none";
 const LABEL = "mb-1 block text-[11px] font-medium text-stone-500";
 
 export function EventForm({ pageId }: { pageId: string }) {

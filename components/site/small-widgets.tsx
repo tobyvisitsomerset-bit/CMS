@@ -80,7 +80,7 @@ export function AdBar({ imageUrl, url, alt, label }: { imageUrl?: string; url?: 
   return (
     <section className="px-6 py-6">
       <div className="mx-auto max-w-7xl">
-        <p className="mb-1 text-[10px] font-semibold tracking-widest text-stone-400 uppercase">{label || "Advertisement"}</p>
+        <p className="mb-1 text-[10px] font-semibold tracking-widest text-stone-600 uppercase">{label || "Advertisement"}</p>
         {url ? (
           <a href={url} target="_blank" rel="noreferrer sponsored" className="block">
             {img}

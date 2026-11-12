@@ -27,7 +27,7 @@ export function NewsletterForm({ source = "footer", tone = "dark" }: { source?: 
           name="email"
           required
           placeholder="Your email address"
-          className="min-w-0 flex-1 rounded-full border border-white/20 bg-white px-4 py-2.5 text-sm text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-white/60"
+          className="min-w-0 flex-1 rounded-full border border-white/20 bg-white px-4 py-2.5 text-sm text-stone-800 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-white/60"
         />
         <button
           type="submit"

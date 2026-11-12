@@ -109,7 +109,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           name="q"
           defaultValue={q}
           placeholder="Search places, events, towns…"
-          className="min-w-0 flex-1 bg-transparent py-2 text-base text-stone-900 placeholder:text-stone-400 focus:outline-none"
+          className="min-w-0 flex-1 bg-transparent py-2 text-base text-stone-900 placeholder:text-stone-500 focus:outline-none"
         />
         <button type="submit" className="rounded-full bg-somerset-green px-5 py-2 text-sm font-bold text-white hover:opacity-90">
           Search
@@ -133,7 +133,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                     scope === s.key ? "border-somerset-green bg-somerset-green text-white" : "border-stone-200 text-stone-700 hover:border-somerset-green",
                   )}
                 >
-                  {s.label} <span className="opacity-70">· {n}</span>
+                  {s.label} <span className="opacity-80">· {n}</span>
                 </Link>
               );
             })}

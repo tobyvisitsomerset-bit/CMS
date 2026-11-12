@@ -103,7 +103,7 @@ export default async function AccessibleSomersetPage({ searchParams }: { searchP
               // eslint-disable-next-line @next/next/no-img-element
               <img src={i.imageUrl} alt="" className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
             ) : (
-              <div className="flex aspect-[4/3] items-center justify-center bg-cool-grey text-[11px] font-semibold tracking-wider text-stone-400 uppercase">
+              <div className="flex aspect-[4/3] items-center justify-center bg-cool-grey text-[11px] font-semibold tracking-wider text-stone-500 uppercase">
                 Photo · {i.title}
               </div>
             )}

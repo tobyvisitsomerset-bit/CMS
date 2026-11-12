@@ -36,7 +36,7 @@ export function SiteFooter({
           </div>
           {master.footerColumns.map((col) => (
             <div key={col.heading} className="min-w-[8rem]">
-              <h3 className="text-sm font-bold text-white">{col.heading}</h3>
+              <h2 className="text-sm font-bold text-white">{col.heading}</h2>
               <ul className="mt-3 space-y-2">
                 {col.links.map((link) => (
                   <li key={link.href + link.label}>
@@ -73,7 +73,7 @@ export function SiteFooter({
                     href={link.url}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label={link.platform}
+                    aria-label={`${link.platform} (opens in a new tab)`}
                     className="text-white/70 transition-colors hover:text-white"
                   >
                     <SocialIcon platform={link.platform} className="size-4" />

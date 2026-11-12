@@ -43,7 +43,7 @@ export function ProducerShop({ intro, producers }: { intro?: string; producers: 
             <article key={p.id} id={anchor(p.title)} className="scroll-mt-48 border-t border-stone-200 pt-8">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="max-w-2xl">
-                  {p.town && <p className="text-xs font-semibold tracking-wider text-stone-400 uppercase">{p.town}</p>}
+                  {p.town && <p className="text-xs font-semibold tracking-wider text-stone-600 uppercase">{p.town}</p>}
                   <h2 className="font-serif text-3xl font-black text-stone-900">{p.title}</h2>
                   {p.description && <p className="mt-2 line-clamp-3 text-stone-600">{p.description}</p>}
                 </div>

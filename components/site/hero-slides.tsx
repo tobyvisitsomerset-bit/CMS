@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { focusStyle } from "@/lib/page-display";
 
@@ -27,14 +27,17 @@ export function HeroSlides({
   const shown = slides.filter((s) => s.imageUrl);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  // A visible stop button, because moving content that starts on its own and
+  // lasts more than five seconds must be stoppable (WCAG 2.2.2).
+  const [stopped, setStopped] = useState(false);
   const count = shown.length;
 
   useEffect(() => {
-    if (count < 2 || paused) return;
+    if (count < 2 || paused || stopped) return;
     if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const t = setInterval(() => setIndex((i) => (i + 1) % count), intervalMs);
     return () => clearInterval(t);
-  }, [count, paused, intervalMs]);
+  }, [count, paused, stopped, intervalMs]);
 
   if (count === 0) return null;
   const current = shown[Math.min(index, count - 1)];
@@ -75,6 +78,14 @@ export function HeroSlides({
               onFocus={() => setPaused(true)}
               onBlur={() => setPaused(false)}
             >
+              <button
+                type="button"
+                onClick={() => setStopped((s) => !s)}
+                aria-label={stopped ? "Play the photo slideshow" : "Pause the photo slideshow"}
+                className="flex size-7 items-center justify-center rounded-full bg-black/45 text-white hover:bg-black/65"
+              >
+                {stopped ? <Play className="size-3.5" aria-hidden="true" /> : <Pause className="size-3.5" aria-hidden="true" />}
+              </button>
               {shown.map((s, i) => (
                 <button
                   key={`${s.imageUrl}-dot-${i}`}

@@ -408,7 +408,7 @@ export function ItineraryBuilder({ initial = null, token: initialToken = null }:
                 className={cn("rounded-2xl border px-4 py-3 text-left", prefs.pace === k ? "border-somerset-green bg-somerset-green/5" : "border-stone-300 bg-white")}
               >
                 <span className="block text-sm font-bold text-stone-900">{label}</span>
-                <span className="block text-xs text-stone-500">{sub}</span>
+                <span className="block text-xs text-stone-600">{sub}</span>
               </button>
             ))}
           </div>

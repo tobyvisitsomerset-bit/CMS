@@ -11,7 +11,7 @@ export function LoginForm({ oauth }: { oauth: { google: boolean; microsoft: bool
   const [state, formAction, pending] = useActionState(loginAction, undefined);
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-neutral-50 px-4">
+    <main className="flex min-h-screen w-full items-center justify-center bg-neutral-50 px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="space-y-1 text-center">
           <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-md bg-emerald-800 text-white font-serif text-lg">
@@ -63,6 +63,6 @@ export function LoginForm({ oauth }: { oauth: { google: boolean; microsoft: bool
           to save trips and itineraries.
         </p>
       </div>
-    </div>
+    </main>
   );
 }

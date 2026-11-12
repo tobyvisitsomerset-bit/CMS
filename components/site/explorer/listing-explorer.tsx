@@ -134,7 +134,7 @@ function ListCard({ item, sp, featured, kind }: { item: ExplorerItem; sp: SP; fe
                 {price.unit && <span className="ml-1 text-xs font-sans font-medium text-stone-500">{price.unit}</span>}
               </p>
             ) : (
-              <p className="text-xs text-stone-400">{kind === "accommodation" ? "Contact for prices" : ""}</p>
+              <p className="text-xs text-stone-600">{kind === "accommodation" ? "Contact for prices" : ""}</p>
             )}
           </div>
           <div className="flex gap-2">
@@ -210,7 +210,7 @@ export function Pagination({ basePath, sp, page, pageCount }: { basePath: string
     <nav aria-label="Pagination" className="mt-8 flex flex-wrap items-center justify-center gap-2">
       {parts.map((p, i) =>
         p === "gap" ? (
-          <span key={`g${i}`} className="px-1 text-stone-400">
+          <span key={`g${i}`} className="px-1 text-stone-500">
             …
           </span>
         ) : (
@@ -298,7 +298,7 @@ export function ListingExplorer({
               name="q"
               defaultValue={sp.q ?? ""}
               placeholder="Anywhere in Somerset"
-              className="w-full bg-transparent text-sm font-medium text-stone-900 placeholder:text-stone-400 focus:outline-none"
+              className="w-full bg-transparent text-sm font-medium text-stone-900 placeholder:text-stone-500 focus:outline-none"
             />
           </label>
           {kind === "accommodation" && (
@@ -318,7 +318,7 @@ export function ListingExplorer({
                   name="guests"
                   defaultValue={sp.guests ?? ""}
                   placeholder="2 adults"
-                  className="w-full bg-transparent text-sm font-medium text-stone-900 placeholder:text-stone-400 focus:outline-none"
+                  className="w-full bg-transparent text-sm font-medium text-stone-900 placeholder:text-stone-500 focus:outline-none"
                 />
               </label>
             </>
@@ -345,7 +345,7 @@ export function ListingExplorer({
         </Chip>
         {result.types.slice(0, 9).map((t) => (
           <Chip key={t.slug} href={buildHref(basePath, sp, { type: sp.type === t.slug ? undefined : t.slug })} active={sp.type === t.slug}>
-            {t.label} <span className="opacity-60">· {t.count}</span>
+            {t.label} <span className="opacity-80">· {t.count}</span>
           </Chip>
         ))}
         {result.counts.graded > 0 && (
@@ -373,7 +373,7 @@ export function ListingExplorer({
           </summary>
       {ACCESS_FEATURES.some((f) => (result.accessCounts?.[f.key] ?? 0) > 0) && (
         <div className="mt-2 flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold tracking-wide text-stone-400 uppercase">Accessible</span>
+          <span className="text-xs font-semibold tracking-wide text-stone-600 uppercase">Accessible</span>
           {ACCESS_FEATURES.filter((f) => (result.accessCounts?.[f.key] ?? 0) > 0).map((f) => {
             const active = (sp.access ?? "").split(",").includes(f.key);
             const next = active
@@ -381,7 +381,7 @@ export function ListingExplorer({
               : [...(sp.access ?? "").split(",").filter(Boolean), f.key];
             return (
               <Chip key={f.key} href={buildHref(basePath, sp, { access: next.join(",") || undefined })} active={active}>
-                {f.short} <span className="opacity-60">· {result.accessCounts[f.key]}</span>
+                {f.short} <span className="opacity-80">· {result.accessCounts[f.key]}</span>
               </Chip>
             );
           })}
@@ -389,7 +389,7 @@ export function ListingExplorer({
       )}
       {result.towns.length > 0 && (
         <div className="mt-2 flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold tracking-wide text-stone-400 uppercase">Near</span>
+          <span className="text-xs font-semibold tracking-wide text-stone-600 uppercase">Near</span>
           {result.towns.slice(0, 8).map((t) => (
             <Chip key={t.name} href={buildHref(basePath, sp, { town: sp.town === t.name ? undefined : t.name })} active={sp.town === t.name}>
               {t.name}
@@ -450,6 +450,7 @@ export function ListingExplorer({
         </div>
       </div>
 
+      <h2 className="sr-only">Results</h2>
       {result.matched === 0 ? (
         <div className="mt-8 rounded-3xl bg-cool-grey p-10 text-center">
           <p className="font-serif text-xl font-black text-stone-900">Nothing matches those filters</p>

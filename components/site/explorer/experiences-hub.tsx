@@ -43,7 +43,7 @@ export function ExperiencesHubView({
           <div className="grid gap-3 md:grid-cols-[1.4fr_1fr_auto]">
             <label className="rounded-2xl border border-stone-200 px-4 py-2.5">
               <span className="block text-[11px] font-medium text-stone-500">What</span>
-              <input name="q" defaultValue={sp.q ?? ""} placeholder="Anything" className="w-full bg-transparent text-sm font-semibold text-stone-900 placeholder:text-stone-400 focus:outline-none" />
+              <input name="q" defaultValue={sp.q ?? ""} placeholder="Anything" className="w-full bg-transparent text-sm font-semibold text-stone-900 placeholder:text-stone-500 focus:outline-none" />
             </label>
             <label className="rounded-2xl border border-stone-200 px-4 py-2.5">
               <span className="block text-[11px] font-medium text-stone-500">Where</span>
@@ -107,7 +107,7 @@ export function ExperiencesHubView({
                   )}
                 </div>
                 <div className="flex flex-1 flex-col gap-2 p-5">
-                  <p className="text-[11px] font-semibold tracking-wider text-stone-400 uppercase">
+                  <p className="text-[11px] font-semibold tracking-wider text-stone-600 uppercase">
                     {[item.type, item.town].filter(Boolean).join(" · ")}
                   </p>
                   <h3 className="font-serif text-xl leading-tight font-black text-stone-900">

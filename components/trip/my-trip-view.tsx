@@ -188,7 +188,7 @@ export function MyTripView() {
             defaultValue={item.note ?? ""}
             onBlur={(e) => e.target.value !== (item.note ?? "") && trip.setNote(item.id, e.target.value)}
             placeholder="Add a note…"
-            className="mt-1 w-full border-b border-dashed border-stone-200 bg-transparent py-0.5 text-xs text-stone-600 placeholder:text-stone-400 focus:border-somerset-green focus:outline-none"
+            className="mt-1 w-full border-b border-dashed border-stone-200 bg-transparent py-0.5 text-xs text-stone-600 placeholder:text-stone-500 focus:border-somerset-green focus:outline-none"
           />
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -263,7 +263,7 @@ export function MyTripView() {
               t.id === activeTrip.id ? "border-somerset-green bg-somerset-green text-white" : "border-stone-200 text-stone-700 hover:border-somerset-green",
             )}
           >
-            {t.name} <span className="opacity-70">· {t.items.length}</span>
+            {t.name} <span className="opacity-80">· {t.items.length}</span>
           </button>
         ))}
         {showNew ? (
@@ -392,7 +392,7 @@ export function MyTripView() {
                 <section key={day}>
                   <h2 className="mb-3 font-serif text-2xl font-black text-stone-900">
                     {fmtDay(day)}
-                    {list.length === 0 && <span className="ml-3 font-sans text-sm font-medium text-stone-400">nothing planned</span>}
+                    {list.length === 0 && <span className="ml-3 font-sans text-sm font-medium text-stone-600">nothing planned</span>}
                   </h2>
                   {list.length > 0 ? (
                     <div className="space-y-3">

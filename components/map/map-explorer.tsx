@@ -139,7 +139,7 @@ export function MapExplorer({ pins, initialQuery }: { pins: MapPinInput[]; initi
   return (
     <div className="grid h-[calc(100vh-10rem)] min-h-[34rem] grid-cols-1 overflow-hidden border-y border-stone-200 bg-white lg:grid-cols-[17rem_minmax(0,1fr)_19rem]">
       {/* Layers rail */}
-      <aside className="space-y-5 overflow-y-auto border-r border-stone-200 p-5">
+      <aside aria-label="Search and map layers" className="space-y-5 overflow-y-auto border-r border-stone-200 p-5">
         <div>
           <h1 className="font-serif text-2xl font-black text-stone-900">Map</h1>
           <p className="text-xs text-stone-500">
@@ -156,7 +156,7 @@ export function MapExplorer({ pins, initialQuery }: { pins: MapPinInput[]; initi
           />
         </label>
         <div>
-          <p className="mb-2 text-[11px] font-semibold tracking-wider text-stone-400 uppercase">Layers</p>
+          <p className="mb-2 text-[11px] font-semibold tracking-wider text-stone-600 uppercase">Layers</p>
           <ul className="space-y-1.5">
             {LAYERS.map((l) => {
               const n = counts.get(l.key) ?? 0;
@@ -166,7 +166,7 @@ export function MapExplorer({ pins, initialQuery }: { pins: MapPinInput[]; initi
                   <label className="flex cursor-pointer items-center gap-3 rounded-2xl px-3 py-2 text-sm hover:bg-cool-grey">
                     <input type="checkbox" checked={active.has(l.key)} onChange={() => toggleLayer(l.key)} className="size-4 accent-[#3d685b]" />
                     <span className="flex-1 font-medium text-stone-800">{l.label}</span>
-                    <span className="text-xs text-stone-400">{n.toLocaleString("en-GB")}</span>
+                    <span className="text-xs text-stone-600">{n.toLocaleString("en-GB")}</span>
                   </label>
                 </li>
               );
@@ -199,7 +199,7 @@ export function MapExplorer({ pins, initialQuery }: { pins: MapPinInput[]; initi
       </div>
 
       {/* Trip rail */}
-      <aside className="space-y-4 overflow-y-auto border-l border-stone-200 p-5">
+      <aside aria-label="Your trip" className="space-y-4 overflow-y-auto border-l border-stone-200 p-5">
         <div>
           <h2 className="font-serif text-xl font-black text-stone-900">{trip.activeTrip.name}</h2>
           <p className="text-xs text-stone-500">
@@ -218,7 +218,7 @@ export function MapExplorer({ pins, initialQuery }: { pins: MapPinInput[]; initi
                 <Link href={`/${item.slug}`} className="min-w-0 flex-1 truncate text-sm font-semibold text-stone-900 hover:text-somerset-green">
                   {item.title}
                 </Link>
-                <button type="button" aria-label={`Remove ${item.title}`} onClick={() => trip.remove(item.id)} className="rounded-full p-1.5 text-stone-400 hover:bg-cool-grey hover:text-damson">
+                <button type="button" aria-label={`Remove ${item.title}`} onClick={() => trip.remove(item.id)} className="rounded-full p-1.5 text-stone-500 hover:bg-cool-grey hover:text-damson">
                   <Trash2 className="size-3.5" />
                 </button>
               </li>

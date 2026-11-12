@@ -82,7 +82,7 @@ function MiniCalendar({
       </div>
       <div className="mt-3 grid grid-cols-7 gap-1 text-center text-xs">
         {WEEKDAYS.map((d, i) => (
-          <span key={i} className="py-1 font-medium text-stone-400">
+          <span key={i} className="py-1 font-medium text-stone-500">
             {d}
           </span>
         ))}
@@ -99,7 +99,7 @@ function MiniCalendar({
                   ? "bg-somerset-green font-bold text-white"
                   : has
                     ? "bg-cool-grey font-semibold text-stone-900 hover:bg-somerset-green/15"
-                    : "text-stone-300",
+                    : "text-stone-500",
                 key === todayKey && !selected && "ring-1 ring-somerset-green",
               )}
             >
@@ -367,7 +367,7 @@ export function EventsExplorer({
                       {key === "undated"
                         ? "Date to be confirmed"
                         : `${key === todayKey ? "Today · " : ""}${fmtDay(key, { weekday: "long", day: "numeric", month: "long" })}`}
-                      <span className="font-sans text-xs font-medium text-stone-400">
+                      <span className="font-sans text-xs font-medium text-stone-600">
                         {items.length} {items.length === 1 ? "event" : "events"}
                       </span>
                     </h3>
@@ -408,7 +408,7 @@ export function EventsExplorer({
             />
             {extras.carnival && (
               <div className="rounded-3xl bg-somerset-green p-6 text-white">
-                <p className="text-[11px] font-semibold tracking-wider text-white/70 uppercase">Somerset original</p>
+                <p className="text-[11px] font-semibold tracking-wider text-white/90 uppercase">Somerset original</p>
                 <h3 className="mt-1 font-serif text-2xl font-black">{extras.carnival.title}</h3>
                 {extras.carnival.summary && <p className="mt-2 line-clamp-4 text-sm text-white/90">{extras.carnival.summary}</p>}
                 <Link href={extras.carnival.href} className="mt-4 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-bold text-deep-green hover:opacity-90">

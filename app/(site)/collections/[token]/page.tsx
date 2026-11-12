@@ -40,7 +40,7 @@ export default async function SharedCollectionPage({ params }: { params: Promise
               // eslint-disable-next-line @next/next/no-img-element
               <img src={p.heroImageUrl} alt="" className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
             ) : (
-              <div className="flex aspect-[4/3] items-center justify-center bg-cool-grey text-[11px] font-semibold tracking-wider text-stone-400 uppercase">Photo</div>
+              <div className="flex aspect-[4/3] items-center justify-center bg-cool-grey text-[11px] font-semibold tracking-wider text-stone-500 uppercase">Photo</div>
             )}
             <div className="p-4">
               <p className="font-serif text-lg leading-tight font-black text-stone-900 group-hover:text-somerset-green">{p.title}</p>

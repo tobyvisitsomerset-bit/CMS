@@ -12,7 +12,7 @@ const TABS = [
 
 const FIELD = "rounded-2xl border border-stone-200 bg-white px-4 py-2.5 text-left";
 const LABEL = "block text-[11px] font-medium text-stone-500";
-const INPUT = "w-full bg-transparent text-sm font-semibold text-stone-900 placeholder:text-stone-400 focus:outline-none";
+const INPUT = "w-full bg-transparent text-sm font-semibold text-stone-900 placeholder:text-stone-500 focus:outline-none";
 
 // The hero search panel from the mockup pack. Every tab submits a real GET
 // to the matching real landing page, which filters its real listings by the

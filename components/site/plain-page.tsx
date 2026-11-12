@@ -49,7 +49,7 @@ export function PlainPage({
         )}
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-deep-green/80 via-deep-green/30 to-transparent" />
         <div className="mx-auto max-w-7xl px-6 pt-20 pb-12">
-          <nav aria-label="Breadcrumb" className="mb-3 text-xs text-white/70">
+          <nav aria-label="Breadcrumb" className="mb-3 text-xs text-white/90">
             <Link href="/" className="hover:underline">
               Home
             </Link>{" "}

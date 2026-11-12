@@ -261,7 +261,7 @@ export function MapBand({
     <section className="bg-somerset-green px-6 py-14 text-white">
       <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[1fr_1.2fr]">
         <div>
-          <p className="text-[11px] font-semibold tracking-[0.2em] text-white/70 uppercase">{eyebrow || "Everything, everywhere"}</p>
+          <p className="text-[11px] font-semibold tracking-[0.2em] text-white/90 uppercase">{eyebrow || "Everything, everywhere"}</p>
           <h2 className="mt-2 font-serif text-4xl font-black sm:text-5xl">{heading || "See it all on the map"}</h2>
           {text && <p className="mt-3 max-w-md text-white/90">{text}</p>}
           <div className="mt-6 flex flex-wrap gap-3">
