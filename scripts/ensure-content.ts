@@ -485,9 +485,13 @@ const ACCESSIBILITY_STATEMENT = `Visit Somerset wants everyone to be able to use
 - Move around using only a keyboard. The first thing you reach when you press Tab is a link to skip straight to the main content.
 - Find places with step-free access, accessible toilets, hearing loops and more using the access filters on our listings, and see the full range on [Accessible Somerset](/accessible-somerset).
 
+## The standard we follow
+
+We design this website to follow the [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/WCAG22/) at level AA. These are the international guidelines, published by the World Wide Web Consortium (W3C), for making websites usable by as many people as possible, including disabled people. The W3C also has a plain-English [introduction to WCAG](https://www.w3.org/WAI/standards-guidelines/wcag/).
+
 ## How we check
 
-In November 2026 we ran automated checks against the Web Content Accessibility Guidelines (WCAG) 2.2, level AA, on the main types of page on this site, at desktop and phone sizes, and fixed the problems they found. We also checked keyboard use, page headings and page titles by hand. We aim to meet WCAG 2.2 level AA.
+In November 2026 we ran automated checks against WCAG 2.2 level AA on the main types of page on this site, at desktop and phone sizes, and fixed the problems they found. We also checked keyboard use, page headings and page titles by hand.
 
 Automated checks only find some problems. We have not yet had this site tested by an independent auditor or by people using screen readers and other assistive technology, so we cannot say that every page fully meets the standard.
 
