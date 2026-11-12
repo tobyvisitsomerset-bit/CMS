@@ -426,7 +426,7 @@ export function ListingExplorer({
           )}
         </p>
         <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-1.5 text-sm">
+          <div className="flex flex-wrap items-center gap-1.5 text-sm">
             <span className="text-stone-500">Sort</span>
             {sortOptions.map((o) => (
               <Chip key={o.key} href={buildHref(basePath, sp, { sort: o.key === "recommended" ? undefined : o.key })} active={sort === o.key}>
@@ -460,7 +460,7 @@ export function ListingExplorer({
           </Link>
         </div>
       ) : kind === "accommodation" ? (
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_26rem]">
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_26rem]">
           <div>
             {view === "map" ? <div className="h-[34rem]"><ExplorerMap pins={result.mapPins} /></div> : list}
             <Pagination basePath={basePath} sp={sp} page={result.page} pageCount={result.pageCount} />

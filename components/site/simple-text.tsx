@@ -51,7 +51,7 @@ export function SimpleText({ text }: { text: string }) {
     .map((b) => b.trim())
     .filter(Boolean);
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 break-words">
       {blocks.map((block, i) => {
         if (block.startsWith("## ")) {
           return (

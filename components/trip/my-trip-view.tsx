@@ -319,15 +319,15 @@ export function MyTripView() {
 
       {/* Trip settings */}
       <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-stone-600 print:hidden">
-        <label className="flex items-center gap-2">
+        <label className="flex flex-wrap items-center gap-2">
           From
           <input type="date" value={activeTrip.startDate ?? ""} onChange={(e) => trip.editTrip(activeTrip.id, { startDate: e.target.value || null })} className={FIELD} />
         </label>
-        <label className="flex items-center gap-2">
+        <label className="flex flex-wrap items-center gap-2">
           To
           <input type="date" value={activeTrip.endDate ?? ""} onChange={(e) => trip.editTrip(activeTrip.id, { endDate: e.target.value || null })} className={FIELD} />
         </label>
-        <label className="flex items-center gap-2">
+        <label className="flex flex-wrap items-center gap-2">
           Who&apos;s going
           <input
             key={activeTrip.id}

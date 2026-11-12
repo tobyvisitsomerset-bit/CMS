@@ -41,6 +41,13 @@ html[data-a11y-space="wide"] body * {
   word-spacing: 0.16em !important;
 }
 
+/* Safety net: with big text or wide spacing, let a very long word break rather
+   than push the page sideways. Only applies when someone has chosen one of
+   these settings, so the standard look is untouched. */
+html[data-a11y-text] body *,
+html[data-a11y-space] body *,
+html[data-a11y-font] body * { overflow-wrap: anywhere; }
+
 /* Stop movement: no animation or smooth scrolling. The home page slideshow
    also checks this attribute and stays on one photo. */
 html[data-a11y-motion="stop"],
