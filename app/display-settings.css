@@ -1,0 +1,53 @@
+/* Visitor display settings, chosen on the Accessibility page.
+   lib/display-prefs.ts puts data-a11y-* attributes on <html>; these rules do
+   the rest. This file is not inside a @layer, so it wins over Tailwind's
+   utility classes without needing a higher specificity. */
+
+/* Text size: everything sized in rem grows with the root size. */
+html[data-a11y-text="112"] { font-size: 112.5%; }
+html[data-a11y-text="125"] { font-size: 125%; }
+html[data-a11y-text="150"] { font-size: 150%; }
+
+/* Greyscale and colour-blind help share one filter on the page. */
+html[data-a11y-grey="1"] { --a11y-grey: grayscale(1); }
+html[data-a11y-cb="protan"] { --a11y-cb: url(#vs-cb-protan); }
+html[data-a11y-cb="deutan"] { --a11y-cb: url(#vs-cb-deutan); }
+html[data-a11y-cb="tritan"] { --a11y-cb: url(#vs-cb-tritan); }
+html[data-a11y-grey="1"],
+html[data-a11y-cb] { filter: var(--a11y-cb, ) var(--a11y-grey, ); }
+
+/* Higher contrast: darker secondary text, stronger borders, underlined links
+   in the page content and a bold focus outline. */
+html[data-a11y-contrast="high"] body { color: #111; }
+html[data-a11y-contrast="high"] :is(.text-stone-400, .text-stone-500, .text-stone-600, .text-stone-700, .text-neutral-400, .text-neutral-500, .text-neutral-600) { color: #111; }
+html[data-a11y-contrast="high"] [class*="text-white/"] { color: #fff; }
+html[data-a11y-contrast="high"] :is(.opacity-60, .opacity-70, .opacity-80) { opacity: 1; }
+html[data-a11y-contrast="high"] :is(.border-stone-200, .border-stone-300, .border-neutral-200) { border-color: #57534e; }
+html[data-a11y-contrast="high"] main a:not([class*="rounded-full"]) { text-decoration: underline; }
+html[data-a11y-contrast="high"] :focus-visible {
+  outline: 3px solid #111 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 6px #fff !important;
+}
+
+/* Easy-read font. */
+html[data-a11y-font="easy"],
+html[data-a11y-font="easy"] * { font-family: var(--font-atkinson), system-ui, sans-serif !important; }
+
+/* Wider text spacing (more than WCAG 1.4.12 asks for). */
+html[data-a11y-space="wide"] body * {
+  line-height: 1.7 !important;
+  letter-spacing: 0.08em !important;
+  word-spacing: 0.16em !important;
+}
+
+/* Stop movement: no animation or smooth scrolling. The home page slideshow
+   also checks this attribute and stays on one photo. */
+html[data-a11y-motion="stop"],
+html[data-a11y-motion="stop"] *,
+html[data-a11y-motion="stop"] *::before,
+html[data-a11y-motion="stop"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}

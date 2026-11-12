@@ -24,6 +24,7 @@ import { ProducerShop } from "@/components/site/shop/producer-shop";
 import { BuyPanel } from "@/components/site/shop/buy-panel";
 import type { ShopProducer } from "@/lib/data/shop";
 import { ContentPanel } from "@/components/site/content-panel";
+import { DisplaySettingsPanel } from "@/components/site/display-settings";
 import {
   AdBar,
   AvailabilitySearch,
@@ -460,6 +461,9 @@ export function BlockRenderer({
 
     case "event_form":
       return <EventFormWidget heading={config.heading} intro={config.intro} pageId={pageId} />;
+
+    case "display_settings":
+      return <DisplaySettingsPanel heading={config.heading} intro={config.intro} />;
 
     case "embed":
       return <EmbedWidget heading={config.heading} url={config.url} height={config.height} linkLabel={config.linkLabel} />;

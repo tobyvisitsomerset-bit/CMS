@@ -848,6 +848,21 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
         </div>
       );
 
+    case "display_settings":
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">
+            Visitors choose text size, greyscale, colour-blind help, contrast, font, spacing and movement. Their choices are kept in their own browser.
+          </p>
+          <Field label="Heading">
+            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          </Field>
+          <Field label="Introduction (optional)">
+            <Textarea rows={3} value={config.intro ?? ""} onChange={(e) => set({ intro: e.target.value })} />
+          </Field>
+        </div>
+      );
+
     case "embed":
       return (
         <div className="space-y-4">

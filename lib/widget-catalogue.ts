@@ -71,6 +71,21 @@ export const WIDGETS: WidgetDef[] = [
     tips: ["Events are not published automatically — someone adds them to the site after review."],
   },
   {
+    type: "display_settings",
+    name: "Display settings",
+    category: "Content panels",
+    summary:
+      "A panel where visitors change how the whole site looks for them: text size, greyscale, colour-blind help, higher contrast, an easy-read font, wider spacing and a switch to stop movement. Their choices are saved in their own browser and apply on every page.",
+    whenToUse: "The Accessibility page. Not needed anywhere else.",
+    data: "You type it",
+    kentico: "No equivalent",
+    properties: [
+      { name: "Heading", type: "Text", help: "The words at the top of the panel." },
+      { name: "Introduction", type: "Long text", help: "Optional line under the heading. Leave empty for the standard wording." },
+    ],
+    tips: ["The settings themselves are fixed.", "Nothing is sent to us: choices stay on the visitor's own device."],
+  },
+  {
     type: "embed",
     name: "External tool (embed)",
     category: "Content panels",

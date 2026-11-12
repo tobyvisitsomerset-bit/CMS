@@ -31,6 +31,7 @@ import {
   AppWindow,
   Share2 as SocialIcon,
   BedDouble,
+  Accessibility,
 } from "lucide-react";
 
 export type BlockType =
@@ -68,7 +69,8 @@ export type BlockType =
   | "event_form"
   | "embed"
   | "social_panel"
-  | "buy_panel";
+  | "buy_panel"
+  | "display_settings";
 
 export const BLOCK_DEFS: { type: BlockType; label: string; description: string; icon: typeof LayoutTemplate }[] = [
   { type: "hero", label: "Hero", description: "Full-width banner with heading and CTA", icon: LayoutTemplate },
@@ -106,6 +108,7 @@ export const BLOCK_DEFS: { type: BlockType; label: string; description: string; 
   { type: "embed", label: "External tool (embed)", description: "Show an external tool such as the Traveline journey planner", icon: AppWindow },
   { type: "social_panel", label: "Social panel", description: "A row of linked pictures with a link to your profile", icon: SocialIcon },
   { type: "buy_panel", label: "Buy panel", description: "One producer's products with Buy links to their own shop", icon: ShoppingBag },
+  { type: "display_settings", label: "Display settings", description: "Lets visitors change text size, colours, contrast and movement", icon: Accessibility },
 ];
 
 export function blockIcon(type: string): typeof LayoutTemplate {
@@ -216,6 +219,8 @@ export function defaultConfigFor(type: BlockType): Record<string, unknown> {
       return { heading: "Plan your journey", url: "", height: 600, linkLabel: "Open in a new tab" };
     case "buy_panel":
       return { heading: "Buy from a Somerset producer", producerSlug: "", limit: 4 };
+    case "display_settings":
+      return { heading: "Make this site easier to use", intro: "" };
     case "social_panel":
       return { heading: "On Instagram", handle: "@visitsomerset", profileUrl: "", images: [] };
     case "map_band":

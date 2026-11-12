@@ -14,6 +14,7 @@
 import { readFileSync } from "fs";
 import path from "path";
 import { PrismaClient } from "@prisma/client";
+import { decodeKenticoBody } from "../lib/kentico-item-fields";
 
 const prisma = new PrismaClient();
 
@@ -472,6 +473,35 @@ async function ensureMediaLibraries() {
   }
 }
 
+// The Accessibility page (top menu) carries the visitors' display settings.
+// It used to be plain text, which cannot hold a widget, so the first time it
+// is rebuilt as heading, settings panel, then the existing statement as an
+// ordinary text block the team can reword. Done once; if the page already has
+// widgets (someone built it by hand) it is left exactly as it is.
+async function ensureAccessibilityPage() {
+  const KEY = "accessibility-page-v1";
+  if (await prisma.siteSetting.findUnique({ where: { key: KEY } })) return;
+  const page = await prisma.page.findUnique({ where: { slug: "accessibility" }, select: { id: true, title: true, bodyContent: true } });
+  if (!page) return;
+  const existing = await prisma.contentBlock.count({ where: { pageId: page.id } });
+  if (existing === 0) {
+    await ensureBlock("accessibility", "hero", {
+      heading: page.title || "Accessibility",
+      subheading: "Change how this site looks for you, and read our accessibility statement.",
+      imageUrl: "",
+      ctaLabel: "",
+      ctaUrl: "",
+      showSearchBar: false,
+      eyebrow: "",
+      slides: [],
+    }, { position: "end" });
+    await ensureBlock("accessibility", "display_settings", { heading: "Make this site easier to use", intro: "" }, { position: "end" });
+    const statement = decodeKenticoBody(page.bodyContent);
+    if (statement) await ensureBlock("accessibility", "text", { heading: "Accessibility statement", body: statement }, { position: "end" });
+  }
+  await prisma.siteSetting.create({ data: { key: KEY, value: JSON.stringify({ built: existing === 0, at: new Date().toISOString() }) } });
+}
+
 async function main() {
   await syncMailerLite();
   await ensureVisitorRole();
@@ -485,6 +515,7 @@ async function main() {
   await ensureHome();
   await ensureShopAndExperiences();
   await ensureSubmitEventPage();
+  await ensureAccessibilityPage();
 }
 
 main()

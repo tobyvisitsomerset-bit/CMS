@@ -35,6 +35,8 @@ export function HeroSlides({
   useEffect(() => {
     if (count < 2 || paused || stopped) return;
     if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // "Stop movement" on the Accessibility page.
+    if (document.documentElement.getAttribute("data-a11y-motion") === "stop") return;
     const t = setInterval(() => setIndex((i) => (i + 1) % count), intervalMs);
     return () => clearInterval(t);
   }, [count, paused, stopped, intervalMs]);
