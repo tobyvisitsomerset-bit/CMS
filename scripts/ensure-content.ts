@@ -293,6 +293,76 @@ async function simplifyHome() {
   console.log(`[ensure-content] home page simplified: removed ${remove.length} sections (saved as home-removed-blocks-v1)`);
 }
 
+// One time: lay the home page out like the current site. The heading becomes
+// "Be *enchanted,* Visit Somerset" (only if it still says the original
+// "Be enchanted"), the purple band of four picture tiles and the two booking
+// buttons goes straight under the photo, the booking search panel is switched
+// off (it can be switched back on in the hero's settings) and the events row is
+// called "Upcoming events" and shows more events.
+async function redesignHome() {
+  const KEY = "home-redesign-v1";
+  if (await prisma.siteSetting.findUnique({ where: { key: KEY } })) return;
+  const page = await pageBySlug("home");
+  if (!page) return;
+  const blocks = await prisma.contentBlock.findMany({ where: { pageId: page.id }, orderBy: { sortOrder: "asc" } });
+  const parse = (c: string): Cfg => {
+    try {
+      return JSON.parse(c || "{}");
+    } catch {
+      return {};
+    }
+  };
+
+  const hero = blocks.find((b) => b.type === "hero");
+  if (hero) {
+    const cfg = parse(hero.config);
+    if (String(cfg.heading ?? "").trim() === "Be enchanted") cfg.heading = "Be *enchanted,*\nVisit Somerset";
+    if (cfg.searchPanel === undefined) cfg.searchPanel = false;
+    await prisma.contentBlock.update({ where: { id: hero.id }, data: { config: JSON.stringify(cfg) } });
+  }
+
+  for (const b of blocks.filter((x) => x.type === "real_teaser")) {
+    const cfg = parse(b.config);
+    if (cfg.mode === "businesses") continue;
+    if (!cfg.title || cfg.title === "On this week") cfg.title = "Upcoming events";
+    if (!(Number(cfg.limit) >= 9)) cfg.limit = 9;
+    await prisma.contentBlock.update({ where: { id: b.id }, data: { config: JSON.stringify(cfg) } });
+  }
+
+  let tilesId = blocks.find((b) => b.type === "home_tiles")?.id;
+  if (!tilesId) {
+    const created = await prisma.contentBlock.create({
+      data: {
+        pageId: page.id,
+        type: "home_tiles",
+        sortOrder: 9999,
+        config: JSON.stringify({
+          tiles: [
+            { label: "Things to Do", url: "/things-to-do", rootSlug: "things-to-do", imageUrl: "" },
+            { label: "Stay in Somerset", url: "/places-to-stay", rootSlug: "places-to-stay", imageUrl: "" },
+            { label: "Places to Eat", url: "/things-to-do/food-drink-more", rootSlug: "things-to-do/food-drink-more", imageUrl: "" },
+            { label: "Events", url: "/festivals-events", rootSlug: "festivals-events", imageUrl: "" },
+          ],
+          buttons: [
+            { label: "Book Experiences", url: "/book-experiences", icon: "ticket" },
+            { label: "Book Accommodation", url: "/places-to-stay", icon: "bed" },
+          ],
+        }),
+      },
+    });
+    tilesId = created.id;
+  }
+
+  // Order: hero, tiles and buttons, then everything else as it was.
+  const all = await prisma.contentBlock.findMany({ where: { pageId: page.id }, orderBy: { sortOrder: "asc" } });
+  const ordered = [...all.filter((b) => b.type === "hero"), ...all.filter((b) => b.id === tilesId), ...all.filter((b) => b.type !== "hero" && b.id !== tilesId)];
+  for (let i = 0; i < ordered.length; i++) {
+    if (ordered[i].sortOrder !== i) await prisma.contentBlock.update({ where: { id: ordered[i].id }, data: { sortOrder: i } });
+  }
+  await prisma.siteSetting.create({ data: { key: KEY, value: JSON.stringify({ at: new Date().toISOString() }) } });
+  console.log("[ensure-content] home page laid out like the current site");
+}
+
 // The "Business Detail" starter template used to add placeholder hero/text/
 // gallery widgets that hid the Form tab. A business page is now one template
 // fed by its form, so the starter adds nothing.
@@ -627,6 +697,7 @@ async function main() {
   await ensureExplorers();
   await ensureHome();
   await simplifyHome();
+  await redesignHome();
   await ensureShopAndExperiences();
   await ensureSubmitEventPage();
   await ensureAccessibilityPage();

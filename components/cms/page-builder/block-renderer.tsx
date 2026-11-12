@@ -15,7 +15,7 @@ import { HomepageSearchBar } from "@/components/site/homepage-search-bar";
 import { HeroSlides } from "@/components/site/hero-slides";
 import { ScriptText } from "@/components/site/script-text";
 import { focusStyle } from "@/lib/page-display";
-import { AreaTiles, EventsTeaser, MapBand, MoodTiles, PartnersRow, StaysTeaser, TownsRow } from "@/components/site/home-sections";
+import { AreaTiles, MapBand, MoodTiles, PartnersRow, StaysTeaser, TownsRow } from "@/components/site/home-sections";
 import { ListingExplorer } from "@/components/site/explorer/listing-explorer";
 import { EventsExplorer } from "@/components/site/explorer/events-explorer";
 import { ExperiencesHubView } from "@/components/site/explorer/experiences-hub";
@@ -26,6 +26,8 @@ import type { ShopProducer } from "@/lib/data/shop";
 import { ContentPanel } from "@/components/site/content-panel";
 import { DisplaySettingsPanel } from "@/components/site/display-settings";
 import { SimpleText } from "@/components/site/simple-text";
+import { HomeTiles } from "@/components/site/home-tiles";
+import { EventsCarousel } from "@/components/site/events-carousel";
 import {
   AdBar,
   AvailabilitySearch,
@@ -59,6 +61,7 @@ export type RealBlockData =
   | { type: "explore_area_tiles"; tiles: ExploreAreaTile[] }
   | { type: "real_teaser"; items: FeaturedPageTile[]; total: number }
   | { type: "towns_row"; towns: TownTile[] }
+  | { type: "home_tiles"; tiles: { label: string; url: string; imageUrl: string | null }[] }
   | { type: "mood_tiles"; moods: { label: string; query: string; count: number; blurb: string; imageUrl: string | null }[] }
   | { type: "map_band"; pins: { id: string; lat: number; lng: number; title: string; href: string }[] }
   | { type: "partners_row"; items: FeaturedPageTile[] }
@@ -120,7 +123,7 @@ export function BlockRenderer({
                 <p className="text-[11px] font-semibold tracking-[0.28em] text-white/80 uppercase">
                   {config.eyebrow || "Somerset · England's West Country"}
                 </p>
-                <h1 className="mt-4 font-serif text-6xl leading-none font-black tracking-tight sm:text-8xl">
+                <h1 className="mt-4 font-serif text-6xl leading-none font-black tracking-tight whitespace-pre-line sm:text-8xl">
                   <ScriptText text={config.heading || "Be enchanted"} className="text-[1.1em]" />
                 </h1>
                 {config.subheading && <p className="mx-auto mt-5 max-w-2xl text-lg text-white/90">{config.subheading}</p>}
@@ -131,12 +134,14 @@ export function BlockRenderer({
                 )}
               </div>
             </div>
-            {/* The booking search sits under the photo, not over it. */}
-            <div className="bg-cool-grey">
-              <div className="mx-auto max-w-5xl px-6 py-8">
-                <HomepageSearchBar />
+            {/* The booking search sits under the photo, not over it (and can be switched off). */}
+            {config.searchPanel !== false && (
+              <div className="bg-cool-grey">
+                <div className="mx-auto max-w-5xl px-6 py-8">
+                  <HomepageSearchBar />
+                </div>
               </div>
-            </div>
+            )}
           </section>
         );
       }
@@ -371,7 +376,12 @@ export function BlockRenderer({
           />
         );
       }
-      return <EventsTeaser title={config.title} eyebrow={config.eyebrow} items={realData.items} seeAllHref={config.seeAllHref} />;
+      return <EventsCarousel title={config.title} items={realData.items} seeAllHref={config.seeAllHref} />;
+    }
+
+    case "home_tiles": {
+      if (!realData || realData.type !== "home_tiles") return <RealDataUnavailable />;
+      return <HomeTiles tiles={realData.tiles} buttons={config.buttons ?? []} />;
     }
 
     case "towns_row": {

@@ -50,8 +50,8 @@ export function SiteHeader({
 
   return (
     <header className="sticky top-0 z-30 bg-white shadow-[0_1px_0_0_rgba(0,0,0,0.06)]" onMouseLeave={closeSoon}>
-      {/* Utility strip */}
-      <div className="bg-somerset-green text-[12px] font-medium text-white">
+      {/* Utility strip: white, as on the current site */}
+      <div className="border-b border-stone-200 bg-white text-[13px] font-medium text-somerset-green">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-1.5">
           <div className="flex items-center gap-5">
             <Link href="/accessibility" className="hover:underline">
@@ -60,7 +60,7 @@ export function SiteHeader({
             <Link href="/accessible-somerset" className="font-semibold hover:underline">
               Accessible Somerset
             </Link>
-            <span className="hidden text-white/80 sm:inline">English (UK)</span>
+            <span className="hidden text-stone-600 sm:inline">English (UK)</span>
           </div>
           <nav className="hidden items-center gap-5 md:flex" aria-label="Utility">
             {utilityLinks.map((l) => (
@@ -88,13 +88,14 @@ export function SiteHeader({
         </div>
       </div>
 
-      {/* Main row */}
+      {/* Main row: green with the white logo, as on the current site */}
+      <div className="bg-somerset-green text-white [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-white [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-2 [&_button:focus-visible]:outline-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3">
         <Link href="/" className="flex shrink-0 items-center">
-          <Image src="/logo-visit-somerset.png" alt="Visit Somerset" width={419} height={113} priority className="h-[40px] w-auto" />
+          <Image src="/logo-visit-somerset.png" alt="Visit Somerset" width={419} height={113} priority className="h-[40px] w-auto brightness-0 invert" />
         </Link>
 
-        <nav className="hidden items-center gap-6 text-[15px] font-semibold text-stone-900 lg:flex" aria-label="Main">
+        <nav className="hidden items-center gap-6 text-[15px] font-semibold whitespace-nowrap text-white xl:flex" aria-label="Main">
           {mainNav.map((link) => {
             const hasMenu = (megaMenus[link.slug]?.length ?? 0) > 0;
             return (
@@ -103,8 +104,8 @@ export function SiteHeader({
                 href={`/${link.slug}`}
                 {...(link.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 className={cn(
-                  "flex items-center gap-1 py-1 transition-colors hover:text-somerset-green",
-                  activeSlug === link.slug && "text-somerset-green",
+                  "flex items-center gap-1 border-b-2 border-transparent py-1 transition-colors hover:border-white/70",
+                  activeSlug === link.slug && "border-white",
                 )}
                 onMouseEnter={() => (hasMenu ? openNow(link.slug) : closeSoon())}
                 onFocus={() => hasMenu && openNow(link.slug)}
@@ -118,7 +119,7 @@ export function SiteHeader({
           })}
           <Link
             href={`/${mapNav.slug}`}
-            className="flex items-center gap-1.5 py-1 text-somerset-green transition-opacity hover:opacity-80"
+            className="flex items-center gap-1.5 rounded-md bg-white px-4 py-2 text-somerset-green transition-opacity hover:opacity-90 [&:focus-visible]:outline-stone-900"
             onMouseEnter={closeSoon}
           >
             <MapPin className="size-4" />
@@ -130,13 +131,13 @@ export function SiteHeader({
           <Link
             href="/search"
             aria-label="Search the site"
-            className="flex size-[40px] items-center justify-center rounded-full border border-stone-200 text-stone-700 transition-colors hover:bg-cool-grey"
+            className="flex size-[40px] items-center justify-center rounded-full border border-white/50 text-white transition-colors hover:bg-white/10"
           >
             <Search className="size-4" />
           </Link>
           <Link
             href={bookHref}
-            className="hidden rounded-full bg-damson px-5 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90 sm:inline-block"
+            className="hidden rounded-full bg-white px-5 py-2.5 text-sm font-bold text-somerset-green transition-opacity hover:opacity-90 whitespace-nowrap sm:inline-block [&:focus-visible]:outline-stone-900"
           >
             {bookLabel}
           </Link>
@@ -145,16 +146,17 @@ export function SiteHeader({
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}
-            className="flex size-[40px] items-center justify-center rounded-full border border-stone-200 text-stone-700 lg:hidden"
+            className="flex size-[40px] items-center justify-center rounded-full border border-white/50 text-white xl:hidden"
           >
             {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
         </div>
       </div>
+      </div>
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="border-t border-stone-200 bg-white px-6 py-4 lg:hidden">
+        <div className="border-t border-stone-200 bg-white px-6 py-4 xl:hidden">
           <nav className="flex flex-col gap-1 text-[15px] font-semibold text-stone-900">
             {[...mainNav, mapNav].map((l) => (
               <Link key={l.slug} href={`/${l.slug}`} onClick={() => setMobileOpen(false)} className="rounded-lg px-2 py-2.5 hover:bg-cool-grey">
@@ -185,7 +187,7 @@ export function SiteHeader({
       {/* Shared mega-menu panel */}
       {activeColumns.length > 0 && (
         <div
-          className="absolute inset-x-0 top-full hidden border-t border-white/10 bg-deep-green shadow-xl lg:block"
+          className="absolute inset-x-0 top-full hidden border-t border-white/10 bg-deep-green shadow-xl xl:block"
           onMouseEnter={() => activeSlug && openNow(activeSlug)}
         >
           <div className="mx-auto flex max-w-7xl flex-wrap gap-x-10 gap-y-6 px-6 py-8">

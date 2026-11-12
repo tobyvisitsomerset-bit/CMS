@@ -70,7 +70,8 @@ export type BlockType =
   | "embed"
   | "social_panel"
   | "buy_panel"
-  | "display_settings";
+  | "display_settings"
+  | "home_tiles";
 
 export const BLOCK_DEFS: { type: BlockType; label: string; description: string; icon: typeof LayoutTemplate }[] = [
   { type: "hero", label: "Hero", description: "Full-width banner with heading and CTA", icon: LayoutTemplate },
@@ -109,6 +110,7 @@ export const BLOCK_DEFS: { type: BlockType; label: string; description: string; 
   { type: "social_panel", label: "Social panel", description: "A row of linked pictures with a link to your profile", icon: SocialIcon },
   { type: "buy_panel", label: "Buy panel", description: "One producer's products with Buy links to their own shop", icon: ShoppingBag },
   { type: "display_settings", label: "Display settings", description: "Lets visitors change text size, colours, contrast and movement", icon: Accessibility },
+  { type: "home_tiles", label: "Quick links and booking buttons", description: "Purple band with four picture tiles and wide booking buttons", icon: LayoutPanelTop },
 ];
 
 export function blockIcon(type: string): typeof LayoutTemplate {
@@ -221,6 +223,19 @@ export function defaultConfigFor(type: BlockType): Record<string, unknown> {
       return { heading: "Buy from a Somerset producer", producerSlug: "", limit: 4 };
     case "display_settings":
       return { heading: "Make this site easier to use", intro: "" };
+    case "home_tiles":
+      return {
+        tiles: [
+          { label: "Things to Do", url: "/things-to-do", rootSlug: "things-to-do", imageUrl: "" },
+          { label: "Stay in Somerset", url: "/places-to-stay", rootSlug: "places-to-stay", imageUrl: "" },
+          { label: "Places to Eat", url: "/things-to-do/food-drink-more", rootSlug: "things-to-do/food-drink-more", imageUrl: "" },
+          { label: "Events", url: "/festivals-events", rootSlug: "festivals-events", imageUrl: "" },
+        ],
+        buttons: [
+          { label: "Book Experiences", url: "/book-experiences", icon: "ticket" },
+          { label: "Book Accommodation", url: "/places-to-stay", icon: "bed" },
+        ],
+      };
     case "social_panel":
       return { heading: "On Instagram", handle: "@visitsomerset", profileUrl: "", images: [] };
     case "map_band":

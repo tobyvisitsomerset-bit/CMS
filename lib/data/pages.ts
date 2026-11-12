@@ -2,7 +2,7 @@ import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { MembershipTier, Page, PageStatus } from "@prisma/client";
-import { parseCustomFields, getBusinessInfo } from "@/lib/kentico-item-fields";
+import { parseCustomFields, getBusinessInfo, decodeKenticoText } from "@/lib/kentico-item-fields";
 import { LEVELS_BY_PRIORITY, LEVEL_VALUES } from "@/lib/membership";
 
 export type PageTreeNode = Pick<
@@ -301,6 +301,8 @@ export type FeaturedPageTile = {
   tier?: MembershipTier | null;
   admission?: string | null;
   bookingUrl?: string | null;
+  /** A short plain-text description for cards (the subtitle, else the start of the page text). */
+  summary?: string | null;
 };
 
 const TILE_SELECT = {
@@ -311,7 +313,14 @@ const TILE_SELECT = {
   heroImageUrl: true,
   customFields: true,
   membershipTier: true,
+  bodyContent: true,
 } as const;
+
+function tileSummary(subtitle: string | null, body: string | null | undefined): string | null {
+  const text = decodeKenticoText(subtitle) ?? decodeKenticoText(body);
+  if (!text) return null;
+  return text.length <= 140 ? text : `${text.slice(0, 137).replace(/\s+\S*$/, "")}...`;
+}
 
 function toTile(r: {
   id: string;
@@ -321,6 +330,7 @@ function toTile(r: {
   heroImageUrl: string | null;
   customFields: string | null;
   membershipTier: MembershipTier | null;
+  bodyContent?: string | null;
 }): FeaturedPageTile {
   const info = getBusinessInfo(parseCustomFields(r.customFields));
   return {
@@ -335,6 +345,7 @@ function toTile(r: {
     tier: r.membershipTier,
     admission: info?.admission ? info.admission.slice(0, 80) : null,
     bookingUrl: info?.bookingUrl ?? null,
+    summary: tileSummary(r.subtitle, r.bodyContent),
   };
 }
 
@@ -451,6 +462,36 @@ export async function imageForPlacesMatching(query: string): Promise<string | nu
   const rank = (t: string | null) => (t === "PREMIUM" || t === "PLATINUM" || t === "GOLD" ? 3 : t === "PARTNER" || t === "SILVER" ? 2 : t ? 1 : 0);
   rows.sort((a, b) => rank(b.membershipTier) - rank(a.membershipTier));
   return rows[0].heroImageUrl;
+}
+
+// A real photo for one section of the site (things to do, places to stay, ...):
+// a published listing under that section with a picture. Higher membership
+// levels first, and the pick rotates daily within the top level so it is not
+// always the same business. For events, an upcoming event with a picture.
+export async function imageForSection(rootSlug: string): Promise<string | null> {
+  if (rootSlug.startsWith("festivals-events")) {
+    const events = await getUpcomingRealEvents(rootSlug, 24);
+    const withPhoto = events.filter((e) => e.heroImageUrl);
+    if (withPhoto.length) return withPhoto[0].heroImageUrl;
+  }
+  const rows = await prisma.page.findMany({
+    where: {
+      status: "PUBLISHED",
+      linkedPageId: null,
+      slug: { startsWith: `${rootSlug}/` },
+      customFields: { contains: "sz.touristitem" },
+      heroImageUrl: { not: null },
+    },
+    select: { id: true, heroImageUrl: true, membershipTier: true },
+    take: 120,
+    orderBy: { sortOrder: "asc" },
+  });
+  if (rows.length === 0) return null;
+  const rank = (t: string | null) => (t === "PREMIUM" || t === "PLATINUM" || t === "GOLD" ? 3 : t === "PARTNER" || t === "SILVER" ? 2 : t ? 1 : 0);
+  const top = Math.max(...rows.map((r) => rank(r.membershipTier)));
+  const best = rows.filter((r) => rank(r.membershipTier) === top);
+  const day = Math.floor(Date.now() / 86_400_000);
+  return best[day % best.length].heroImageUrl;
 }
 
 export async function countPlacesMatching(query: string): Promise<number> {

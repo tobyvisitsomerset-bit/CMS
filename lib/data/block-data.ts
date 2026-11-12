@@ -4,6 +4,7 @@ import {
   getPagesWithCoordinates,
   countPlacesMatching,
   imageForPlacesMatching,
+  imageForSection,
   countRealBusinesses,
   getFeaturedRealBusinesses,
   getUpcomingRealEvents,
@@ -113,6 +114,19 @@ export async function resolveBlockData(
             })),
           );
           return [block.id, { type: "mood_tiles", moods: resolved }];
+        }
+        case "home_tiles": {
+          // Each tile uses its own picture when one is set, otherwise a real
+          // member photo from the section it links to.
+          const tiles: { label: string; url: string; imageUrl?: string; rootSlug?: string }[] = config.tiles ?? [];
+          const resolved = await Promise.all(
+            tiles.map(async (t) => ({
+              label: t.label,
+              url: t.url,
+              imageUrl: t.imageUrl || (t.rootSlug ? await imageForSection(t.rootSlug) : null),
+            })),
+          );
+          return [block.id, { type: "home_tiles", tiles: resolved }];
         }
         case "listing_explorer": {
           const rootSlug: string = config.rootSlug ?? "";

@@ -63,8 +63,8 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
     case "hero":
       return (
         <div className="space-y-4">
-          <Field label="Heading (the big text). Put *asterisks* round words to use the script font">
-            <Input value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
+          <Field label="Heading (the big text). Put *asterisks* round words to use the script font; press Enter for a new line">
+            <Textarea rows={2} value={config.heading ?? ""} onChange={(e) => set({ heading: e.target.value })} />
           </Field>
           <Field label="Eyebrow (small line above the heading)">
             <Input value={config.eyebrow ?? ""} onChange={(e) => set({ eyebrow: e.target.value })} />
@@ -88,6 +88,12 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
             <Switch checked={config.showSearchBar ?? false} onCheckedChange={(v) => set({ showSearchBar: v })} />
             <Label>Show the homepage search bar (Stay / Things to do / Eat &amp; drink / What&apos;s on)</Label>
           </div>
+          {config.showSearchBar && (
+            <div className="flex items-center gap-2">
+              <Switch checked={config.searchPanel !== false} onCheckedChange={(v) => set({ searchPanel: v })} />
+              <Label>Show the booking search panel under the photo</Label>
+            </div>
+          )}
           {config.showSearchBar && (
             <div className="space-y-3 rounded-lg border bg-neutral-50 p-3">
               <div>
@@ -847,6 +853,46 @@ export function BlockConfigForm({ type, config, setConfig }: { type: BlockType; 
           </Field>
         </div>
       );
+
+    case "home_tiles": {
+      const tiles: { label: string; url: string; imageUrl?: string; rootSlug?: string }[] = config.tiles ?? [];
+      const buttons: { label: string; url: string; icon?: string }[] = config.buttons ?? [];
+      const setTile = (i: number, p: Record<string, string>) => set({ tiles: tiles.map((t, idx) => (idx === i ? { ...t, ...p } : t)) });
+      const setButton = (i: number, p: Record<string, string>) => set({ buttons: buttons.map((b, idx) => (idx === i ? { ...b, ...p } : b)) });
+      return (
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-400">
+            Four picture tiles, then wide booking buttons. A tile with no picture of its own shows a real member photo from the section it links to.
+          </p>
+          {tiles.map((t, i) => (
+            <div key={i} className="space-y-2 rounded-md border bg-neutral-50 p-3">
+              <p className="text-sm font-semibold">Tile {i + 1}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Label">
+                  <Input value={t.label ?? ""} onChange={(e) => setTile(i, { label: e.target.value })} />
+                </Field>
+                <Field label="Link">
+                  <Input value={t.url ?? ""} onChange={(e) => setTile(i, { url: e.target.value })} />
+                </Field>
+              </div>
+              <Field label="Own picture (optional, best at 5:3)">
+                <MediaPickerField value={t.imageUrl ?? ""} onChange={(url) => setTile(i, { imageUrl: url })} />
+              </Field>
+            </div>
+          ))}
+          {buttons.map((b, i) => (
+            <div key={i} className="grid grid-cols-2 gap-3 rounded-md border bg-neutral-50 p-3">
+              <Field label={`Button ${i + 1} label`}>
+                <Input value={b.label ?? ""} onChange={(e) => setButton(i, { label: e.target.value })} />
+              </Field>
+              <Field label="Link">
+                <Input value={b.url ?? ""} onChange={(e) => setButton(i, { url: e.target.value })} />
+              </Field>
+            </div>
+          ))}
+        </div>
+      );
+    }
 
     case "display_settings":
       return (

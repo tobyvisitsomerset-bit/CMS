@@ -71,6 +71,21 @@ export const WIDGETS: WidgetDef[] = [
     tips: ["Events are not published automatically — someone adds them to the site after review."],
   },
   {
+    type: "home_tiles",
+    name: "Quick links and booking buttons",
+    category: "Content panels",
+    summary:
+      "A purple band with four picture tiles that lead into the main sections (Things to Do, Stay in Somerset, Places to Eat, Events), then wide booking buttons such as Book Experiences and Book Accommodation.",
+    whenToUse: "Directly under the hero on the home page.",
+    data: "Live data from the site",
+    kentico: "No equivalent (built from the current home page)",
+    properties: [
+      { name: "Tiles", type: "List", help: "Label, link and an optional picture. With no picture, a real member photo from that section is used." },
+      { name: "Buttons", type: "List", help: "The wide white buttons under the tiles." },
+    ],
+    tips: ["Tile pictures are best at a 5:3 shape.", "Photos from members rotate daily, with the highest membership level first."],
+  },
+  {
     type: "display_settings",
     name: "Display settings",
     category: "Content panels",
