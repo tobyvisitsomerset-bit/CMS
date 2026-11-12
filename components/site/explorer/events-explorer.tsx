@@ -253,7 +253,7 @@ export function EventsExplorer({
             {k.label}
           </Chip>
         ))}
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex flex-wrap items-center gap-3">
           <div className="flex overflow-hidden rounded-full border border-stone-200 text-sm font-semibold">
             {(["list", "calendar", "map"] as const).map((v) => (
               <Link

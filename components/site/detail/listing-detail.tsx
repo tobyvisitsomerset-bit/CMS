@@ -276,21 +276,21 @@ export function ListingDetail({
               <H2>Good to know</H2>
               <dl className="divide-y divide-stone-100 rounded-3xl border border-stone-200 text-sm">
                 {info.openingTimes && (
-                  <div className="grid grid-cols-[9rem_1fr] gap-4 p-4">
+                  <div className="grid grid-cols-1 gap-1 p-4 sm:grid-cols-[9rem_1fr] sm:gap-4">
                     <dt className="text-stone-500">Opening times</dt>
-                    <dd className="text-stone-800">{info.openingTimes}</dd>
+                    <dd className="min-w-0 break-words text-stone-800">{info.openingTimes}</dd>
                   </div>
                 )}
                 {generalOpening && (
-                  <div className="grid grid-cols-[9rem_1fr] gap-4 p-4">
+                  <div className="grid grid-cols-1 gap-1 p-4 sm:grid-cols-[9rem_1fr] sm:gap-4">
                     <dt className="text-stone-500">Opening information</dt>
-                    <dd className="text-stone-800">{generalOpening}</dd>
+                    <dd className="min-w-0 break-words text-stone-800">{generalOpening}</dd>
                   </div>
                 )}
                 {info.admission && !isEvent && (
-                  <div className="grid grid-cols-[9rem_1fr] gap-4 p-4">
+                  <div className="grid grid-cols-1 gap-1 p-4 sm:grid-cols-[9rem_1fr] sm:gap-4">
                     <dt className="text-stone-500">{isStay ? "Prices" : "Admission"}</dt>
-                    <dd className="text-stone-800">{info.admission}</dd>
+                    <dd className="min-w-0 break-words text-stone-800">{info.admission}</dd>
                   </div>
                 )}
               </dl>

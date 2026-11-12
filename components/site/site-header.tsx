@@ -91,7 +91,7 @@ export function SiteHeader({
       {/* Main row */}
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3">
         <Link href="/" className="flex shrink-0 items-center">
-          <Image src="/logo-visit-somerset.png" alt="Visit Somerset" width={419} height={113} priority className="h-10 w-auto" />
+          <Image src="/logo-visit-somerset.png" alt="Visit Somerset" width={419} height={113} priority className="h-[40px] w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-6 text-[15px] font-semibold text-stone-900 lg:flex" aria-label="Main">
@@ -130,7 +130,7 @@ export function SiteHeader({
           <Link
             href="/search"
             aria-label="Search the site"
-            className="flex size-10 items-center justify-center rounded-full border border-stone-200 text-stone-700 transition-colors hover:bg-cool-grey"
+            className="flex size-[40px] items-center justify-center rounded-full border border-stone-200 text-stone-700 transition-colors hover:bg-cool-grey"
           >
             <Search className="size-4" />
           </Link>
@@ -145,7 +145,7 @@ export function SiteHeader({
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}
-            className="flex size-10 items-center justify-center rounded-full border border-stone-200 text-stone-700 lg:hidden"
+            className="flex size-[40px] items-center justify-center rounded-full border border-stone-200 text-stone-700 lg:hidden"
           >
             {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
