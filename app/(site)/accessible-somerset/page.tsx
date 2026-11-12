@@ -85,7 +85,7 @@ export default async function AccessibleSomersetPage({ searchParams }: { searchP
                 on ? "border-somerset-green bg-somerset-green text-white" : "border-stone-300 bg-white text-stone-700 hover:border-somerset-green",
               )}
             >
-              {f.label} <span className="opacity-60">· {counts[f.key]}</span>
+              {f.label} <span className="opacity-80">· {counts[f.key]}</span>
             </Link>
           );
         })}

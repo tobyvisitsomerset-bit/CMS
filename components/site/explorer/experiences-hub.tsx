@@ -155,7 +155,7 @@ export function ExperiencesHubView({
           {stats.avgPrice !== null && (
             <div className="rounded-3xl bg-cool-grey p-6">
               <p className="font-serif text-4xl font-black text-stone-900">£{Math.round(stats.avgPrice)}</p>
-              <p className="mt-1 text-sm text-stone-500">average &ldquo;from&rdquo; price across {stats.priced} priced listings</p>
+              <p className="mt-1 text-sm text-stone-600">average &ldquo;from&rdquo; price across {stats.priced} priced listings</p>
             </div>
           )}
         </div>
